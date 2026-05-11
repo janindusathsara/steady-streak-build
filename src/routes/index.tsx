@@ -1,380 +1,227 @@
-import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useEffect, useRef, useState } from "react";
-import {
-  Infinity as InfinityIcon, Flame, CalendarDays, Moon, Bell, BarChart3, CloudUpload,
-  CheckCircle2, TrendingUp, Sparkles, ArrowRight, Star, Quote,
-} from "lucide-react";
-import heroBg from "@/assets/hero-bg.jpg";
-import shadowBg from "@/assets/shadow-bg.jpg";
-
+import { createFileRoute, Link } from "@tanstack/react-router";
+import { Wrench, ArrowRight, Phone, Mail, Printer, MapPin } from "lucide-react";
+import electrician from "@/assets/service-electrician.jpg";
+import mason from "@/assets/service-mason.jpg";
+import plumber from "@/assets/service-plumber.jpg";
+import carpenter from "@/assets/service-carpenter.jpg";
+import painter from "@/assets/service-painter.jpg";
+import hvac from "@/assets/service-hvac.jpg";
+import welder from "@/assets/service-welder.jpg";
+import cleaner from "@/assets/service-cleaner.jpg";
 
 export const Route = createFileRoute("/")({
-  component: LandingPage,
+  component: HomePage,
   head: () => ({
     meta: [
-      { title: "Continuum — Build lasting habits, one day at a time" },
-      { name: "description", content: "A calm, focused habit tracker. Track streaks, visualize progress, and build your daily ritual. Free, ad-free, distraction-free." },
+      { title: "FixItNow — Trusted home service professionals on demand" },
+      { name: "description", content: "Book electricians, plumbers, masons, carpenters and more. FixItNow connects you with verified local professionals in minutes." },
     ],
   }),
 });
 
-function LandingPage() {
-  const navigate = useNavigate();
-  const [checked, setChecked] = useState(false);
+const services = [
+  { name: "Electrician", img: electrician, desc: "Wiring, repairs, installations." },
+  { name: "Mason", img: mason, desc: "Brickwork, plastering, tiling." },
+  { name: "Plumber", img: plumber, desc: "Leaks, pipes, fixtures." },
+  { name: "Carpenter", img: carpenter, desc: "Furniture, doors, custom builds." },
+  { name: "Painter", img: painter, desc: "Interior & exterior painting." },
+  { name: "HVAC Tech", img: hvac, desc: "AC service & installation." },
+  { name: "Welder", img: welder, desc: "Gates, grills, metalwork." },
+  { name: "Cleaner", img: cleaner, desc: "Deep & routine home cleaning." },
+];
 
-  useEffect(() => {
-    import("@/integrations/supabase/client").then(({ supabase }) => {
-      supabase.auth.getSession().then(({ data: { session } }) => {
-        if (session?.user) {
-          navigate({ to: "/app" });
-        } else {
-          setChecked(true);
-        }
-      });
-    }).catch(() => setChecked(true));
-  }, [navigate]);
-
+function HomePage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <Navbar />
       <Hero />
-      <Features />
-      <HowItWorks />
-      <Reviews />
-      <FinalCTA />
+      <Services />
+      <CTA />
       <Footer />
     </div>
   );
 }
 
-/* ─── Hero (dark, full-bleed, with navbar) ─── */
+function Navbar() {
+  return (
+    <header className="sticky top-4 z-30 mx-auto max-w-6xl px-4">
+      <nav className="flex h-16 items-center justify-between rounded-2xl border border-border/60 bg-card/90 px-5 backdrop-blur shadow-sm">
+        <Link to="/" className="flex items-center gap-2">
+          <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
+          <span className="text-lg font-bold tracking-tight">FixItNow</span>
+        </Link>
+        <div className="hidden gap-8 text-sm text-muted-foreground sm:flex">
+          <a href="#services" className="hover:text-foreground transition-colors">Services</a>
+          <a href="#news" className="hover:text-foreground transition-colors">News</a>
+          <a href="#about" className="hover:text-foreground transition-colors">About Us</a>
+        </div>
+        <div className="flex items-center gap-2">
+          <Link to="/login" className="rounded-full px-4 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors">Sign In</Link>
+          <Link to="/login" className="rounded-full bg-primary px-4 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity">Sign Up</Link>
+        </div>
+      </nav>
+    </header>
+  );
+}
+
 function Hero() {
   return (
-    <>
-      <section className="relative pb-24 pt-0 lg:pb-32 lg:pt-8 xl:pb-40 xl:pt-12" style={{ background: "#050d0a" }}>
-        {/* Background image — weighted to the right */}
-        <img
-          src={heroBg}
-          alt=""
-          width={1920}
-          height={1080}
-          className="absolute inset-0 w-full h-full object-cover object-right pointer-events-none select-none"
-          aria-hidden="true"
-        />
-        {/* Left-side gradient for text legibility */}
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(to right, rgba(5,13,10,0.5), rgba(5,13,10,0.13), transparent)` }} />
-        <div className="absolute inset-0 pointer-events-none" style={{ background: `linear-gradient(to bottom, rgba(0,0,0,0.26), transparent, rgba(5,13,10,0))` }} />
-
-        {/* Navbar */}
-        <nav className="relative z-20 max-w-5xl mx-auto px-5 h-16 flex items-center justify-between">
-          <Link to="/" className="flex items-center gap-2.5">
-            <InfinityIcon className="w-7 h-7 text-white" strokeWidth={2.5} />
-            <span className="text-xl font-semibold text-white/90 tracking-tight">Continuum</span>
-          </Link>
-
-          <div className="hidden sm:flex items-center gap-8 text-sm text-white">
-            <a href="#features" className="hover:text-white/70 transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-white/70 transition-colors">How it works</a>
-            <a href="#reviews" className="hover:text-white/70 transition-colors">Reviews</a>
-          </div>
-
-          <Link
-            to="/login"
-            className="inline-flex items-center gap-1.5 rounded-xl border border-white/30 bg-white/10 text-white px-5 py-2.5 text-sm font-medium hover:bg-white/20 backdrop-blur-sm transition-all duration-200 active:scale-[0.97]"
-          >
-            Get started
-            <ArrowRight className="w-3.5 h-3.5" />
-          </Link>
-        </nav>
-
-        {/* Hero content — left aligned */}
-        <div className="relative z-10 max-w-5xl mx-auto px-5 pt-24 pb-12">
-          <div className="max-w-xl">
-            <ScrollReveal delay={80}>
-              <h1 className="text-4xl sm:text-5xl md:text-6xl font-bold tracking-tight text-white text-left" style={{ lineHeight: "1.08" }}>
-                Build lasting habits,<br />one day at a time
-              </h1>
-            </ScrollReveal>
-
-            <ScrollReveal delay={160}>
-              <p className="mt-6 text-lg text-white text-left" style={{ textWrap: "pretty", lineHeight: "1.6" }}>
-                Continuum is a calm, focused habit tracker that helps you build consistency through streaks, visual progress, and zero distractions.
-              </p>
-            </ScrollReveal>
-
-            <ScrollReveal delay={240}>
-              <div className="mt-10 flex flex-col sm:flex-row items-start gap-3">
-                <Link
-                  to="/login"
-                  className="inline-flex items-center gap-2 rounded-xl bg-[#FDAA3E] text-[#1a1a1a] px-7 py-3.5 text-sm font-bold hover:bg-[#fdb95e] transition-all duration-200 active:scale-[0.97] shadow-lg shadow-[#FDAA3E]/25"
-                >
-                  Get started free
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </ScrollReveal>
-          </div>
-        </div>
-      </section>
-    </>
-  );
-}
-
-/* ─── Features ─── */
-const features = [
-  { icon: Flame, title: "Streak tracking", desc: "Watch your momentum build day by day. Never break the chain." },
-  { icon: CalendarDays, title: "Calendar heatmap", desc: "See your consistency at a glance with a beautiful 30-day view." },
-  { icon: BarChart3, title: "Smart insights", desc: "Current streak, longest streak, completion rate — all the stats that matter." },
-  { icon: Bell, title: "Gentle reminders", desc: "Set custom reminder times so you never forget your daily rituals." },
-  { icon: Moon, title: "Dark mode", desc: "Easy on the eyes, day or night. Follows your system or your choice." },
-  { icon: CloudUpload, title: "Cloud sync", desc: "Sign in to sync your habits across devices. Your data, always safe." },
-];
-
-function Features() {
-  return (
-    <section id="features" className="py-28 relative bg-white">
-      <div className="absolute inset-0 pointer-events-none" style={{ backgroundImage: `url(${shadowBg})`, backgroundSize: 'cover', backgroundPosition: 'center', backgroundAttachment: 'fixed', opacity: 0.75 }} />
-      <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[400px] bg-primary/5 rounded-full blur-3xl pointer-events-none" />
-
-      <div className="max-w-6xl mx-auto px-5 relative">
-        <div className="flex flex-col lg:flex-row items-start gap-12 lg:gap-16">
-          {/* Left: App preview — light mode on mint bg */}
-          <div className="w-full lg:w-[420px] flex-shrink-0">
-            <div className="relative">
-              <div className="rounded-xl bg-white border border-black/[0.06] shadow-xl overflow-hidden">
-                {/* Mock browser chrome */}
-                <div className="border-b border-black/5 px-5 py-3 flex items-center gap-3 bg-gray-50/80">
-                  <div className="flex gap-1.5">
-                    <div className="w-2.5 h-2.5 rounded-full bg-black/10" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-black/10" />
-                    <div className="w-2.5 h-2.5 rounded-full bg-black/10" />
-                  </div>
-                  <div className="flex-1" />
-                </div>
-
-                {/* Mock app content — light mode */}
-                <div className="p-6 space-y-4">
-                  <div>
-                    <p className="text-xs text-black/40">Good morning</p>
-                    <p className="text-lg font-semibold text-black/90 mt-0.5">Your daily ritual</p>
-                    <p className="text-xs text-black/40 mt-1">Tuesday, March 25 · 2 of 4 minted</p>
-                  </div>
-
-                  {/* Mock progress ring */}
-                  <div className="flex justify-center py-3">
-                    <div className="w-20 h-20 rounded-full border-[4px] border-black/[0.06] flex items-center justify-center relative">
-                      <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 80 80">
-                        <circle cx="40" cy="40" r="35" fill="none" strokeWidth="4" stroke="#FDAA3E" strokeDasharray="220" strokeDashoffset="110" strokeLinecap="round" />
-                      </svg>
-                      <span className="text-lg font-bold text-black/80">50%</span>
-                    </div>
-                  </div>
-
-                  {/* Mock habit cards */}
-                  {[
-                    { name: "Morning meditation", color: "#FDAA3E", done: true },
-                    { name: "Read 20 pages", color: "hsl(217, 91%, 60%)", done: true },
-                    { name: "Exercise 30 min", color: "hsl(25, 95%, 53%)", done: false },
-                    { name: "Journal", color: "hsl(270, 95%, 75%)", done: false },
-                  ].map((h) => (
-                    <div key={h.name} className="flex items-center gap-3 rounded-xl border border-black/[0.06] bg-black/[0.02] px-4 py-3">
-                      <div className="w-2 h-2 rounded-full flex-shrink-0" style={{ backgroundColor: h.color }} />
-                      <span className={`flex-1 text-sm ${h.done ? "line-through text-black/30" : "text-black/70"}`}>{h.name}</span>
-                      <div className={`w-5 h-5 rounded-full border-2 flex items-center justify-center ${h.done ? "bg-primary border-primary" : "border-black/15"}`}>
-                        {h.done && <CheckCircle2 className="w-3.5 h-3.5 text-white" />}
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              </div>
-            </div>
-          </div>
-
-          {/* Right: Features content */}
-          <div className="flex-1">
-            <ScrollReveal>
-              <div className="mb-10">
-                <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Features</p>
-                <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground" style={{ lineHeight: "1.15" }}>
-                  Everything you need,<br />nothing you don't
-                </h2>
-              </div>
-            </ScrollReveal>
-
-            <div className="grid sm:grid-cols-2 gap-5">
-              {features.map((f, i) => (
-                <ScrollReveal key={f.title} delay={i * 70}>
-                  <div className="group rounded-2xl border border-black/[0.04] bg-black/[0.03] p-5 hover:bg-black/[0.05] hover:border-black/[0.08] transition-all duration-300">
-                    <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-primary/15 to-primary/5 flex items-center justify-center mb-3 group-hover:scale-105 transition-transform duration-300">
-                      <f.icon className="w-5 h-5 text-primary" />
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-1">{f.title}</h3>
-                    <p className="text-sm text-muted-foreground leading-relaxed">{f.desc}</p>
-                  </div>
-                </ScrollReveal>
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── How it works ─── */
-const steps = [
-  { num: "1", icon: CheckCircle2, title: "Create your habits", desc: "Add the habits you want to build — daily, specific days, or a weekly goal." },
-  { num: "2", icon: Sparkles, title: "Tap to complete", desc: "One tap each day to log your progress. Quick, satisfying, done." },
-  { num: "3", icon: TrendingUp, title: "Watch your growth", desc: "See streaks grow, heatmaps fill in, and your consistency compound over time." },
-];
-
-function HowItWorks() {
-  return (
-    <section id="how-it-works" className="py-28 bg-white border-y border-border/30">
-      <div className="max-w-4xl mx-auto px-5">
-        <ScrollReveal>
-          <div className="text-center mb-16">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">How it works</p>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground" style={{ lineHeight: "1.15" }}>
-              Three steps to a better routine
-            </h2>
-          </div>
-        </ScrollReveal>
-
-        <div className="relative grid md:grid-cols-3 gap-8">
-          {/* Connecting line between steps (desktop only) */}
-          <div className="hidden md:block absolute top-7 left-[calc(16.67%+28px)] right-[calc(16.67%+28px)] h-px border-t-2 border-dashed border-primary/20" />
-
-          {steps.map((s, i) => (
-            <ScrollReveal key={s.num} delay={i * 100}>
-              <div className="text-center relative">
-                <div className="w-14 h-14 rounded-2xl bg-primary text-primary-foreground flex items-center justify-center mx-auto mb-5 text-lg font-bold shadow-lg shadow-primary/15">
-                  {s.num}
-                </div>
-                <h3 className="font-semibold text-foreground text-lg mb-2">{s.title}</h3>
-                <p className="text-sm text-muted-foreground leading-relaxed max-w-xs mx-auto">{s.desc}</p>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Reviews ─── */
-const reviews = [
-  { name: "Daniel Cooper", role: "Product designer", avatar: "https://trovdwfeqyzlxzrtfbjv.supabase.co/storage/v1/object/public/assets/avatars/e20b66f6-e7e9-4c00-93d3-506c78cb66c2/avatar-19.jpg", quote: "Finally a habit app that doesn't try to be a social network. Just me and my habits.", rating: 5 },
-  { name: "Emma Lindström", role: "Software engineer", avatar: "https://trovdwfeqyzlxzrtfbjv.supabase.co/storage/v1/object/public/assets/avatars/307e7512-1637-4ea2-a5cd-875afeb1002b/avatar-21.jpg", quote: "The streak tracking is addictive in the best way. I've been consistent for 47 days now.", rating: 5 },
-  { name: "Ryan Mitchell", role: "Grad student", avatar: "https://trovdwfeqyzlxzrtfbjv.supabase.co/storage/v1/object/public/assets/avatars/6b77ccde-dbfd-4c23-8c9f-ce748683068a/avatar-16.jpg", quote: "Love the heatmap. Seeing my progress visually keeps me motivated more than any badge system.", rating: 5 },
-  { name: "Mei Lin", role: "Freelance writer", avatar: "https://trovdwfeqyzlxzrtfbjv.supabase.co/storage/v1/object/public/assets/avatars/b706d9a7-3a45-4fdd-ab47-c7023d4d0cfa/avatar-20.jpg", quote: "Simple, clean, no ads. This is what every habit tracker should be. Dark mode is gorgeous too.", rating: 5 },
-];
-
-function Reviews() {
-  return (
-    <section id="reviews" className="py-28">
-      <div className="max-w-5xl mx-auto px-5">
-        <ScrollReveal>
-          <div className="text-center mb-16">
-            <p className="text-xs font-semibold uppercase tracking-widest text-primary mb-3">Reviews</p>
-            <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-foreground" style={{ lineHeight: "1.15" }}>
-              Loved by habit builders
-            </h2>
-          </div>
-        </ScrollReveal>
-
-        <div className="grid sm:grid-cols-2 gap-5">
-          {reviews.map((r, i) => (
-            <ScrollReveal key={r.name} delay={i * 80}>
-              <div className="relative rounded-2xl border border-border/50 bg-card p-6 overflow-hidden">
-                {/* Decorative quote mark */}
-                <Quote className="absolute top-4 right-4 w-10 h-10 text-primary/[0.06] rotate-180" />
-
-                <div className="flex gap-0.5 mb-4">
-                  {Array.from({ length: r.rating }).map((_, j) => (
-                    <Star key={j} className="w-4 h-4 fill-primary text-primary" />
-                  ))}
-                </div>
-                <p className="text-sm text-foreground leading-relaxed mb-5 relative">"{r.quote}"</p>
-                <div className="flex items-center gap-3">
-                  <img src={r.avatar} alt={r.name} className="w-[4.5rem] h-[4.5rem] rounded-full object-cover" loading="lazy" />
-                  <div>
-                    <p className="text-sm font-medium text-foreground">{r.name}</p>
-                    <p className="text-xs text-muted-foreground">{r.role}</p>
-                  </div>
-                </div>
-              </div>
-            </ScrollReveal>
-          ))}
-        </div>
-      </div>
-    </section>
-  );
-}
-
-/* ─── Final CTA ─── */
-function FinalCTA() {
-  return (
-    <section className="relative overflow-hidden py-28" style={{ background: "#050d0a" }}>
-      {/* Reuse hero bg for visual cohesion */}
-      <img
-        src={heroBg}
-        alt=""
-        width={1920}
-        height={1080}
-        loading="lazy"
-        className="absolute inset-0 w-full h-full object-cover opacity-25 pointer-events-none select-none"
-        aria-hidden="true"
-      />
-      <div className="absolute inset-0 bg-gradient-to-t from-[#050d0a] via-transparent to-[#050d0a] pointer-events-none" />
-
-      <div className="relative z-10 max-w-2xl mx-auto px-5 text-center">
-        <ScrollReveal>
-          <h2 className="text-3xl sm:text-4xl font-bold tracking-tight text-white" style={{ lineHeight: "1.15" }}>
-            Ready to build better habits?
-          </h2>
-          <p className="mt-4 text-white max-w-md mx-auto" style={{ textWrap: "pretty" }}>
-            Join thousands of people using Continuum to build consistency, one day at a time.
+    <section className="mx-auto max-w-6xl px-5 pt-16 pb-20">
+      <div className="grid gap-12 md:grid-cols-2 md:gap-16">
+        <div>
+          <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
+            Home Services, Simplified
+          </span>
+          <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl" style={{ lineHeight: 1.05 }}>
+            Reliable repairs.<br />Right at your doorstep.
+          </h1>
+          <p className="mt-6 text-base leading-relaxed text-muted-foreground">
+            FixItNow connects homeowners with verified local professionals — electricians, plumbers, masons,
+            carpenters and more. Book in minutes. Pay on completion. Backed by our service guarantee.
           </p>
-          <Link
-            to="/login"
-            className="mt-8 inline-flex items-center gap-2 rounded-xl bg-[#FDAA3E] text-[#1a1a1a] px-8 py-4 text-sm font-semibold hover:bg-[#fdb95e] transition-all duration-200 active:scale-[0.97] shadow-lg shadow-[#FDAA3E]/25"
-          >
-            Get started free
-            <ArrowRight className="w-4 h-4" />
-          </Link>
-        </ScrollReveal>
+          <div className="mt-8 flex flex-wrap gap-3">
+            <a href="#services" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-90 transition-opacity">
+              Browse services <ArrowRight className="h-4 w-4" />
+            </a>
+            <Link to="/login" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted transition-colors">
+              Get started free
+            </Link>
+          </div>
+        </div>
+        <div id="about" className="space-y-5 text-sm leading-relaxed text-muted-foreground">
+          <h2 className="text-xl font-semibold text-foreground">Why FixItNow</h2>
+          <p>
+            Every professional on our platform is background-checked, skill-verified, and rated by real customers.
+            We make it effortless to find the right person for the job — whether you need a quick faucet fix or a
+            full home renovation crew.
+          </p>
+          <p>
+            Transparent pricing, real-time tracking, and instant chat with your tradesperson. No hidden fees,
+            no shady contractors, no missed appointments. Just dependable help when you need it most.
+          </p>
+          <div className="grid grid-cols-3 gap-4 pt-2">
+            {[
+              { n: "10k+", l: "Jobs done" },
+              { n: "500+", l: "Pros vetted" },
+              { n: "4.9★", l: "Avg. rating" },
+            ].map((s) => (
+              <div key={s.l} className="rounded-xl border border-border bg-card p-4">
+                <div className="text-2xl font-bold text-foreground">{s.n}</div>
+                <div className="mt-1 text-xs text-muted-foreground">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );
 }
 
-/* ─── Footer ─── */
+function Services() {
+  return (
+    <section id="services" className="bg-secondary/40 py-20">
+      <div className="mx-auto max-w-6xl px-5">
+        <div className="mb-12 flex items-end justify-between gap-6">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Our services</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Find the right pro for any job</h2>
+          </div>
+          <a href="#" className="hidden text-sm font-medium text-primary hover:underline sm:inline">View all →</a>
+        </div>
+        <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
+          {services.map((s) => (
+            <div key={s.name} className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg">
+              <div className="relative aspect-[4/3] overflow-hidden">
+                <img
+                  src={s.img}
+                  alt={s.name}
+                  width={640}
+                  height={480}
+                  loading="lazy"
+                  className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-105"
+                />
+                <span className="absolute left-3 top-3 rounded-full bg-card/95 px-3 py-1 text-xs font-semibold text-foreground shadow-sm backdrop-blur">
+                  {s.name}
+                </span>
+              </div>
+              <div className="p-4">
+                <p className="text-sm text-muted-foreground">{s.desc}</p>
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
+
+function CTA() {
+  return (
+    <section id="news" className="mx-auto max-w-6xl px-5 py-24">
+      <div className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-10 sm:p-14">
+        <div className="grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-primary">Get started</p>
+            <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl" style={{ lineHeight: 1.15 }}>
+              Need a hand around the house?
+            </h2>
+            <p className="mt-4 max-w-md text-muted-foreground">
+              Sign up in seconds and book your first service today. Trusted pros, fair prices, zero hassle.
+            </p>
+          </div>
+          <div className="flex md:justify-end">
+            <Link to="/login" className="inline-flex items-center gap-2 rounded-xl bg-primary px-7 py-4 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-90 transition-opacity">
+              Create free account <ArrowRight className="h-4 w-4" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </section>
+  );
+}
+
 function Footer() {
   return (
-    <footer className="border-t border-border/40 py-12">
-      <div className="max-w-5xl mx-auto px-5">
-        <div className="flex flex-col sm:flex-row items-center justify-between gap-6">
-          <div className="flex items-center gap-2">
-            <InfinityIcon className="w-6 h-6 text-foreground" strokeWidth={2.5} />
-            <span className="font-semibold text-foreground text-sm">Continuum</span>
+    <footer className="bg-foreground text-background">
+      <div className="mx-auto max-w-6xl px-5 py-14">
+        <div className="grid gap-10 md:grid-cols-3">
+          <div>
+            <div className="flex items-center gap-2">
+              <Wrench className="h-7 w-7 text-primary" strokeWidth={2.5} />
+              <span className="text-2xl font-bold">FixItNow</span>
+            </div>
+            <p className="mt-4 max-w-xs text-sm text-background/60">
+              Trusted home service professionals, on demand.
+            </p>
           </div>
-
-          <div className="flex items-center gap-6 text-sm text-muted-foreground">
-            <a href="#features" className="hover:text-foreground transition-colors">Features</a>
-            <a href="#how-it-works" className="hover:text-foreground transition-colors">How it works</a>
-            <a href="#reviews" className="hover:text-foreground transition-colors">Reviews</a>
-            <Link to="/login" className="hover:text-foreground transition-colors">Sign in</Link>
-            <Link to="/login" className="hover:text-foreground transition-colors">Get started</Link>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-background/50">Quick Links</p>
+            <ul className="mt-4 space-y-2 text-sm">
+              <li><a href="#" className="hover:text-primary transition-colors">Home</a></li>
+              <li><a href="#about" className="hover:text-primary transition-colors">About Us</a></li>
+              <li><a href="#services" className="hover:text-primary transition-colors">Services</a></li>
+              <li><a href="#news" className="hover:text-primary transition-colors">News</a></li>
+              <li><a href="#" className="hover:text-primary transition-colors">Rate Us</a></li>
+            </ul>
           </div>
-
-          <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} Continuum</p>
+          <div>
+            <p className="text-xs font-semibold uppercase tracking-widest text-background/50">Contact Us</p>
+            <ul className="mt-4 space-y-2.5 text-sm text-background/80">
+              <li className="flex items-start gap-2"><Phone className="mt-0.5 h-4 w-4 text-primary" />0771234567 · 0767654321</li>
+              <li className="flex items-start gap-2"><Mail className="mt-0.5 h-4 w-4 text-primary" />fixitnow@gmail.com</li>
+              <li className="flex items-start gap-2"><Printer className="mt-0.5 h-4 w-4 text-primary" />Fax: +94761234567</li>
+              <li className="flex items-start gap-2"><MapPin className="mt-0.5 h-4 w-4 text-primary" />University of Moratuwa, Sri Lanka</li>
+            </ul>
+          </div>
+        </div>
+        <div className="mt-12 flex flex-col items-start justify-between gap-3 border-t border-background/10 pt-6 text-xs text-background/50 sm:flex-row sm:items-center">
+          <p>© {new Date().getFullYear()} FixItNow. All rights reserved.</p>
+          <div className="flex gap-6">
+            <a href="#" className="hover:text-background transition-colors">Terms and Conditions</a>
+            <a href="#" className="hover:text-background transition-colors">Privacy and Policy</a>
+          </div>
         </div>
       </div>
     </footer>
   );
-}
-
-/* ─── Scroll reveal wrapper (animations removed) ─── */
-function ScrollReveal({ children }: { children: React.ReactNode; delay?: number }) {
-  return <>{children}</>;
 }
