@@ -48,13 +48,13 @@ function HomePage() {
 
 function Hero() {
   return (
-    <section className="mx-auto max-w-6xl px-5 pt-16 pb-20">
-      <div className="grid gap-12 md:grid-cols-2 md:gap-16">
+    <section className="mx-auto max-w-6xl px-5 pt-10 pb-14 sm:pt-16 sm:pb-20">
+      <div className="grid gap-10 md:grid-cols-2 md:gap-16">
         <div>
           <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
             Home Services, Simplified
           </span>
-          <h1 className="mt-5 text-4xl font-bold tracking-tight sm:text-5xl md:text-6xl" style={{ lineHeight: 1.05 }}>
+          <h1 className="mt-5 text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl" style={{ lineHeight: 1.05 }}>
             Reliable repairs.<br />Right at your doorstep.
           </h1>
           <p className="mt-6 text-base leading-relaxed text-muted-foreground">
@@ -139,8 +139,8 @@ function Services() {
 
 function CTA() {
   return (
-    <section id="news" className="mx-auto max-w-6xl px-5 py-24">
-      <div className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-10 sm:p-14">
+    <section id="news" className="mx-auto max-w-6xl px-5 py-16 sm:py-24">
+      <div className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-6 sm:p-10 md:p-14">
         <div className="grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Get started</p>
