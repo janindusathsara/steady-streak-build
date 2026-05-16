@@ -50,9 +50,9 @@ function Hero() {
             carpenters and more. Book in minutes. Pay on completion. Backed by our service guarantee.
           </p>
           <div className="mt-8 flex flex-wrap gap-3">
-            <a href="#services" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-90 transition-opacity">
+            <Link to="/services" className="inline-flex items-center gap-2 rounded-xl bg-primary px-6 py-3 text-sm font-semibold text-primary-foreground shadow-md hover:opacity-90 transition-opacity">
               Browse services <ArrowRight className="h-4 w-4" />
-            </a>
+            </Link>
             <Link to="/login" className="inline-flex items-center gap-2 rounded-xl border border-border bg-card px-6 py-3 text-sm font-semibold text-foreground hover:bg-muted transition-colors">
               Get started free
             </Link>
