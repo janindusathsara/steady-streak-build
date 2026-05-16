@@ -8,7 +8,7 @@ export function Navbar() {
   const navLinks = (
     <>
       <Link to="/" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeOptions={{ exact: true }} activeProps={{ className: "text-foreground font-semibold" }}>Home</Link>
-      <Link to="/" hash="services" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors">Services</Link>
+      <Link to="/services" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground font-semibold" }}>Services</Link>
       <Link to="/news" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground font-semibold" }}>News</Link>
       <Link to="/about" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground font-semibold" }}>About Us</Link>
     </>
