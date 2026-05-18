@@ -148,7 +148,7 @@ function LoginPage() {
           </form>
 
           <p className="mt-4 text-center text-sm text-muted-foreground">
-            Don't have an account? <a href="#" className="font-semibold text-primary hover:underline">Create account</a>
+            Don't have an account? <Link to="/signup" className="font-semibold text-primary hover:underline">Create account</Link>
           </p>
 
           <div className="mt-5 flex justify-center gap-4 border-t border-border pt-4 text-[11px] text-muted-foreground">
