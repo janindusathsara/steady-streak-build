@@ -2,8 +2,8 @@ import { createFileRoute } from "@tanstack/react-router";
 import { SignupPage } from "@/components/pages/signup/SignupPage";
 
 export const Route = createFileRoute("/signup")({
-  validateSearch: (s: Record<string, unknown>) => ({
-    role: s.role === "provider" ? "provider" : "homeowner",
+  validateSearch: (s: Record<string, unknown>): { role?: "homeowner" | "provider" } => ({
+    role: s.role === "provider" ? "provider" : s.role === "homeowner" ? "homeowner" : undefined,
   }),
   component: SignupPage,
   head: () => ({
