@@ -12,14 +12,14 @@ import welder from "@/assets/cover/service-welder.jpg";
 import cleaner from "@/assets/cover/service-cleaner.jpg";
 
 const services = [
-  { name: "Electrician", img: electrician, desc: "Wiring, repairs, installations." },
-  { name: "Mason", img: mason, desc: "Brickwork, plastering, tiling." },
-  { name: "Plumber", img: plumber, desc: "Leaks, pipes, fixtures." },
-  { name: "Carpenter", img: carpenter, desc: "Furniture, doors, custom builds." },
-  { name: "Painter", img: painter, desc: "Interior & exterior painting." },
-  { name: "HVAC Tech", img: hvac, desc: "AC service & installation." },
-  { name: "Welder", img: welder, desc: "Gates, grills, metalwork." },
-  { name: "Cleaner", img: cleaner, desc: "Deep & routine home cleaning." },
+  { id: "electrician", name: "Electrician", img: electrician, desc: "Wiring, repairs, installations." },
+  { id: "mason", name: "Mason", img: mason, desc: "Brickwork, plastering, tiling." },
+  { id: "plumber", name: "Plumber", img: plumber, desc: "Leaks, pipes, fixtures." },
+  { id: "carpenter", name: "Carpenter", img: carpenter, desc: "Furniture, doors, custom builds." },
+  { id: "painter", name: "Painter", img: painter, desc: "Interior & exterior painting." },
+  { id: "hvac", name: "HVAC Tech", img: hvac, desc: "AC service & installation." },
+  { id: "welder", name: "Welder", img: welder, desc: "Gates, grills, metalwork." },
+  { id: "cleaner", name: "Cleaner", img: cleaner, desc: "Deep & routine home cleaning." },
 ];
 
 export function HomePage() {
