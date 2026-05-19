@@ -20,10 +20,10 @@ const values = [
 ];
 
 const team = [
-  { initials: "MJ", name: "M. Janidu", role: "Project Lead" },
-  { initials: "TC", name: "Team Member", role: "Backend Developer" },
-  { initials: "TD", name: "Team Member", role: "Frontend Developer" },
-  { initials: "TD", name: "Team Member", role: "UI/UX Designer" },
+  { initials: "CH", name: "Chanupa Hansaja", role: "Project Lead" },
+  { initials: "MP", name: "M. Piriyatharsan", role: "Backend Developer" },
+  { initials: "JS", name: "Janindu Sathsara", role: "Frontend Developer" },
+  { initials: "PR", name: "Pasan Rashmika", role: "UI/UX Designer" },
 ];
 
 const promise = [
