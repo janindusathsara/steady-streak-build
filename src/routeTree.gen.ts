@@ -11,7 +11,6 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SignupRouteImport } from './routes/signup'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ServicesRouteImport } from './routes/services'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as LoginRouteImport } from './routes/login'
@@ -19,6 +18,7 @@ import { Route as InsightsRouteImport } from './routes/insights'
 import { Route as AppRouteImport } from './routes/app'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as IndexRouteImport } from './routes/index'
+import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceIdRouteImport } from './routes/services.$serviceId'
 import { Route as DashboardProviderRouteImport } from './routes/dashboard.provider'
 import { Route as DashboardHomeownerRouteImport } from './routes/dashboard.homeowner'
@@ -33,11 +33,6 @@ const SignupRoute = SignupRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ServicesRoute = ServicesRouteImport.update({
-  id: '/services',
-  path: '/services',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProfileRoute = ProfileRouteImport.update({
@@ -75,6 +70,11 @@ const IndexRoute = IndexRouteImport.update({
   path: '/',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesIndexRoute = ServicesIndexRouteImport.update({
+  id: '/services/',
+  path: '/services/',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesServiceIdRoute = ServicesServiceIdRouteImport.update({
   id: '/$serviceId',
   path: '/$serviceId',
@@ -109,7 +109,6 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
-  '/services': typeof ServicesRouteWithChildren
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/admin/login': typeof AdminLoginRoute
@@ -117,6 +116,7 @@ export interface FileRoutesByFullPath {
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/services/': typeof ServicesIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -126,7 +126,6 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
-  '/services': typeof ServicesRouteWithChildren
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/admin/login': typeof AdminLoginRoute
@@ -134,6 +133,7 @@ export interface FileRoutesByTo {
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/services': typeof ServicesIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -144,7 +144,6 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
-  '/services': typeof ServicesRouteWithChildren
   '/settings': typeof SettingsRoute
   '/signup': typeof SignupRoute
   '/admin/login': typeof AdminLoginRoute
@@ -152,6 +151,7 @@ export interface FileRoutesById {
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/services/': typeof ServicesIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -163,7 +163,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/news'
     | '/profile'
-    | '/services'
     | '/settings'
     | '/signup'
     | '/admin/login'
@@ -171,6 +170,7 @@ export interface FileRouteTypes {
     | '/dashboard/homeowner'
     | '/dashboard/provider'
     | '/services/$serviceId'
+    | '/services/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -180,7 +180,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/news'
     | '/profile'
-    | '/services'
     | '/settings'
     | '/signup'
     | '/admin/login'
@@ -188,6 +187,7 @@ export interface FileRouteTypes {
     | '/dashboard/homeowner'
     | '/dashboard/provider'
     | '/services/$serviceId'
+    | '/services'
   id:
     | '__root__'
     | '/'
@@ -197,7 +197,6 @@ export interface FileRouteTypes {
     | '/login'
     | '/news'
     | '/profile'
-    | '/services'
     | '/settings'
     | '/signup'
     | '/admin/login'
@@ -205,6 +204,7 @@ export interface FileRouteTypes {
     | '/dashboard/homeowner'
     | '/dashboard/provider'
     | '/services/$serviceId'
+    | '/services/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -215,13 +215,13 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   NewsRoute: typeof NewsRoute
   ProfileRoute: typeof ProfileRoute
-  ServicesRoute: typeof ServicesRouteWithChildren
   SettingsRoute: typeof SettingsRoute
   SignupRoute: typeof SignupRoute
   AdminLoginRoute: typeof AdminLoginRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardHomeownerRoute: typeof DashboardHomeownerRoute
   DashboardProviderRoute: typeof DashboardProviderRoute
+  ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
 declare module '@tanstack/react-router' {
@@ -238,13 +238,6 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/services': {
-      id: '/services'
-      path: '/services'
-      fullPath: '/services'
-      preLoaderRoute: typeof ServicesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/profile': {
@@ -296,6 +289,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IndexRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/': {
+      id: '/services/'
+      path: '/services'
+      fullPath: '/services/'
+      preLoaderRoute: typeof ServicesIndexRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/services/$serviceId': {
       id: '/services/$serviceId'
       path: '/$serviceId'
@@ -334,18 +334,6 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface ServicesRouteChildren {
-  ServicesServiceIdRoute: typeof ServicesServiceIdRoute
-}
-
-const ServicesRouteChildren: ServicesRouteChildren = {
-  ServicesServiceIdRoute: ServicesServiceIdRoute,
-}
-
-const ServicesRouteWithChildren = ServicesRoute._addFileChildren(
-  ServicesRouteChildren,
-)
-
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AboutRoute: AboutRoute,
@@ -354,13 +342,13 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   NewsRoute: NewsRoute,
   ProfileRoute: ProfileRoute,
-  ServicesRoute: ServicesRouteWithChildren,
   SettingsRoute: SettingsRoute,
   SignupRoute: SignupRoute,
   AdminLoginRoute: AdminLoginRoute,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardHomeownerRoute: DashboardHomeownerRoute,
   DashboardProviderRoute: DashboardProviderRoute,
+  ServicesIndexRoute: ServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
