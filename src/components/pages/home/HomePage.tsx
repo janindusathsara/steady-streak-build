@@ -96,11 +96,16 @@ function Services() {
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Our services</p>
             <h2 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">Find the right pro for any job</h2>
           </div>
-          <a href="#" className="hidden text-sm font-medium text-primary hover:underline sm:inline">View all →</a>
+          <Link to="/services" className="hidden text-sm font-medium text-primary hover:underline sm:inline">View all →</Link>
         </div>
         <div className="grid grid-cols-2 gap-5 sm:grid-cols-3 lg:grid-cols-4">
           {services.map((s) => (
-            <div key={s.name} className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg">
+            <Link
+              key={s.id}
+              to="/services/$serviceId"
+              params={{ serviceId: s.id }}
+              className="group overflow-hidden rounded-2xl border border-border bg-card transition-all hover:shadow-lg"
+            >
               <div className="relative aspect-[4/3] overflow-hidden">
                 <img
                   src={s.img}
@@ -117,7 +122,7 @@ function Services() {
               <div className="p-4">
                 <p className="text-sm text-muted-foreground">{s.desc}</p>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
       </div>
