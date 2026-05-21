@@ -165,3 +165,11 @@ export const SERVICES: ServiceCategory[] = [
 export function getService(id: string): ServiceCategory | undefined {
   return SERVICES.find((s) => s.id === id);
 }
+
+export function getSubService(serviceId: string, subServiceId: string): { service: ServiceCategory; sub: SubService } | undefined {
+  const service = getService(serviceId);
+  if (!service) return undefined;
+  const sub = service.subServices.find((s) => s.id === subServiceId);
+  if (!sub) return undefined;
+  return { service, sub };
+}

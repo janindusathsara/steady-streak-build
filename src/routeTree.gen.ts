@@ -21,6 +21,7 @@ import { Route as DashboardProviderRouteImport } from './routes/dashboard.provid
 import { Route as DashboardHomeownerRouteImport } from './routes/dashboard.homeowner'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -82,6 +83,12 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesServiceIdSubServiceIdRoute =
+  ServicesServiceIdSubServiceIdRouteImport.update({
+    id: '/$subServiceId',
+    path: '/$subServiceId',
+    getParentRoute: () => ServicesServiceIdRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -94,8 +101,9 @@ export interface FileRoutesByFullPath {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
-  '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
+  '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -108,8 +116,9 @@ export interface FileRoutesByTo {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
-  '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services': typeof ServicesIndexRoute
+  '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -123,8 +132,9 @@ export interface FileRoutesById {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
-  '/services/$serviceId': typeof ServicesServiceIdRoute
+  '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
+  '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -141,6 +151,7 @@ export interface FileRouteTypes {
     | '/dashboard/provider'
     | '/services/$serviceId'
     | '/services/'
+    | '/services/$serviceId/$subServiceId'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -155,6 +166,7 @@ export interface FileRouteTypes {
     | '/dashboard/provider'
     | '/services/$serviceId'
     | '/services'
+    | '/services/$serviceId/$subServiceId'
   id:
     | '__root__'
     | '/'
@@ -169,6 +181,7 @@ export interface FileRouteTypes {
     | '/dashboard/provider'
     | '/services/$serviceId'
     | '/services/'
+    | '/services/$serviceId/$subServiceId'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -182,7 +195,7 @@ export interface RootRouteChildren {
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardHomeownerRoute: typeof DashboardHomeownerRoute
   DashboardProviderRoute: typeof DashboardProviderRoute
-  ServicesServiceIdRoute: typeof ServicesServiceIdRoute
+  ServicesServiceIdRoute: typeof ServicesServiceIdRouteWithChildren
   ServicesIndexRoute: typeof ServicesIndexRoute
 }
 
@@ -272,8 +285,26 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/$serviceId/$subServiceId': {
+      id: '/services/$serviceId/$subServiceId'
+      path: '/$subServiceId'
+      fullPath: '/services/$serviceId/$subServiceId'
+      preLoaderRoute: typeof ServicesServiceIdSubServiceIdRouteImport
+      parentRoute: typeof ServicesServiceIdRoute
+    }
   }
 }
+
+interface ServicesServiceIdRouteChildren {
+  ServicesServiceIdSubServiceIdRoute: typeof ServicesServiceIdSubServiceIdRoute
+}
+
+const ServicesServiceIdRouteChildren: ServicesServiceIdRouteChildren = {
+  ServicesServiceIdSubServiceIdRoute: ServicesServiceIdSubServiceIdRoute,
+}
+
+const ServicesServiceIdRouteWithChildren =
+  ServicesServiceIdRoute._addFileChildren(ServicesServiceIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -286,7 +317,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardHomeownerRoute: DashboardHomeownerRoute,
   DashboardProviderRoute: DashboardProviderRoute,
-  ServicesServiceIdRoute: ServicesServiceIdRoute,
+  ServicesServiceIdRoute: ServicesServiceIdRouteWithChildren,
   ServicesIndexRoute: ServicesIndexRoute,
 }
 export const routeTree = rootRouteImport
