@@ -92,12 +92,17 @@ export function ServiceDetailPage() {
               <h2 className="mb-5 text-xs font-bold uppercase tracking-wider text-primary">{service.name} Sub-Services</h2>
               <div className="grid gap-4 sm:grid-cols-2">
                 {service.subServices.map((s) => (
-                  <button key={s.id} type="button" className="rounded-2xl border border-border bg-card p-5 text-left transition-all hover:border-primary/50 hover:shadow-md">
+                  <Link
+                    key={s.id}
+                    to="/services/$serviceId/$subServiceId"
+                    params={{ serviceId: service.id, subServiceId: s.id }}
+                    className="rounded-2xl border border-border bg-card p-5 text-left transition-all hover:border-primary/50 hover:shadow-md"
+                  >
                     <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-xl">{s.emoji}</div>
                     <p className="mt-3 font-semibold">{s.name}</p>
                     <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{s.description}</p>
                     <p className="mt-3 text-sm"><span className="font-bold text-primary">Rs. {s.priceFrom.toLocaleString()}</span> <span className="text-xs text-muted-foreground">onwards</span></p>
-                  </button>
+                  </Link>
                 ))}
               </div>
             </div>
