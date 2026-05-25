@@ -21,6 +21,7 @@ import { Route as DashboardProviderRouteImport } from './routes/dashboard.provid
 import { Route as DashboardHomeownerRouteImport } from './routes/dashboard.homeowner'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 
 const SignupRoute = SignupRouteImport.update({
@@ -83,6 +84,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ServicesServiceIdIndexRoute = ServicesServiceIdIndexRouteImport.update({
+  id: '/',
+  path: '/',
+  getParentRoute: () => ServicesServiceIdRoute,
+} as any)
 const ServicesServiceIdSubServiceIdRoute =
   ServicesServiceIdSubServiceIdRouteImport.update({
     id: '/$subServiceId',
@@ -104,6 +110,7 @@ export interface FileRoutesByFullPath {
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
+  '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -116,9 +123,9 @@ export interface FileRoutesByTo {
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
-  '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services': typeof ServicesIndexRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
+  '/services/$serviceId': typeof ServicesServiceIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -135,6 +142,7 @@ export interface FileRoutesById {
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
+  '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -152,6 +160,7 @@ export interface FileRouteTypes {
     | '/services/$serviceId'
     | '/services/'
     | '/services/$serviceId/$subServiceId'
+    | '/services/$serviceId/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -164,9 +173,9 @@ export interface FileRouteTypes {
     | '/dashboard/admin'
     | '/dashboard/homeowner'
     | '/dashboard/provider'
-    | '/services/$serviceId'
     | '/services'
     | '/services/$serviceId/$subServiceId'
+    | '/services/$serviceId'
   id:
     | '__root__'
     | '/'
@@ -182,6 +191,7 @@ export interface FileRouteTypes {
     | '/services/$serviceId'
     | '/services/'
     | '/services/$serviceId/$subServiceId'
+    | '/services/$serviceId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -285,6 +295,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AdminLoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/services/$serviceId/': {
+      id: '/services/$serviceId/'
+      path: '/'
+      fullPath: '/services/$serviceId/'
+      preLoaderRoute: typeof ServicesServiceIdIndexRouteImport
+      parentRoute: typeof ServicesServiceIdRoute
+    }
     '/services/$serviceId/$subServiceId': {
       id: '/services/$serviceId/$subServiceId'
       path: '/$subServiceId'
@@ -297,10 +314,12 @@ declare module '@tanstack/react-router' {
 
 interface ServicesServiceIdRouteChildren {
   ServicesServiceIdSubServiceIdRoute: typeof ServicesServiceIdSubServiceIdRoute
+  ServicesServiceIdIndexRoute: typeof ServicesServiceIdIndexRoute
 }
 
 const ServicesServiceIdRouteChildren: ServicesServiceIdRouteChildren = {
   ServicesServiceIdSubServiceIdRoute: ServicesServiceIdSubServiceIdRoute,
+  ServicesServiceIdIndexRoute: ServicesServiceIdIndexRoute,
 }
 
 const ServicesServiceIdRouteWithChildren =
