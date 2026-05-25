@@ -9,7 +9,7 @@ const DISTRICTS = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Galle", "Negombo"
 const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evening (4 PM – 8 PM)", "ASAP"];
 
 export function ServiceDetailPage() {
-  const { serviceId } = useParams({ from: "/services/$serviceId" });
+  const { serviceId } = useParams({ from: "/services/$serviceId/" });
   const service = getService(serviceId);
 
   const [filter, setFilter] = useState("all");
