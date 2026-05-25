@@ -1,5 +1,5 @@
-import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw } from "lucide-react";
-import { Navbar } from "@/components/common/Navbar";
+import { Link } from "@tanstack/react-router";
+import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Bell, Wrench } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 
 const logs = [
