@@ -24,7 +24,7 @@ const apis = [
 export function AdminDashboard() {
   return (
     <div className="min-h-screen bg-foreground text-background">
-      <header className="border-b border-background/10">
+      <header className="sticky top-0 z-30 border-b border-background/10 bg-foreground/95 backdrop-blur">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
             <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
