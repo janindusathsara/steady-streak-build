@@ -137,9 +137,11 @@ export function AdminDashboard() {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }
+
 
 function NodeList({ title, items }: { title: string; items: { name: string; kind: string; load: string; status: string; bad?: boolean }[] }) {
   return (
