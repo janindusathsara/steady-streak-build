@@ -1,5 +1,5 @@
-import { Wrench, Calendar, DollarSign, Star, TrendingUp } from "lucide-react";
-import { Navbar } from "@/components/common/Navbar";
+import { Link } from "@tanstack/react-router";
+import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 
 
