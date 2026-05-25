@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Search, Bell, Filter, MapPin, Clock, Star, Wrench } from "lucide-react";
+import { Search, Filter, MapPin, Clock, Star } from "lucide-react";
+import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 
@@ -14,7 +15,7 @@ export function HomeownerDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <DashHeader />
+      <Navbar />
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-primary/5 to-background">
@@ -129,33 +130,3 @@ export function HomeownerDashboard() {
   );
 }
 
-function DashHeader() {
-  return (
-    <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-        <Link to="/" className="flex items-center gap-2">
-          <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
-          <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
-        </Link>
-        <nav className="hidden gap-6 text-sm text-muted-foreground md:flex">
-          <Link to="/services" className="hover:text-foreground">Find Services</Link>
-          <a href="#" className="hover:text-foreground">My Wallet</a>
-          <a href="#" className="hover:text-foreground">Go Gold</a>
-        </nav>
-        <div className="flex items-center gap-3">
-          <button className="relative rounded-full p-2 hover:bg-muted">
-            <Bell className="h-5 w-5 text-muted-foreground" />
-            <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
-          </button>
-          <Link to="/profile" className="flex items-center gap-2 rounded-full border border-border px-2 py-1 hover:bg-muted transition-colors">
-            <div className="flex h-7 w-7 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">AJ</div>
-            <div className="hidden text-right sm:block">
-              <p className="text-xs font-semibold leading-tight">Alex Johnson</p>
-              <p className="text-[10px] text-muted-foreground leading-tight">Premium Member</p>
-            </div>
-          </Link>
-        </div>
-      </div>
-    </header>
-  );
-}

@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { Bell, Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Wrench } from "lucide-react";
+import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw } from "lucide-react";
+import { Navbar } from "@/components/common/Navbar";
+import { Footer } from "@/components/common/Footer";
 
 const logs = [
   { time: "14:20:11", tag: "SUCCESS", src: "@BK-01", text: "Backup cycle complete (Cluster A)", tone: "text-success" },
@@ -24,32 +25,9 @@ const apis = [
 export function AdminDashboard() {
   return (
     <div className="min-h-screen bg-foreground text-background">
-      <header className="sticky top-0 z-30 border-b border-background/10 bg-foreground/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
-            <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
-          </Link>
-          <nav className="hidden gap-6 text-sm text-background/70 md:flex">
-            <a href="#" className="hover:text-background">Find Services</a>
-            <a href="#" className="hover:text-background">My Wallet</a>
-            <a href="#" className="hover:text-background">Go Gold</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <button className="relative rounded-full p-2 hover:bg-background/10">
-              <Bell className="h-5 w-5 text-background/70" />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">AJ</div>
-              <div className="hidden text-right sm:block">
-                <p className="text-xs font-semibold leading-tight">Alex Johnson</p>
-                <p className="text-[10px] text-background/60 leading-tight">Admin</p>
-              </div>
-            </div>
-          </div>
-        </div>
-      </header>
+      <Navbar />
+
+
 
       <div className="mx-auto flex max-w-7xl gap-6 px-5 py-6">
         {/* Sidebar */}
@@ -159,9 +137,11 @@ export function AdminDashboard() {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }
+
 
 function NodeList({ title, items }: { title: string; items: { name: string; kind: string; load: string; status: string; bad?: boolean }[] }) {
   return (
@@ -185,3 +165,5 @@ function NodeList({ title, items }: { title: string; items: { name: string; kind
     </div>
   );
 }
+
+
