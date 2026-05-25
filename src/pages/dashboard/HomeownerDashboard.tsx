@@ -15,7 +15,7 @@ export function HomeownerDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <DashHeader />
+      <Navbar />
 
       {/* Hero */}
       <section className="bg-gradient-to-b from-primary/5 to-background">
