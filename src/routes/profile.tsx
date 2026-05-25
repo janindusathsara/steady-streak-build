@@ -129,6 +129,7 @@ function ProfilePage() {
           </div>
         </main>
       </div>
+      <Footer />
     </div>
   );
 }
