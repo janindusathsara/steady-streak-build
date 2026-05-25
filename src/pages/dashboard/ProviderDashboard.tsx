@@ -1,5 +1,5 @@
-import { Wrench, Calendar, DollarSign, Star, TrendingUp } from "lucide-react";
-import { Navbar } from "@/components/common/Navbar";
+import { Link } from "@tanstack/react-router";
+import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 
 
@@ -13,7 +13,25 @@ export function ProviderDashboard() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
+      <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
+          <Link to="/" className="flex items-center gap-2">
+            <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
+            <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
+          </Link>
+          <nav className="hidden gap-6 text-sm text-muted-foreground md:flex">
+            <a href="#" className="font-medium text-foreground">Dashboard</a>
+            <a href="#" className="hover:text-foreground">Jobs</a>
+            <a href="#" className="hover:text-foreground">Earnings</a>
+            <a href="#" className="hover:text-foreground">Reviews</a>
+          </nav>
+          <div className="flex items-center gap-3">
+            <button className="rounded-full p-2 hover:bg-muted"><Bell className="h-5 w-5 text-muted-foreground" /></button>
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">MS</div>
+          </div>
+        </div>
+      </header>
+
 
 
       <main className="mx-auto max-w-6xl px-5 py-8">
