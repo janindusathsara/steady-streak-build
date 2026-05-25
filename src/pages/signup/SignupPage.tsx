@@ -26,28 +26,31 @@ export function SignupPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <div className="bg-gradient-to-br from-foreground via-foreground to-primary/40 px-5 pt-8 pb-16 text-background">
-        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-background/80 hover:text-background">
+      <div className="relative overflow-hidden bg-gradient-to-br from-accent/50 via-background to-primary/15 px-5 pt-8 pb-16">
+        <div className="pointer-events-none absolute -top-24 -right-24 h-72 w-72 rounded-full bg-primary/15 blur-3xl" />
+        <div className="pointer-events-none absolute -bottom-24 -left-24 h-72 w-72 rounded-full bg-accent/40 blur-3xl" />
+        <Link to="/" className="relative inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ChevronLeft className="h-4 w-4" /> Back to Home
         </Link>
-        <div className="mx-auto mt-8 max-w-3xl text-center">
+        <div className="relative mx-auto mt-8 max-w-3xl text-center">
           <div className="flex items-center justify-center gap-2">
             <Wrench className="h-7 w-7 text-primary" strokeWidth={2.5} />
-            <span className="text-2xl font-bold tracking-tight">FixItNow</span>
+            <span className="text-2xl font-bold tracking-tight text-foreground">FixItNow</span>
           </div>
-          <span className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-background/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-background">
+          <span className="mt-5 inline-flex items-center gap-1.5 rounded-full border border-primary/20 bg-card/80 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary shadow-sm backdrop-blur">
             {role === "homeowner" ? <><UserIcon className="h-3.5 w-3.5" /> Create Account</> : <><Wrench className="h-3.5 w-3.5" /> Join as Pro</>}
           </span>
-          <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
+          <h1 className="mt-3 text-3xl font-bold tracking-tight text-foreground sm:text-4xl">
             {role === "homeowner" ? "Join as a Homeowner" : "Register as a Service Provider"}
           </h1>
-          <p className="mt-2 text-sm text-background/80 sm:text-base">
+          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
             {role === "homeowner"
               ? "Find verified professionals and book home services in minutes."
               : "Grow your business and connect with thousands of homeowners across Sri Lanka."}
           </p>
         </div>
       </div>
+
 
       <main className="mx-auto -mt-10 max-w-3xl px-4 pb-14">
         {/* Role tabs */}
