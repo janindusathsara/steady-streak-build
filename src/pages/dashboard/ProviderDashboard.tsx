@@ -1,5 +1,7 @@
-import { Link } from "@tanstack/react-router";
-import { Bell, Wrench, Calendar, DollarSign, Star, TrendingUp } from "lucide-react";
+import { Wrench, Calendar, DollarSign, Star, TrendingUp } from "lucide-react";
+import { Navbar } from "@/components/common/Navbar";
+import { Footer } from "@/components/common/Footer";
+
 
 
 export function ProviderDashboard() {
