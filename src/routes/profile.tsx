@@ -1,6 +1,7 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { ShieldCheck, BarChart3, Wallet, Settings, LifeBuoy, LogOut, LayoutDashboard, Trash2 } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
+import { Footer } from "@/components/common/Footer";
 
 export const Route = createFileRoute("/profile")({
   component: ProfilePage,
