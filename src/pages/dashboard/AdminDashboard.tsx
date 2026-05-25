@@ -1,5 +1,6 @@
-import { Link } from "@tanstack/react-router";
-import { Bell, Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Wrench } from "lucide-react";
+import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw } from "lucide-react";
+import { Navbar } from "@/components/common/Navbar";
+import { Footer } from "@/components/common/Footer";
 
 const logs = [
   { time: "14:20:11", tag: "SUCCESS", src: "@BK-01", text: "Backup cycle complete (Cluster A)", tone: "text-success" },
