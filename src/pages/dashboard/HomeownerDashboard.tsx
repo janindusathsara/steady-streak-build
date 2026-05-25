@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Search, Bell, Filter, MapPin, Clock, Star } from "lucide-react";
+import { Search, Bell, Filter, MapPin, Clock, Star, Wrench } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 
@@ -134,8 +134,8 @@ function DashHeader() {
     <header className="border-b border-border bg-card">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2">
-          <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">FN</div>
-          <span className="font-bold tracking-tight">FixItNow Ultra-Suite</span>
+          <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
+          <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
         </Link>
         <nav className="hidden gap-6 text-sm text-muted-foreground md:flex">
           <Link to="/services" className="hover:text-foreground">Find Services</Link>

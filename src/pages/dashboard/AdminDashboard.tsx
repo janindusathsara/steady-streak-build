@@ -1,5 +1,5 @@
 import { Link } from "@tanstack/react-router";
-import { Bell, Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw } from "lucide-react";
+import { Bell, Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Wrench } from "lucide-react";
 
 const logs = [
   { time: "14:20:11", tag: "SUCCESS", src: "@BK-01", text: "Backup cycle complete (Cluster A)", tone: "text-success" },
@@ -27,8 +27,8 @@ export function AdminDashboard() {
       <header className="border-b border-background/10">
         <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">FN</div>
-            <span className="font-bold">FixItNow Ultra-Suite</span>
+            <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
+            <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
           </Link>
           <nav className="hidden gap-6 text-sm text-background/70 md:flex">
             <a href="#" className="hover:text-background">Find Services</a>
