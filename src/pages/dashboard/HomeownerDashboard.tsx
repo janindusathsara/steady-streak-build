@@ -1,5 +1,6 @@
 import { Link } from "@tanstack/react-router";
-import { Search, Bell, Filter, MapPin, Clock, Star, Wrench } from "lucide-react";
+import { Search, Filter, MapPin, Clock, Star } from "lucide-react";
+import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 
