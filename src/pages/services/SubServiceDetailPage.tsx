@@ -1,6 +1,6 @@
 import { Link, useParams } from "@tanstack/react-router";
 import { useMemo, useState } from "react";
-import { ChevronRight, MapPin, Star, Shield, CheckCircle2, Clock, ChevronDown } from "lucide-react";
+import { ChevronRight, Search, MapPin, Star, Shield, CheckCircle2, Clock, ChevronDown } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { getSubService } from "@/lib/services-data";
@@ -11,12 +11,20 @@ const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evenin
 export function SubServiceDetailPage() {
   const { serviceId, subServiceId } = useParams({ from: "/services/$serviceId/$subServiceId" });
   const data = getSubService(serviceId, subServiceId);
-  const [openFaq, setOpenFaq] = useState<number | null>(0);
 
-  const otherSubs = useMemo(() => {
+  const [filter, setFilter] = useState("all");
+  const [openFaq, setOpenFaq] = useState<number | null>(0);
+  const [query, setQuery] = useState("");
+
+  const filtered = useMemo(() => {
     if (!data) return [];
-    return data.service.subServices.filter((s) => s.id !== subServiceId).slice(0, 4);
-  }, [data, subServiceId]);
+    return data.service.providers.filter((p) => {
+      if (query && !`${p.name} ${p.title}`.toLowerCase().includes(query.toLowerCase())) return false;
+      if (filter === "rated" && !p.topRated) return false;
+      if (filter === "available" && !p.availability.toLowerCase().includes("available")) return false;
+      return true;
+    });
+  }, [data, filter, query]);
 
   if (!data) {
     return (
@@ -32,13 +40,12 @@ export function SubServiceDetailPage() {
   }
 
   const { service, sub } = data;
-  const providers = service.providers;
 
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      {/* Hero */}
+      {/* Hero banner */}
       <section
         className="relative overflow-hidden text-background"
         style={{ background: "linear-gradient(135deg, oklch(0.42 0.10 60) 0%, oklch(0.32 0.06 50) 100%)" }}
@@ -100,9 +107,47 @@ export function SubServiceDetailPage() {
 
             {/* Providers */}
             <div>
-              <h2 className="mb-5 text-xs font-bold uppercase tracking-wider text-primary">Specialists For {sub.name}</h2>
-              <div className="space-y-4">
-                {providers.map((p) => (
+              <h2 className="mb-4 text-xs font-bold uppercase tracking-wider text-primary">Available Specialists For {sub.name}</h2>
+
+              <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+                <div className="relative flex-1">
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+                  <input
+                    value={query}
+                    onChange={(e) => setQuery(e.target.value)}
+                    placeholder="Search by name or specialty…"
+                    className="w-full rounded-xl border border-border bg-card pl-10 pr-3 py-2.5 text-sm outline-none focus:border-primary/60"
+                  />
+                </div>
+                <select className="rounded-xl border border-border bg-card px-3 py-2.5 text-sm outline-none">
+                  <option>Sort: Top Rated</option>
+                  <option>Sort: Nearest</option>
+                  <option>Sort: Lowest Price</option>
+                </select>
+              </div>
+
+              <div className="mt-3 flex flex-wrap gap-2">
+                {[
+                  { id: "all", label: "All" },
+                  { id: "available", label: "Available Now" },
+                  { id: "rated", label: "Top Rated" },
+                  { id: "near", label: "Within 5km" },
+                  { id: "cheap", label: "Rs. under 2500/hr" },
+                ].map((f) => (
+                  <button
+                    key={f.id}
+                    onClick={() => setFilter(f.id)}
+                    className={`rounded-full border px-3 py-1.5 text-xs font-semibold transition-colors ${
+                      filter === f.id ? "border-primary bg-primary text-primary-foreground" : "border-border bg-card text-muted-foreground hover:text-foreground"
+                    }`}
+                  >
+                    {f.label}
+                  </button>
+                ))}
+              </div>
+
+              <div className="mt-5 space-y-4">
+                {filtered.map((p) => (
                   <div key={p.id} className="rounded-2xl border border-border bg-card p-5">
                     <div className="flex flex-col gap-4 sm:flex-row sm:items-start">
                       <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full text-sm font-bold text-background" style={{ backgroundColor: p.color }}>{p.initials}</div>
@@ -112,6 +157,11 @@ export function SubServiceDetailPage() {
                         <div className="mt-1.5 flex flex-wrap gap-1.5 text-[10px]">
                           {p.topRated && <span className="inline-flex items-center gap-1 rounded-full bg-primary/15 px-2 py-0.5 font-semibold text-primary">⭐ Top Rated</span>}
                           {p.verified && <span className="inline-flex items-center gap-1 rounded-full bg-success/20 px-2 py-0.5 font-semibold text-foreground">✓ Verified</span>}
+                        </div>
+                        <div className="mt-3 grid grid-cols-3 gap-3 border-t border-border pt-3 text-center sm:max-w-md">
+                          <Stat v={p.rating.toFixed(1)} l="Rating" />
+                          <Stat v={p.jobsDone.toString()} l="Jobs Done" />
+                          <Stat v={p.experience} l="Experience" />
                         </div>
                         <div className="mt-3 space-y-1 text-xs">
                           <p className="flex items-center gap-1 text-muted-foreground"><MapPin className="h-3 w-3" /> {p.area} · {p.distance}</p>
@@ -125,30 +175,11 @@ export function SubServiceDetailPage() {
                     </div>
                   </div>
                 ))}
+                {filtered.length === 0 && (
+                  <p className="rounded-2xl border border-dashed border-border bg-card p-8 text-center text-sm text-muted-foreground">No providers match those filters.</p>
+                )}
               </div>
             </div>
-
-            {/* Other sub-services */}
-            {otherSubs.length > 0 && (
-              <div>
-                <h2 className="mb-5 text-xs font-bold uppercase tracking-wider text-primary">Other {service.name} Services</h2>
-                <div className="grid gap-4 sm:grid-cols-2">
-                  {otherSubs.map((s) => (
-                    <Link
-                      key={s.id}
-                      to="/services/$serviceId/$subServiceId"
-                      params={{ serviceId, subServiceId: s.id }}
-                      className="rounded-2xl border border-border bg-card p-5 transition-all hover:border-primary/50 hover:shadow-md"
-                    >
-                      <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-xl">{s.emoji}</div>
-                      <p className="mt-3 font-semibold">{s.name}</p>
-                      <p className="mt-1 text-xs leading-relaxed text-muted-foreground">{s.description}</p>
-                      <p className="mt-3 text-sm"><span className="font-bold text-primary">Rs. {s.priceFrom.toLocaleString()}</span> <span className="text-xs text-muted-foreground">onwards</span></p>
-                    </Link>
-                  ))}
-                </div>
-              </div>
-            )}
           </div>
 
           {/* Right rail */}
@@ -220,6 +251,15 @@ function Field({ label, children }: { label: string; children: React.ReactNode }
     <div>
       <label className="mb-1 block text-[11px] font-semibold">{label}</label>
       {children}
+    </div>
+  );
+}
+
+function Stat({ v, l }: { v: string; l: string }) {
+  return (
+    <div>
+      <p className="text-base font-bold text-primary">{v}</p>
+      <p className="text-[10px] text-muted-foreground">{l}</p>
     </div>
   );
 }
