@@ -160,6 +160,9 @@ function NodeList({ title, items }: { title: string; items: { name: string; kind
           </div>
         ))}
       </div>
+      </div>
+      <Footer />
     </div>
   );
 }
+
