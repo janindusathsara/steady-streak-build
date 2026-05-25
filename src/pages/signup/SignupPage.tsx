@@ -1,7 +1,6 @@
 import { Link, useNavigate, useSearch } from "@tanstack/react-router";
 import { useState } from "react";
-import { Home as HomeIcon, Wrench, Upload, User as UserIcon, Eye, EyeOff, AlertCircle } from "lucide-react";
-import { Navbar } from "@/components/common/Navbar";
+import { Home as HomeIcon, Wrench, Upload, User as UserIcon, Eye, EyeOff, AlertCircle, ChevronLeft } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { toast } from "sonner";
 import { setRole, dashboardPathFor } from "@/lib/role";
@@ -27,24 +26,32 @@ export function SignupPage() {
 
   return (
     <div className="min-h-screen bg-background text-foreground">
-      <Navbar />
-      <main className="mx-auto max-w-3xl px-4 py-10 sm:py-14">
-        <div className="text-center">
-          <span className="inline-flex items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">
+      <div className="bg-gradient-to-br from-foreground via-foreground to-primary/40 px-5 pt-8 pb-16 text-background">
+        <Link to="/" className="inline-flex items-center gap-1.5 text-sm text-background/80 hover:text-background">
+          <ChevronLeft className="h-4 w-4" /> Back to Home
+        </Link>
+        <div className="mx-auto mt-8 max-w-3xl text-center">
+          <div className="flex items-center justify-center gap-2">
+            <Wrench className="h-7 w-7 text-primary" strokeWidth={2.5} />
+            <span className="text-2xl font-bold tracking-tight">FixItNow</span>
+          </div>
+          <span className="mt-5 inline-flex items-center gap-1.5 rounded-full bg-background/10 px-3 py-1 text-xs font-bold uppercase tracking-wider text-background">
             {role === "homeowner" ? <><UserIcon className="h-3.5 w-3.5" /> Create Account</> : <><Wrench className="h-3.5 w-3.5" /> Join as Pro</>}
           </span>
           <h1 className="mt-3 text-3xl font-bold tracking-tight sm:text-4xl">
             {role === "homeowner" ? "Join as a Homeowner" : "Register as a Service Provider"}
           </h1>
-          <p className="mt-2 text-sm text-muted-foreground sm:text-base">
+          <p className="mt-2 text-sm text-background/80 sm:text-base">
             {role === "homeowner"
               ? "Find verified professionals and book home services in minutes."
               : "Grow your business and connect with thousands of homeowners across Sri Lanka."}
           </p>
         </div>
+      </div>
 
+      <main className="mx-auto -mt-10 max-w-3xl px-4 pb-14">
         {/* Role tabs */}
-        <div className="mx-auto mt-6 grid max-w-xl grid-cols-2 gap-3">
+        <div className="mx-auto grid max-w-xl grid-cols-2 gap-3">
           {[
             { v: "homeowner" as const, label: "Homeowner", Icon: HomeIcon },
             { v: "provider" as const, label: "Service Provider", Icon: Wrench },

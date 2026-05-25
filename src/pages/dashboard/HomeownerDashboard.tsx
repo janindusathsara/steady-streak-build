@@ -131,7 +131,7 @@ export function HomeownerDashboard() {
 
 function DashHeader() {
   return (
-    <header className="border-b border-border bg-card">
+    <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
       <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
         <Link to="/" className="flex items-center gap-2">
           <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
