@@ -84,6 +84,7 @@ export function ProviderDashboard() {
           </div>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
