@@ -3,12 +3,12 @@ import { useState } from "react";
 import {
   Search, Filter, MapPin, Clock, Star, Bell,
   LayoutDashboard, ShieldCheck, Activity, Wallet as WalletIcon,
-  Settings, LifeBuoy, LogOut,
+  Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 
-type Tab = "dashboard" | "security" | "system" | "wallet" | "preferences" | "support";
+type Tab = "dashboard" | "security" | "system" | "wallet" | "bookings" | "preferences" | "support";
 
 export function HomeownerDashboard() {
   const [tab, setTab] = useState<Tab>("dashboard");
