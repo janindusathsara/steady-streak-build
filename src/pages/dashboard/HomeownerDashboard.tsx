@@ -1,7 +1,7 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  Search, Filter, MapPin, Clock, Star, Bell,
+  Search, Filter, MapPin, Clock, Star, Bell, Wrench,
   LayoutDashboard, ShieldCheck, Activity, Wallet as WalletIcon,
   Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail,
 } from "lucide-react";
@@ -19,7 +19,7 @@ export function HomeownerDashboard() {
       <header className="sticky top-0 z-30 border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">FN</span>
+            <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
             <span className="text-lg font-bold tracking-tight">FixItNow</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
@@ -42,7 +42,7 @@ export function HomeownerDashboard() {
 
       <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-5 py-6 lg:grid-cols-[210px_1fr]">
         {/* Sidebar */}
-        <aside className="hidden lg:flex flex-col justify-between sticky top-20 self-start max-h-[calc(100vh-5rem)] overflow-y-auto">
+        <aside className="hidden lg:flex flex-col justify-between sticky top-20 self-start h-[calc(100vh-5rem)] overflow-y-auto pb-4">
           <nav className="space-y-1 text-sm">
             <SideItem icon={LayoutDashboard} label="Dashboard" active={tab === "dashboard"} onClick={() => setTab("dashboard")} />
             <SideItem icon={ShieldCheck} label="Security Check" active={tab === "security"} onClick={() => setTab("security")} />
