@@ -19,7 +19,7 @@ export function HomeownerDashboard() {
       <header className="sticky top-0 z-30 border-b border-border bg-card">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
           <Link to="/" className="flex items-center gap-2">
-            <span className="flex h-9 w-9 items-center justify-center rounded-lg bg-primary text-sm font-bold text-primary-foreground">FN</span>
+            <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
             <span className="text-lg font-bold tracking-tight">FixItNow</span>
           </Link>
           <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
