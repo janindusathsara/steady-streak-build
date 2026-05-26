@@ -3,12 +3,12 @@ import { useState } from "react";
 import {
   Search, Filter, MapPin, Clock, Star, Bell,
   LayoutDashboard, ShieldCheck, Activity, Wallet as WalletIcon,
-  Settings, LifeBuoy, LogOut,
+  Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 
-type Tab = "dashboard" | "security" | "system" | "wallet" | "preferences" | "support";
+type Tab = "dashboard" | "security" | "system" | "wallet" | "bookings" | "preferences" | "support";
 
 export function HomeownerDashboard() {
   const [tab, setTab] = useState<Tab>("dashboard");
@@ -48,6 +48,7 @@ export function HomeownerDashboard() {
             <SideItem icon={ShieldCheck} label="Security Check" active={tab === "security"} onClick={() => setTab("security")} />
             <SideItem icon={Activity} label="System Health" active={tab === "system"} onClick={() => setTab("system")} />
             <SideItem icon={WalletIcon} label="Wallet" active={tab === "wallet"} onClick={() => setTab("wallet")} />
+            <SideItem icon={CalendarDays} label="Past Bookings" active={tab === "bookings"} onClick={() => setTab("bookings")} />
             <SideItem icon={Settings} label="Preferences" active={tab === "preferences"} onClick={() => setTab("preferences")} />
             <div className="my-3 border-t border-border" />
             <SideItem icon={LifeBuoy} label="Support" active={tab === "support"} onClick={() => setTab("support")} />
@@ -62,8 +63,9 @@ export function HomeownerDashboard() {
           {tab === "security" && <SecurityView />}
           {tab === "system" && <SystemHealthView />}
           {tab === "wallet" && <WalletView />}
-          {tab === "preferences" && <PlaceholderView title="Preferences" desc="Manage your account preferences." />}
-          {tab === "support" && <PlaceholderView title="Support" desc="Get help from our team." />}
+          {tab === "bookings" && <PastBookingsView />}
+          {tab === "preferences" && <PreferencesView />}
+          {tab === "support" && <SupportView />}
         </main>
       </div>
 
@@ -497,14 +499,371 @@ function WalletView() {
   );
 }
 
-function PlaceholderView({ title, desc }: { title: string; desc: string }) {
+/* ---------------- Past Bookings ---------------- */
+function PastBookingsView() {
+  const stats = [
+    { icon: "📋", v: "24", l: "Total Bookings" },
+    { icon: "✅", v: "20", l: "Completed" },
+    { icon: "❌", v: "3", l: "Cancelled" },
+    { icon: "💰", v: "Rs. 428K", l: "Total Spent" },
+  ];
+  const filters = ["All (24)", "Completed (20)", "Cancelled (3)", "In Dispute (1)"];
+  const bookings = [
+    {
+      icon: "🔧", iconBg: "bg-amber-100",
+      title: "Faucet & Tap Repair", status: "Completed", statusTone: "ok", ref: "#FIN-2026-08471",
+      cat: "🔧 Plumbing", date: "23 May 2026", time: "10:00 AM", addr: "42 Palm Grove, Colombo 3", svcType: "⚡ On-the-Spot",
+      provider: "Marcus Sterling", pInit: "MS", rating: "★★★★★ 4.9", review: "✓ Review Submitted",
+      price: "Rs. 4,200", pay: "Paid via Visa ···· 4242", actions: ["Book Again", "Invoice"],
+    },
+    {
+      icon: "⚡", iconBg: "bg-yellow-100",
+      title: "Switch & Socket Installation", status: "Completed", statusTone: "ok", ref: "#FIN-2026-08310",
+      cat: "⚡ Electrical", date: "20 May 2026", time: "02:00 PM", addr: "42 Palm Grove, Colombo 3", svcType: "📅 Scheduled",
+      provider: "Elena Rodriguez", pInit: "ER", rating: "★★★★★ 4.8", review: "✓ Review Submitted",
+      price: "Rs. 3,800", pay: "Paid via Wallet", actions: ["Book Again", "Invoice"],
+    },
+    {
+      icon: "❄️", iconBg: "bg-blue-100",
+      title: "AC Service & Gas Refill", status: "In Progress", statusTone: "warn", ref: "#FIN-2026-08195",
+      cat: "❄️ HVAC", date: "18 May 2026", time: "09:00 AM", addr: "42 Palm Grove, Colombo 3", svcType: "⚡ On-the-Spot",
+      provider: "James Wilson", pInit: "JW", rating: "★★★★☆ 4.6", review: "💰 Rs. 7,500 in Escrow",
+      price: "Rs. 7,500", pay: "Escrow held", actions: ["Confirm Done", "Track"], highlight: true,
+    },
+    {
+      icon: "🎨", iconBg: "bg-pink-100",
+      title: "Interior Wall Painting", status: "Completed", statusTone: "ok", ref: "#FIN-2026-07882",
+      cat: "🎨 Painting", date: "10 May 2026", time: "08:00 AM", addr: "42 Palm Grove, Colombo 3", svcType: "📅 Scheduled",
+      provider: "Rajan Perera", pInit: "RP", rating: "★★★★★ 4.9", review: "⭐ Leave a Review",
+      price: "Rs. 18,000", pay: "Paid via Visa ···· 4242", actions: ["Book Again", "Invoice"],
+    },
+    {
+      icon: "🪚", iconBg: "bg-orange-100",
+      title: "Cabinet Door Repair", status: "Cancelled", statusTone: "bad", ref: "#FIN-2026-07741",
+      cat: "🪚 Carpentry", date: "3 May 2026", time: "11:00 AM", addr: "42 Palm Grove, Colombo 3",
+      note: "Cancelled by homeowner · 2 hrs before job · Full refund issued",
+      price: "Rs. 2,800", pay: "↩ Refunded", actions: ["Rebook"], strike: true,
+    },
+    {
+      icon: "🚽", iconBg: "bg-cyan-100",
+      title: "Toilet Flush & Cistern Fix", status: "Completed", statusTone: "ok", ref: "#FIN-2026-07530",
+      cat: "🔧 Plumbing", date: "28 Apr 2026", time: "10:30 AM", addr: "42 Palm Grove, Colombo 3", svcType: "⚡ On-the-Spot",
+      provider: "Marcus Sterling", pInit: "MS", rating: "★★★★★ 4.9", review: "✓ Review Submitted",
+      price: "Rs. 2,200", pay: "Paid via Wallet", actions: ["Book Again", "Invoice"],
+    },
+  ];
+  const [active, setActive] = useState(0);
+  const toneCls = (t?: string) =>
+    t === "ok" ? "bg-emerald-50 text-emerald-700" : t === "warn" ? "bg-amber-50 text-amber-700" : t === "bad" ? "bg-red-50 text-red-700" : "bg-muted text-foreground";
+
   return (
-    <div className="space-y-2">
-      <h1 className="text-3xl font-bold">{title}</h1>
-      <p className="text-sm text-muted-foreground">{desc}</p>
-      <div className="mt-6 rounded-2xl border border-border bg-card p-10 text-center text-sm text-muted-foreground">
-        Coming soon.
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Past Bookings</h1>
+        <p className="mt-1 text-sm text-muted-foreground">View, review and manage all your service history</p>
       </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.l} className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-2xl">{s.icon}</div>
+            <p className="mt-2 text-2xl font-bold">{s.v}</p>
+            <p className="text-xs text-muted-foreground">{s.l}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex flex-wrap items-center gap-2">
+        {filters.map((f, i) => (
+          <button
+            key={f}
+            onClick={() => setActive(i)}
+            className={`rounded-full px-4 py-1.5 text-xs font-semibold transition-colors ${
+              active === i ? "bg-foreground text-background" : "border border-border bg-card text-muted-foreground hover:bg-muted"
+            }`}
+          >
+            {f}
+          </button>
+        ))}
+        <div className="ml-auto flex min-w-[260px] flex-1 items-center gap-2 rounded-full border border-border bg-card px-4 py-2">
+          <Search className="h-3.5 w-3.5 text-muted-foreground" />
+          <input placeholder="Search by service, provider or booking ref…" className="flex-1 bg-transparent text-xs outline-none" />
+        </div>
+      </div>
+
+      <div className="space-y-3">
+        {bookings.map((b) => (
+          <div key={b.ref} className={`flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center ${b.highlight ? "border-amber-300 bg-amber-50/50" : "border-border bg-card"}`}>
+            <div className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-2xl ${b.iconBg}`}>{b.icon}</div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-bold">{b.title}</p>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${toneCls(b.statusTone)}`}>{b.status}</span>
+                <span className="text-[11px] text-muted-foreground">{b.ref}</span>
+              </div>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                <span>{b.cat}</span>
+                <span>📅 {b.date}</span>
+                <span>{b.time}</span>
+                <span>📍 {b.addr}</span>
+                {b.svcType && <span>{b.svcType}</span>}
+              </div>
+              {b.provider && (
+                <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[9px] font-bold text-background">{b.pInit}</span>
+                  <span className="font-semibold">{b.provider}</span>
+                  <span className="text-amber-500">{b.rating}</span>
+                  <span className="text-muted-foreground">{b.review}</span>
+                </div>
+              )}
+              {b.note && <p className="mt-2 text-[11px] text-muted-foreground">{b.note}</p>}
+            </div>
+            <div className="text-right">
+              <p className={`text-base font-bold ${b.strike ? "text-muted-foreground line-through" : ""}`}>{b.price}</p>
+              <p className="text-[10px] text-muted-foreground">{b.pay}</p>
+              <div className="mt-2 flex flex-wrap justify-end gap-1.5">
+                {b.actions.map((a, i) => (
+                  <button key={a} className={`rounded-lg px-3 py-1.5 text-[10px] font-bold ${i === 0 ? "bg-foreground text-background" : "border border-border text-foreground hover:bg-muted"}`}>{a}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div className="flex justify-center">
+        <button className="rounded-full border border-border bg-card px-6 py-2.5 text-sm font-semibold hover:bg-muted">Load More Bookings (18 remaining)</button>
+      </div>
+    </div>
+  );
+}
+
+/* ---------------- Preferences ---------------- */
+function PreferencesView() {
+  const [theme, setTheme] = useState<"light" | "dark" | "auto">("light");
+  const notifications = [
+    { t: "Booking Confirmations", d: "Get notified when a booking is confirmed", on: true },
+    { t: "Provider On The Way", d: "Alert when your pro is en route", on: true },
+    { t: "Payment Receipts", d: "Invoice & payment confirmation emails", on: true },
+    { t: "Promotional Offers", d: "Deals, discounts and seasonal offers", on: false },
+    { t: "Newsletter", d: "Monthly home tips and platform news", on: false },
+    { t: "SMS Alerts", d: "Text messages for critical updates", on: true },
+  ];
+  const privacy = [
+    { t: "Share Activity with Providers", d: "Allow pros to see your booking history", on: true },
+    { t: "Personalised Recommendations", d: "AI-based service suggestions", on: true },
+    { t: "Anonymous Usage Analytics", d: "Help improve the platform", on: false },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Preferences</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Customise your FixItNow experience to suit your needs</p>
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <div className="space-y-6">
+          <section className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">Appearance</p>
+            <div className="mt-5 space-y-5">
+              <div className="flex items-center justify-between">
+                <div>
+                  <p className="text-sm font-semibold">Theme</p>
+                  <p className="text-[11px] text-muted-foreground">Choose your preferred colour theme</p>
+                </div>
+                <div className="flex gap-2">
+                  <button onClick={() => setTheme("light")} className={`h-9 w-9 rounded-lg border-2 bg-background ${theme === "light" ? "border-primary" : "border-border"}`} />
+                  <button onClick={() => setTheme("dark")} className={`h-9 w-9 rounded-lg border-2 bg-foreground ${theme === "dark" ? "border-primary" : "border-border"}`} />
+                  <button onClick={() => setTheme("auto")} className={`h-9 w-9 rounded-lg border-2 ${theme === "auto" ? "border-primary" : "border-border"}`} style={{ background: "linear-gradient(135deg, var(--background) 50%, var(--foreground) 50%)" }} />
+                </div>
+              </div>
+              <Field label="Language" desc="Interface display language">
+                <select className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
+                  <option>English</option><option>සිංහල</option><option>தமிழ்</option>
+                </select>
+              </Field>
+              <Field label="Currency Display" desc="Show prices in your preferred currency">
+                <select className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
+                  <option>LKR (Rs.)</option><option>USD ($)</option><option>EUR (€)</option>
+                </select>
+              </Field>
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">Booking Preferences</p>
+            <div className="mt-5 space-y-5">
+              <Field label="Preferred Service Time" desc="Default booking time slot">
+                <select className="rounded-lg border border-border bg-background px-3 py-2 text-sm">
+                  <option>Morning (8 AM – 12 PM)</option><option>Afternoon (12 PM – 5 PM)</option><option>Evening (5 PM – 9 PM)</option>
+                </select>
+              </Field>
+              <ToggleRow t="Auto-confirm Repeat Providers" d="Skip confirmation for trusted pros" defaultOn />
+              <ToggleRow t="Show Price Estimates First" d="Display cost breakdown before booking" defaultOn />
+              <ToggleRow t="Enable Live GPS Tracking" d="Real-time provider location on map" defaultOn />
+            </div>
+          </section>
+        </div>
+
+        <div className="space-y-6">
+          <section className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">Notification Settings</p>
+            <div className="mt-5 space-y-4">
+              {notifications.map((n) => <ToggleRow key={n.t} t={n.t} d={n.d} defaultOn={n.on} />)}
+            </div>
+          </section>
+
+          <section className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">Privacy & Data</p>
+            <div className="mt-5 space-y-4">
+              {privacy.map((p) => <ToggleRow key={p.t} t={p.t} d={p.d} defaultOn={p.on} />)}
+            </div>
+            <div className="mt-5 flex gap-3">
+              <button className="rounded-xl bg-foreground px-5 py-2.5 text-sm font-bold text-background hover:opacity-90">Save Preferences</button>
+              <button className="rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-bold hover:bg-muted">Reset Defaults</button>
+            </div>
+          </section>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function Field({ label, desc, children }: { label: string; desc: string; children: React.ReactNode }) {
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <p className="text-sm font-semibold">{label}</p>
+        <p className="text-[11px] text-muted-foreground">{desc}</p>
+      </div>
+      {children}
+    </div>
+  );
+}
+
+function ToggleRow({ t, d, defaultOn }: { t: string; d: string; defaultOn?: boolean }) {
+  const [on, setOn] = useState(!!defaultOn);
+  return (
+    <div className="flex items-center justify-between gap-4">
+      <div>
+        <p className="text-sm font-semibold">{t}</p>
+        <p className="text-[11px] text-muted-foreground">{d}</p>
+      </div>
+      <button
+        onClick={() => setOn(!on)}
+        className={`relative h-6 w-11 rounded-full transition-colors ${on ? "bg-primary" : "bg-muted"}`}
+      >
+        <span className={`absolute top-0.5 h-5 w-5 rounded-full bg-white shadow transition-all ${on ? "left-[22px]" : "left-0.5"}`} />
+      </button>
+    </div>
+  );
+}
+
+/* ---------------- Support ---------------- */
+function SupportView() {
+  const tickets = [
+    { id: "#TKT-2048", t: "Refund query", d: "Raised 2 days ago · Payment / Refund", s: "In Review", tone: "warn" },
+    { id: "#TKT-2031", t: "GPS not updating", d: "Raised 8 days ago · GPS / Tracking", s: "Resolved", tone: "ok" },
+  ];
+  const faqs = [
+    { q: "How do I cancel a booking?", a: 'Go to My Bookings → find your booking → click "Cancel". Cancellations made 2+ hours before the job are fully refunded. Within 2 hours may incur a 10% cancellation fee.', open: true },
+    { q: "When will I receive my refund?", a: "Refunds typically appear in your wallet within 24 hours, and on your card within 5–7 business days." },
+    { q: "How does the escrow payment work?", a: "Funds are held securely until you confirm the job is complete, then released to the provider." },
+    { q: "How do I raise a dispute?", a: "Open the booking in Past Bookings and click Raise Dispute. Our team will review within 24 hours." },
+    { q: "Can I request the same provider again?", a: "Yes — open their profile from your booking history and tap Book Again." },
+  ];
+  const toneCls = (t: string) => t === "ok" ? "bg-emerald-50 text-emerald-700" : t === "warn" ? "bg-amber-50 text-amber-700" : "bg-muted text-foreground";
+  const [openIdx, setOpenIdx] = useState(0);
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Support</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Get help, raise a ticket or browse our FAQ</p>
+      </div>
+
+      <div className="grid gap-4 md:grid-cols-3">
+        {[
+          { icon: MessageCircle, t: "Live Chat", d: "Chat with a support agent in real-time", s: "● Available Now", tone: "text-emerald-600" },
+          { icon: Phone, t: "Phone Support", d: "Call us on 0771234567 · 0767654321", s: "● Lines Open", tone: "text-emerald-600" },
+          { icon: Mail, t: "Email Support", d: "fixitnow@gmail.com · Reply in 24hrs", s: "⏱ 24hr Response", tone: "text-primary" },
+        ].map((c) => (
+          <div key={c.t} className="rounded-2xl border border-border bg-card p-6 text-center">
+            <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10 text-primary">
+              <c.icon className="h-6 w-6" />
+            </div>
+            <p className="mt-3 font-bold">{c.t}</p>
+            <p className="mt-1 text-[11px] text-muted-foreground">{c.d}</p>
+            <p className={`mt-2 text-[11px] font-semibold ${c.tone}`}>{c.s}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="grid gap-6 lg:grid-cols-2">
+        <section className="rounded-2xl border border-border bg-card p-6">
+          <p className="text-xs font-bold uppercase tracking-wider text-primary">Raise a Support Ticket</p>
+          <div className="mt-4 space-y-3">
+            <select className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm">
+              <option>Select issue category</option><option>Payment / Refund</option><option>GPS / Tracking</option><option>Account</option><option>Booking</option>
+            </select>
+            <input placeholder="Subject — briefly describe your issue" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+            <select className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm">
+              <option>Related Booking (optional)</option><option>#FIN-2026-08471</option><option>#FIN-2026-08310</option>
+            </select>
+            <textarea rows={4} placeholder="Describe your issue in detail — the more context you provide, the faster we can help…" className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm" />
+            <select className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm">
+              <option>Priority: Normal</option><option>Priority: High</option><option>Priority: Urgent</option>
+            </select>
+            <button className="rounded-xl bg-foreground px-5 py-2.5 text-sm font-bold text-background hover:opacity-90">Submit Ticket →</button>
+          </div>
+        </section>
+
+        <section className="space-y-6">
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">My Open Tickets</p>
+            <div className="mt-4 space-y-2">
+              {tickets.map((t) => (
+                <div key={t.id} className="rounded-xl bg-muted/40 p-3">
+                  <div className="flex items-center justify-between">
+                    <p className="text-sm font-semibold">{t.id} — {t.t}</p>
+                    <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${toneCls(t.tone)}`}>{t.s}</span>
+                  </div>
+                  <p className="text-[11px] text-muted-foreground">{t.d}</p>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div className="rounded-2xl border border-border bg-card p-6">
+            <p className="text-xs font-bold uppercase tracking-wider text-primary">Contact Information</p>
+            <ul className="mt-4 space-y-2.5 text-sm">
+              <li className="flex items-center gap-2"><Phone className="h-4 w-4 text-primary" /> 0771234567 · 0767654321</li>
+              <li className="flex items-center gap-2"><Mail className="h-4 w-4 text-primary" /> fixitnow@gmail.com</li>
+              <li className="flex items-center gap-2">🖨 Fax: +94761234567</li>
+              <li className="flex items-center gap-2"><MapPin className="h-4 w-4 text-primary" /> University of Moratuwa, Sri Lanka</li>
+              <li className="flex items-center gap-2"><Clock className="h-4 w-4 text-primary" /> Mon–Sat 8 AM – 8 PM · Sun 9 AM – 5 PM</li>
+            </ul>
+          </div>
+        </section>
+      </div>
+
+      <section className="rounded-2xl border border-border bg-card p-6">
+        <p className="text-xs font-bold uppercase tracking-wider text-primary">Frequently Asked Questions</p>
+        <div className="mt-4 divide-y divide-border">
+          {faqs.map((f, i) => {
+            const open = openIdx === i;
+            return (
+              <div key={f.q} className="py-3">
+                <button onClick={() => setOpenIdx(open ? -1 : i)} className="flex w-full items-center justify-between text-left">
+                  <span className="text-sm font-semibold">{f.q}</span>
+                  <span className="text-muted-foreground">{open ? "▲" : "▼"}</span>
+                </button>
+                {open && <p className="mt-2 text-xs text-muted-foreground">{f.a}</p>}
+              </div>
+            );
+          })}
+        </div>
+      </section>
     </div>
   );
 }
