@@ -48,6 +48,7 @@ export function HomeownerDashboard() {
             <SideItem icon={ShieldCheck} label="Security Check" active={tab === "security"} onClick={() => setTab("security")} />
             <SideItem icon={Activity} label="System Health" active={tab === "system"} onClick={() => setTab("system")} />
             <SideItem icon={WalletIcon} label="Wallet" active={tab === "wallet"} onClick={() => setTab("wallet")} />
+            <SideItem icon={CalendarDays} label="Past Bookings" active={tab === "bookings"} onClick={() => setTab("bookings")} />
             <SideItem icon={Settings} label="Preferences" active={tab === "preferences"} onClick={() => setTab("preferences")} />
             <div className="my-3 border-t border-border" />
             <SideItem icon={LifeBuoy} label="Support" active={tab === "support"} onClick={() => setTab("support")} />
@@ -62,8 +63,9 @@ export function HomeownerDashboard() {
           {tab === "security" && <SecurityView />}
           {tab === "system" && <SystemHealthView />}
           {tab === "wallet" && <WalletView />}
-          {tab === "preferences" && <PlaceholderView title="Preferences" desc="Manage your account preferences." />}
-          {tab === "support" && <PlaceholderView title="Support" desc="Get help from our team." />}
+          {tab === "bookings" && <PastBookingsView />}
+          {tab === "preferences" && <PreferencesView />}
+          {tab === "support" && <SupportView />}
         </main>
       </div>
 
