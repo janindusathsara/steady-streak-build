@@ -43,7 +43,16 @@ export function ProviderDashboard() {
           </nav>
           <div className="flex items-center gap-3">
             <button className="rounded-full p-2 hover:bg-muted"><Bell className="h-5 w-5 text-muted-foreground" /></button>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">MS</div>
+            <button onClick={handleLogout} className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-muted" aria-label="Logout">
+              <LogOut className="h-3.5 w-3.5" /> Logout
+            </button>
+            {username ? (
+              <Link to="/$username/profile" params={{ username }} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground hover:opacity-90" aria-label="My profile">
+                {initials}
+              </Link>
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{initials}</div>
+            )}
           </div>
         </div>
       </header>
