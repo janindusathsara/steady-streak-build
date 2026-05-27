@@ -115,6 +115,8 @@ function SideItem({ icon: Icon, label, active, onClick }: { icon: any; label: st
 
 /* ---------------- Dashboard ---------------- */
 function DashboardView() {
+  const { profile } = useCurrentUser();
+  const username = profile?.username ?? "";
   const services = SERVICES.slice(0, 6);
   const providers = [
     { name: "Marcus Sterling", title: "Master Plumber", area: "Downtown Brooklyn", avail: "Within 2 hours", price: 85, rating: 4.9, color: "oklch(0.42 0.04 55)" },
