@@ -15,6 +15,17 @@ export function clearRole() {
   if (typeof window !== "undefined") localStorage.removeItem(KEY);
 }
 
+/** Legacy role-based dashboard path. Kept for backward compatibility. */
 export function dashboardPathFor(role: Role): string {
   return `/dashboard/${role}`;
+}
+
+/** New username-scoped dashboard path. */
+export function userDashboardPath(username: string): string {
+  return `/${username}/dashboard`;
+}
+
+/** New username-scoped profile path. */
+export function userProfilePath(username: string): string {
+  return `/${username}/profile`;
 }

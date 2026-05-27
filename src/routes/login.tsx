@@ -2,11 +2,28 @@ import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import { Mail, Lock, Wrench, ChevronLeft, User as UserIcon, Shield } from "lucide-react";
 import { toast } from "sonner";
-import { setRole, dashboardPathFor, type Role } from "@/lib/role";
+import { setRole, dashboardPathFor, userDashboardPath, type Role } from "@/lib/role";
 
 export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
+
+async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fallbackRole: Role) {
+  const { supabase } = await import("@/integrations/supabase/client");
+  const { data: sess } = await supabase.auth.getSession();
+  if (sess.session) {
+    const { data: prof } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", sess.session.user.id)
+      .maybeSingle();
+    if (prof?.username) {
+      navigate({ to: userDashboardPath(prof.username) });
+      return;
+    }
+  }
+  navigate({ to: dashboardPathFor(fallbackRole) });
+}
 
 function LoginPage() {
   const navigate = useNavigate();
@@ -25,7 +42,7 @@ function LoginPage() {
         redirect_uri: `${window.location.origin}${dashboardPathFor(role)}`,
       });
       if (result.error) toast.error("Google sign-in failed");
-      else if (!result.redirected) navigate({ to: dashboardPathFor(role) });
+      else if (!result.redirected) await navigateAfterLogin(navigate, role);
     } catch (err: any) {
       toast.error(err.message || "Google sign-in failed");
     } finally {
@@ -42,7 +59,7 @@ function LoginPage() {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) throw error;
       setRole(role);
-      navigate({ to: dashboardPathFor(role) });
+      await navigateAfterLogin(navigate, role);
     } catch (err: any) {
       toast.error(err.message || "Sign-in failed");
     } finally {

@@ -1,4 +1,4 @@
-import { Link } from "@tanstack/react-router";
+import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Search, Filter, MapPin, Clock, Star, Bell, Wrench,
@@ -7,11 +7,26 @@ import {
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 type Tab = "dashboard" | "security" | "system" | "wallet" | "bookings" | "preferences" | "support";
 
 export function HomeownerDashboard() {
   const [tab, setTab] = useState<Tab>("dashboard");
+  const { profile } = useCurrentUser();
+  const navigate = useNavigate();
+
+  const username = profile?.username ?? "";
+  const displayName = profile?.display_name ?? username ?? "User";
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  };
 
   return (
     <div className="min-h-screen bg-muted/40 text-foreground flex flex-col">
@@ -32,10 +47,21 @@ export function HomeownerDashboard() {
               <Bell className="h-4 w-4" />
             </button>
             <div className="hidden text-right text-xs sm:block">
-              <p className="font-semibold">Alex Johnson</p>
-              <p className="text-muted-foreground">Premium Member</p>
+              <p className="font-semibold">{displayName}</p>
+              <p className="text-muted-foreground capitalize">{profile?.role ?? "Member"}</p>
             </div>
-            <div className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">AJ</div>
+            {username ? (
+              <Link
+                to="/$username/profile"
+                params={{ username }}
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background hover:opacity-90 transition-opacity"
+                aria-label="My profile"
+              >
+                {initials}
+              </Link>
+            ) : (
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background">{initials}</div>
+            )}
           </div>
         </div>
       </header>
@@ -53,7 +79,7 @@ export function HomeownerDashboard() {
             <div className="my-3 border-t border-border" />
             <SideItem icon={LifeBuoy} label="Support" active={tab === "support"} onClick={() => setTab("support")} />
           </nav>
-          <button className="mt-6 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-muted">
+          <button onClick={handleLogout} className="mt-6 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-muted">
             <LogOut className="h-4 w-4" /> Logout
           </button>
         </aside>
