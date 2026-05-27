@@ -8,6 +8,19 @@ import { toast } from "sonner";
 
 
 export function ProviderDashboard() {
+  const { profile } = useCurrentUser();
+  const navigate = useNavigate();
+  const username = profile?.username ?? "";
+  const displayName = profile?.display_name ?? username ?? "Provider";
+  const firstName = displayName.split(" ")[0];
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "P";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  };
+
   const jobs = [
     { id: 1, customer: "Alex Johnson", service: "Emergency Plumbing", time: "Today · 2:30 PM", status: "Confirmed", price: 85 },
     { id: 2, customer: "Maria Santos", service: "Faucet Repair", time: "Tomorrow · 10:00 AM", status: "Pending", price: 65 },
