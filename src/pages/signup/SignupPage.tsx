@@ -94,7 +94,7 @@ function HomeownerForm() {
   const [loading, setLoading] = useState(false);
   const [showPwd, setShowPwd] = useState(false);
   const [form, setForm] = useState({
-    firstName: "", lastName: "", email: "", phone: "", district: "", address: "",
+    firstName: "", lastName: "", username: "", email: "", phone: "", district: "", address: "",
     password: "", confirm: "", agree: false,
   });
 
@@ -104,6 +104,9 @@ function HomeownerForm() {
     e.preventDefault();
     if (form.password !== form.confirm) return toast.error("Passwords do not match");
     if (form.password.length < 8) return toast.error("Password must be at least 8 characters");
+    if (!form.username.trim() || !/^[a-zA-Z0-9_]{3,20}$/.test(form.username)) {
+      return toast.error("Username must be 3–20 letters, numbers, or underscores");
+    }
     if (!form.agree) return toast.error("Please accept the Terms of Service");
     setLoading(true);
     try {
@@ -115,6 +118,7 @@ function HomeownerForm() {
           emailRedirectTo: `${window.location.origin}${dashboardPathFor("homeowner")}`,
           data: {
             full_name: `${form.firstName} ${form.lastName}`.trim(),
+            username: form.username.trim().toLowerCase(),
             role: "homeowner",
             phone: form.phone,
             district: form.district,
@@ -155,6 +159,9 @@ function HomeownerForm() {
         </Field>
         <Field label="Last Name" required>
           <input required value={form.lastName} onChange={(e) => update("lastName", e.target.value)} placeholder="e.g. Perera" className={inputCls} />
+        </Field>
+        <Field label="Username" required hint="3–20 letters, numbers, or underscores. Used in your profile URL.">
+          <input required value={form.username} onChange={(e) => update("username", e.target.value)} placeholder="e.g. kavindu_p" className={inputCls} />
         </Field>
         <Field label="Email Address" required className="sm:col-span-2">
           <input required type="email" value={form.email} onChange={(e) => update("email", e.target.value)} placeholder="you@example.com" className={inputCls} />
