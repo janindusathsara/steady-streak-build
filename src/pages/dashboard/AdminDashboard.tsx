@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Bell, Wrench } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Bell, Wrench, LogOut } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const logs = [
   { time: "14:20:11", tag: "SUCCESS", src: "@BK-01", text: "Backup cycle complete (Cluster A)", tone: "text-success" },
