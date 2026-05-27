@@ -57,11 +57,17 @@ export function AdminDashboard() {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">AJ</div>
               <div className="hidden text-right sm:block">
-                <p className="text-xs font-semibold leading-tight">Alex Johnson</p>
-                <p className="text-[10px] text-background/60 leading-tight">Admin</p>
+                <p className="text-xs font-semibold leading-tight">{displayName}</p>
+                <p className="text-[10px] text-background/60 leading-tight capitalize">{profile?.role ?? "Admin"}</p>
               </div>
+              {username ? (
+                <Link to="/$username/profile" params={{ username }} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground hover:opacity-90" aria-label="My profile">
+                  {initials}
+                </Link>
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{initials}</div>
+              )}
             </div>
           </div>
         </div>
