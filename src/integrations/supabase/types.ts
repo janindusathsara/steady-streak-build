@@ -14,6 +14,103 @@ export type Database = {
   }
   public: {
     Tables: {
+      bookings: {
+        Row: {
+          address_line: string
+          created_at: string
+          district: string | null
+          est_hours: number
+          homeowner_id: string
+          hourly_rate: number
+          id: string
+          job_type: string
+          landmarks: string | null
+          payment_method: string | null
+          platform_fee: number
+          postal_code: string | null
+          problem_desc: string | null
+          provider_id: string
+          ref_code: string
+          scheduled_date: string | null
+          scheduled_time: string | null
+          service_name: string
+          status: string
+          sub_service_id: string | null
+          total_amount: number
+          updated_at: string
+        }
+        Insert: {
+          address_line: string
+          created_at?: string
+          district?: string | null
+          est_hours?: number
+          homeowner_id: string
+          hourly_rate?: number
+          id?: string
+          job_type?: string
+          landmarks?: string | null
+          payment_method?: string | null
+          platform_fee?: number
+          postal_code?: string | null
+          problem_desc?: string | null
+          provider_id: string
+          ref_code?: string
+          scheduled_date?: string | null
+          scheduled_time?: string | null
+          service_name: string
+          status?: string
+          sub_service_id?: string | null
+          total_amount?: number
+          updated_at?: string
+        }
+        Update: {
+          address_line?: string
+          created_at?: string
+          district?: string | null
+          est_hours?: number
+          homeowner_id?: string
+          hourly_rate?: number
+          id?: string
+          job_type?: string
+          landmarks?: string | null
+          payment_method?: string | null
+          platform_fee?: number
+          postal_code?: string | null
+          problem_desc?: string | null
+          provider_id?: string
+          ref_code?: string
+          scheduled_date?: string | null
+          scheduled_time?: string | null
+          service_name?: string
+          status?: string
+          sub_service_id?: string | null
+          total_amount?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "bookings_homeowner_id_fkey"
+            columns: ["homeowner_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_provider_id_fkey"
+            columns: ["provider_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "bookings_sub_service_id_fkey"
+            columns: ["sub_service_id"]
+            isOneToOne: false
+            referencedRelation: "sub_services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       habit_logs: {
         Row: {
           created_at: string
@@ -82,6 +179,54 @@ export type Database = {
         }
         Relationships: []
       }
+      notifications: {
+        Row: {
+          body: string | null
+          booking_id: string | null
+          created_at: string
+          id: string
+          read_at: string | null
+          title: string
+          type: string
+          user_id: string
+        }
+        Insert: {
+          body?: string | null
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          title: string
+          type?: string
+          user_id: string
+        }
+        Update: {
+          body?: string | null
+          booking_id?: string | null
+          created_at?: string
+          id?: string
+          read_at?: string | null
+          title?: string
+          type?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "notifications_booking_id_fkey"
+            columns: ["booking_id"]
+            isOneToOne: false
+            referencedRelation: "bookings"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "notifications_user_id_fkey"
+            columns: ["user_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
@@ -108,6 +253,146 @@ export type Database = {
           username?: string
         }
         Relationships: []
+      }
+      providers: {
+        Row: {
+          available: boolean
+          bio: string | null
+          category_id: string | null
+          city: string | null
+          created_at: string
+          distance_km: number | null
+          headline: string
+          hourly_rate: number
+          id: string
+          jobs_done: number
+          rating: number
+          top_rated: boolean
+          verified: boolean
+          years_experience: number
+        }
+        Insert: {
+          available?: boolean
+          bio?: string | null
+          category_id?: string | null
+          city?: string | null
+          created_at?: string
+          distance_km?: number | null
+          headline?: string
+          hourly_rate?: number
+          id: string
+          jobs_done?: number
+          rating?: number
+          top_rated?: boolean
+          verified?: boolean
+          years_experience?: number
+        }
+        Update: {
+          available?: boolean
+          bio?: string | null
+          category_id?: string | null
+          city?: string | null
+          created_at?: string
+          distance_km?: number | null
+          headline?: string
+          hourly_rate?: number
+          id?: string
+          jobs_done?: number
+          rating?: number
+          top_rated?: boolean
+          verified?: boolean
+          years_experience?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "providers_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "providers_id_fkey"
+            columns: ["id"]
+            isOneToOne: true
+            referencedRelation: "profiles"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      service_categories: {
+        Row: {
+          created_at: string
+          icon: string | null
+          id: string
+          name: string
+          pros_count: number
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name: string
+          pros_count?: number
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          created_at?: string
+          icon?: string | null
+          id?: string
+          name?: string
+          pros_count?: number
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: []
+      }
+      sub_services: {
+        Row: {
+          base_price: number
+          category_id: string
+          created_at: string
+          description: string | null
+          icon: string | null
+          id: string
+          name: string
+          slug: string
+          sort_order: number
+        }
+        Insert: {
+          base_price?: number
+          category_id: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name: string
+          slug: string
+          sort_order?: number
+        }
+        Update: {
+          base_price?: number
+          category_id?: string
+          created_at?: string
+          description?: string | null
+          icon?: string | null
+          id?: string
+          name?: string
+          slug?: string
+          sort_order?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "sub_services_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "service_categories"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {
