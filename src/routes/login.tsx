@@ -5,10 +5,17 @@ import { toast } from "sonner";
 import { setRole, dashboardPathFor, userDashboardPath, type Role } from "@/lib/role";
 
 export const Route = createFileRoute("/login")({
+  validateSearch: (s: Record<string, unknown>): { redirect?: string } => ({
+    redirect: typeof s.redirect === "string" ? s.redirect : undefined,
+  }),
   component: LoginPage,
 });
 
-async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fallbackRole: Role) {
+async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fallbackRole: Role, redirectTo?: string) {
+  if (redirectTo) {
+    window.location.href = redirectTo;
+    return;
+  }
   const { supabase } = await import("@/integrations/supabase/client");
   const { data: sess } = await supabase.auth.getSession();
   if (sess.session) {
