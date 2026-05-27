@@ -1,9 +1,11 @@
 import { Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { Wrench, Menu, X } from "lucide-react";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 export function Navbar() {
   const [open, setOpen] = useState(false);
+  const { profile, loading } = useCurrentUser();
 
   const navLinks = (
     <>
@@ -11,6 +13,38 @@ export function Navbar() {
       <Link to="/services" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground font-semibold" }}>Services</Link>
       <Link to="/news" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground font-semibold" }}>News</Link>
       <Link to="/about" onClick={() => setOpen(false)} className="hover:text-foreground transition-colors" activeProps={{ className: "text-foreground font-semibold" }}>About Us</Link>
+    </>
+  );
+
+  const isAuthed = !!profile?.username;
+  const username = profile?.username ?? "";
+  const displayName = profile?.display_name ?? username ?? "User";
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
+
+  const authedDesktop = isAuthed && (
+    <>
+      <Link
+        to="/$username/dashboard"
+        params={{ username }}
+        className="rounded-full px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors lg:px-4"
+      >
+        Dashboard
+      </Link>
+      <Link
+        to="/$username/profile"
+        params={{ username }}
+        aria-label="My profile"
+        className="flex h-9 w-9 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+      >
+        {initials}
+      </Link>
+    </>
+  );
+
+  const guestDesktop = !isAuthed && !loading && (
+    <>
+      <Link to="/login" className="rounded-full px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors lg:px-4">Sign In</Link>
+      <Link to="/signup" className="rounded-full bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity lg:px-4">Sign Up</Link>
     </>
   );
 
@@ -27,8 +61,8 @@ export function Navbar() {
         </div>
 
         <div className="hidden items-center gap-2 md:flex">
-          <Link to="/login" className="rounded-full px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors lg:px-4">Sign In</Link>
-          <Link to="/signup" className="rounded-full bg-primary px-3 py-2 text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity lg:px-4">Sign Up</Link>
+          {authedDesktop}
+          {guestDesktop}
         </div>
 
         <button
@@ -47,10 +81,31 @@ export function Navbar() {
           <div className="flex flex-col gap-3 text-sm text-muted-foreground">
             {navLinks}
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-2">
-            <Link to="/login" onClick={() => setOpen(false)} className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors">Sign In</Link>
-            <Link to="/signup" onClick={() => setOpen(false)} className="rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity">Sign Up</Link>
-          </div>
+          {isAuthed ? (
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Link
+                to="/$username/dashboard"
+                params={{ username }}
+                onClick={() => setOpen(false)}
+                className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors"
+              >
+                Dashboard
+              </Link>
+              <Link
+                to="/$username/profile"
+                params={{ username }}
+                onClick={() => setOpen(false)}
+                className="rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity"
+              >
+                Profile
+              </Link>
+            </div>
+          ) : !loading ? (
+            <div className="mt-4 grid grid-cols-2 gap-2">
+              <Link to="/login" onClick={() => setOpen(false)} className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors">Sign In</Link>
+              <Link to="/signup" onClick={() => setOpen(false)} className="rounded-full bg-primary px-4 py-2 text-center text-sm font-semibold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity">Sign Up</Link>
+            </div>
+          ) : null}
         </div>
       )}
     </header>
