@@ -14,6 +14,7 @@ import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as AboutRouteImport } from './routes/about'
+import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as ServicesIndexRouteImport } from './routes/services.index'
 import { Route as ServicesServiceIdRouteImport } from './routes/services.$serviceId'
@@ -23,6 +24,8 @@ import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
+import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
+import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 
 const SignupRoute = SignupRouteImport.update({
   id: '/signup',
@@ -47,6 +50,10 @@ const LoginRoute = LoginRouteImport.update({
 const AboutRoute = AboutRouteImport.update({
   id: '/about',
   path: '/about',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuthenticatedRoute = AuthenticatedRouteImport.update({
+  id: '/_authenticated',
   getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
@@ -95,6 +102,18 @@ const ServicesServiceIdSubServiceIdRoute =
     path: '/$subServiceId',
     getParentRoute: () => ServicesServiceIdRoute,
   } as any)
+const AuthenticatedUsernameProfileRoute =
+  AuthenticatedUsernameProfileRouteImport.update({
+    id: '/$username/profile',
+    path: '/$username/profile',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsernameDashboardRoute =
+  AuthenticatedUsernameDashboardRouteImport.update({
+    id: '/$username/dashboard',
+    path: '/$username/dashboard',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -109,6 +128,8 @@ export interface FileRoutesByFullPath {
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
+  '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
+  '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
 }
@@ -124,12 +145,15 @@ export interface FileRoutesByTo {
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services': typeof ServicesIndexRoute
+  '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
+  '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId': typeof ServicesServiceIdIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
+  '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
@@ -141,6 +165,8 @@ export interface FileRoutesById {
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
+  '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
+  '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
 }
@@ -159,6 +185,8 @@ export interface FileRouteTypes {
     | '/dashboard/provider'
     | '/services/$serviceId'
     | '/services/'
+    | '/$username/dashboard'
+    | '/$username/profile'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
   fileRoutesByTo: FileRoutesByTo
@@ -174,11 +202,14 @@ export interface FileRouteTypes {
     | '/dashboard/homeowner'
     | '/dashboard/provider'
     | '/services'
+    | '/$username/dashboard'
+    | '/$username/profile'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId'
   id:
     | '__root__'
     | '/'
+    | '/_authenticated'
     | '/about'
     | '/login'
     | '/news'
@@ -190,12 +221,15 @@ export interface FileRouteTypes {
     | '/dashboard/provider'
     | '/services/$serviceId'
     | '/services/'
+    | '/_authenticated/$username/dashboard'
+    | '/_authenticated/$username/profile'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
+  AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
   LoginRoute: typeof LoginRoute
   NewsRoute: typeof NewsRoute
@@ -244,6 +278,13 @@ declare module '@tanstack/react-router' {
       path: '/about'
       fullPath: '/about'
       preLoaderRoute: typeof AboutRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/_authenticated': {
+      id: '/_authenticated'
+      path: ''
+      fullPath: '/'
+      preLoaderRoute: typeof AuthenticatedRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/': {
@@ -309,8 +350,36 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesServiceIdSubServiceIdRouteImport
       parentRoute: typeof ServicesServiceIdRoute
     }
+    '/_authenticated/$username/profile': {
+      id: '/_authenticated/$username/profile'
+      path: '/$username/profile'
+      fullPath: '/$username/profile'
+      preLoaderRoute: typeof AuthenticatedUsernameProfileRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/$username/dashboard': {
+      id: '/_authenticated/$username/dashboard'
+      path: '/$username/dashboard'
+      fullPath: '/$username/dashboard'
+      preLoaderRoute: typeof AuthenticatedUsernameDashboardRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
+
+interface AuthenticatedRouteChildren {
+  AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
+  AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
+}
+
+const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedUsernameDashboardRoute: AuthenticatedUsernameDashboardRoute,
+  AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
+}
+
+const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
+  AuthenticatedRouteChildren,
+)
 
 interface ServicesServiceIdRouteChildren {
   ServicesServiceIdSubServiceIdRoute: typeof ServicesServiceIdSubServiceIdRoute
@@ -327,6 +396,7 @@ const ServicesServiceIdRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
+  AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
   LoginRoute: LoginRoute,
   NewsRoute: NewsRoute,
