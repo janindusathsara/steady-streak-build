@@ -86,7 +86,9 @@ export function AdminDashboard() {
           </nav>
           <div className="mt-8 space-y-1 text-sm text-background/60">
             <a href="#" className="block px-3 py-2 hover:text-background">? Support</a>
-            <a href="#" className="block px-3 py-2 hover:text-background">→ Logout</a>
+            <button onClick={handleLogout} className="flex w-full items-center gap-2 px-3 py-2 text-left text-destructive hover:text-destructive/80">
+              <LogOut className="h-4 w-4" /> Logout
+            </button>
           </div>
         </aside>
 
