@@ -30,5 +30,7 @@ function ProfileGuard() {
   }
   if (profile.username.toLowerCase() !== username.toLowerCase()) return null;
 
+  if (profile.role === "provider") return <ProviderProfilePage />;
+  if (profile.role === "admin") return <AdminProfilePage />;
   return <ProfilePage />;
 }
