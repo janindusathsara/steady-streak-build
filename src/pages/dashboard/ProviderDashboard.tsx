@@ -36,8 +36,8 @@ export function ProviderDashboard() {
             <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
           </Link>
           <nav className="hidden gap-6 text-sm text-muted-foreground md:flex">
-            <a href="#" className="font-medium text-foreground">Dashboard</a>
-            <a href="#" className="hover:text-foreground">Jobs</a>
+            <Link to="/$username/dashboard" params={{ username }} className="font-medium text-foreground">Dashboard</Link>
+            <Link to="/$username/jobs" params={{ username }} className="hover:text-foreground">Jobs</Link>
             <a href="#" className="hover:text-foreground">Earnings</a>
             <a href="#" className="hover:text-foreground">Reviews</a>
           </nav>

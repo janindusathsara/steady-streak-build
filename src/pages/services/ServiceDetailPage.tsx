@@ -76,7 +76,7 @@ export function ServiceDetailPage() {
             <div className="rounded-2xl bg-background/95 p-5 text-foreground shadow-xl backdrop-blur sm:min-w-[240px]">
               <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Starting From</p>
               <p className="mt-1.5 text-3xl font-bold">Rs. {service.startingPrice.toLocaleString()} <span className="text-sm font-medium text-muted-foreground">/service</span></p>
-              <button className="mt-4 w-full rounded-xl bg-primary py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now →</button>
+              <Link to="/book" className="mt-4 block w-full rounded-xl bg-primary py-2.5 text-center text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now →</Link>
             </div>
           </div>
         </div>
@@ -173,7 +173,7 @@ export function ServiceDetailPage() {
                     </div>
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                       <p className="text-sm"><span className="text-lg font-bold">Rs. {p.hourly.toLocaleString()}</span><span className="text-xs text-muted-foreground"> /hr</span></p>
-                      <button className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</button>
+                      <Link to="/book" className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
                     </div>
                   </div>
                 ))}
