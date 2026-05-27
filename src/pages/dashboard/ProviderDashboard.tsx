@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell, LogOut } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 
 
