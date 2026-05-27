@@ -20,9 +20,19 @@ export function Navbar() {
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
+  const isHomeowner = profile?.role === "homeowner";
 
   const authedDesktop = isAuthed && (
     <>
+      {isHomeowner && (
+        <Link
+          to="/$username/book"
+          params={{ username }}
+          className="rounded-full px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors lg:px-4"
+        >
+          Book Now
+        </Link>
+      )}
       <Link
         to="/$username/dashboard"
         params={{ username }}
