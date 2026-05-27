@@ -111,7 +111,7 @@ export function ServicesPage() {
                 <p className="text-xs text-success">✓ {p.avail}</p>
                 <div className="flex items-center justify-between pt-2">
                   <p className="text-sm"><span className="text-lg font-bold">${p.price}</span><span className="text-xs text-muted-foreground">/hr</span></p>
-                  <Link to="/services/$serviceId" params={{ serviceId: p.id }} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
+                  <Link to="/book" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
                     Book Now
                   </Link>
                 </div>
