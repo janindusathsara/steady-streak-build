@@ -13,6 +13,7 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as BookRouteImport } from './routes/book'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -25,6 +26,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
+import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 
 const SignupRoute = SignupRouteImport.update({
@@ -45,6 +47,11 @@ const NewsRoute = NewsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const BookRoute = BookRouteImport.update({
+  id: '/book',
+  path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -108,6 +115,12 @@ const AuthenticatedUsernameProfileRoute =
     path: '/$username/profile',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameJobsRoute =
+  AuthenticatedUsernameJobsRouteImport.update({
+    id: '/$username/jobs',
+    path: '/$username/jobs',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameDashboardRoute =
   AuthenticatedUsernameDashboardRouteImport.update({
     id: '/$username/dashboard',
@@ -118,6 +131,7 @@ const AuthenticatedUsernameDashboardRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
@@ -129,6 +143,7 @@ export interface FileRoutesByFullPath {
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
+  '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
@@ -136,6 +151,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
+  '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
@@ -146,6 +162,7 @@ export interface FileRoutesByTo {
   '/dashboard/provider': typeof DashboardProviderRoute
   '/services': typeof ServicesIndexRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
+  '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId': typeof ServicesServiceIdIndexRoute
@@ -155,6 +172,7 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
+  '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
@@ -166,6 +184,7 @@ export interface FileRoutesById {
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
+  '/_authenticated/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
@@ -175,6 +194,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
+    | '/book'
     | '/login'
     | '/news'
     | '/profile'
@@ -186,6 +206,7 @@ export interface FileRouteTypes {
     | '/services/$serviceId'
     | '/services/'
     | '/$username/dashboard'
+    | '/$username/jobs'
     | '/$username/profile'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
@@ -193,6 +214,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
+    | '/book'
     | '/login'
     | '/news'
     | '/profile'
@@ -203,6 +225,7 @@ export interface FileRouteTypes {
     | '/dashboard/provider'
     | '/services'
     | '/$username/dashboard'
+    | '/$username/jobs'
     | '/$username/profile'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId'
@@ -211,6 +234,7 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
+    | '/book'
     | '/login'
     | '/news'
     | '/profile'
@@ -222,6 +246,7 @@ export interface FileRouteTypes {
     | '/services/$serviceId'
     | '/services/'
     | '/_authenticated/$username/dashboard'
+    | '/_authenticated/$username/jobs'
     | '/_authenticated/$username/profile'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
@@ -231,6 +256,7 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
+  BookRoute: typeof BookRoute
   LoginRoute: typeof LoginRoute
   NewsRoute: typeof NewsRoute
   ProfileRoute: typeof ProfileRoute
@@ -271,6 +297,13 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/book': {
+      id: '/book'
+      path: '/book'
+      fullPath: '/book'
+      preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -357,6 +390,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameProfileRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/jobs': {
+      id: '/_authenticated/$username/jobs'
+      path: '/$username/jobs'
+      fullPath: '/$username/jobs'
+      preLoaderRoute: typeof AuthenticatedUsernameJobsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/dashboard': {
       id: '/_authenticated/$username/dashboard'
       path: '/$username/dashboard'
@@ -369,11 +409,13 @@ declare module '@tanstack/react-router' {
 
 interface AuthenticatedRouteChildren {
   AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
+  AuthenticatedUsernameJobsRoute: typeof AuthenticatedUsernameJobsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameDashboardRoute: AuthenticatedUsernameDashboardRoute,
+  AuthenticatedUsernameJobsRoute: AuthenticatedUsernameJobsRoute,
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
 }
 
@@ -398,6 +440,7 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
+  BookRoute: BookRoute,
   LoginRoute: LoginRoute,
   NewsRoute: NewsRoute,
   ProfileRoute: ProfileRoute,
