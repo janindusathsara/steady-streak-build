@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useSearch } from "@tanstack/react-router";
+import { Link, useNavigate, useSearch, useParams } from "@tanstack/react-router";
 import { Check, ChevronLeft, ChevronRight, MapPin, Star, Clock, Shield, Lock, Zap, CalendarDays, Search, Edit2 } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
@@ -21,7 +21,8 @@ const STEPS = [
 type JobType = "on_the_spot" | "scheduled";
 
 export function BookingWizard() {
-  const search = useSearch({ from: "/book" }) as { subService?: string; step?: number };
+  const search = useSearch({ from: "/$username/book" }) as { subService?: string; step?: number };
+  const { username } = useParams({ from: "/$username/book" });
   const navigate = useNavigate();
   const { profile, loading: userLoading } = useCurrentUser();
 
@@ -135,7 +136,7 @@ export function BookingWizard() {
   }
   if (!profile) {
     // shouldn't render — route handles redirect, but safe-guard
-    navigate({ to: "/login", search: { redirect: "/book" } as any });
+    navigate({ to: "/login", search: { redirect: `/${username}/book` } as any });
     return null;
   }
 
