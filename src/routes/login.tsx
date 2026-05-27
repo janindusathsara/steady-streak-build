@@ -34,6 +34,7 @@ async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fall
 
 function LoginPage() {
   const navigate = useNavigate();
+  const search = Route.useSearch();
   const [role, setRoleState] = useState<Exclude<Role, "admin">>("homeowner");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -46,10 +47,10 @@ function LoginPage() {
       setRole(role);
       const { lovable } = await import("@/integrations/lovable/index");
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}${dashboardPathFor(role)}`,
+        redirect_uri: `${window.location.origin}${search.redirect ?? dashboardPathFor(role)}`,
       });
       if (result.error) toast.error("Google sign-in failed");
-      else if (!result.redirected) await navigateAfterLogin(navigate, role);
+      else if (!result.redirected) await navigateAfterLogin(navigate, role, search.redirect);
     } catch (err: any) {
       toast.error(err.message || "Google sign-in failed");
     } finally {
@@ -66,7 +67,7 @@ function LoginPage() {
       const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
       if (error) throw error;
       setRole(role);
-      await navigateAfterLogin(navigate, role);
+      await navigateAfterLogin(navigate, role, search.redirect);
     } catch (err: any) {
       toast.error(err.message || "Sign-in failed");
     } finally {
