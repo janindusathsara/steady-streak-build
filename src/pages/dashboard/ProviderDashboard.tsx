@@ -1,10 +1,26 @@
-import { Link } from "@tanstack/react-router";
-import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell, LogOut } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 
 
 export function ProviderDashboard() {
+  const { profile } = useCurrentUser();
+  const navigate = useNavigate();
+  const username = profile?.username ?? "";
+  const displayName = profile?.display_name ?? username ?? "Provider";
+  const firstName = displayName.split(" ")[0];
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "P";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  };
+
   const jobs = [
     { id: 1, customer: "Alex Johnson", service: "Emergency Plumbing", time: "Today · 2:30 PM", status: "Confirmed", price: 85 },
     { id: 2, customer: "Maria Santos", service: "Faucet Repair", time: "Tomorrow · 10:00 AM", status: "Pending", price: 65 },
@@ -27,7 +43,16 @@ export function ProviderDashboard() {
           </nav>
           <div className="flex items-center gap-3">
             <button className="rounded-full p-2 hover:bg-muted"><Bell className="h-5 w-5 text-muted-foreground" /></button>
-            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">MS</div>
+            <button onClick={handleLogout} className="hidden sm:inline-flex items-center gap-1.5 rounded-lg border border-border px-3 py-1.5 text-xs font-semibold text-destructive hover:bg-muted" aria-label="Logout">
+              <LogOut className="h-3.5 w-3.5" /> Logout
+            </button>
+            {username ? (
+              <Link to="/$username/profile" params={{ username }} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground hover:opacity-90" aria-label="My profile">
+                {initials}
+              </Link>
+            ) : (
+              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{initials}</div>
+            )}
           </div>
         </div>
       </header>
@@ -36,7 +61,7 @@ export function ProviderDashboard() {
 
       <main className="mx-auto max-w-6xl px-5 py-8">
         <div>
-          <h1 className="text-2xl font-bold">Welcome back, Marcus</h1>
+          <h1 className="text-2xl font-bold">Welcome back, {firstName}</h1>
           <p className="mt-1 text-sm text-muted-foreground">Here's what's happening with your services today.</p>
         </div>
 

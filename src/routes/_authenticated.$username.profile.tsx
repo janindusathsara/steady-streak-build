@@ -1,6 +1,8 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { ProfilePage } from "@/pages/profile/ProfilePage";
+import { ProviderProfilePage } from "@/pages/profile/ProviderProfilePage";
+import { AdminProfilePage } from "@/pages/profile/AdminProfilePage";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { userProfilePath } from "@/lib/role";
 
@@ -28,5 +30,7 @@ function ProfileGuard() {
   }
   if (profile.username.toLowerCase() !== username.toLowerCase()) return null;
 
+  if (profile.role === "provider") return <ProviderProfilePage />;
+  if (profile.role === "admin") return <AdminProfilePage />;
   return <ProfilePage />;
 }

@@ -1,6 +1,9 @@
-import { Link } from "@tanstack/react-router";
-import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Bell, Wrench } from "lucide-react";
+import { Link, useNavigate } from "@tanstack/react-router";
+import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Bell, Wrench, LogOut } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
 const logs = [
   { time: "14:20:11", tag: "SUCCESS", src: "@BK-01", text: "Backup cycle complete (Cluster A)", tone: "text-success" },
@@ -23,6 +26,18 @@ const apis = [
 ];
 
 export function AdminDashboard() {
+  const { profile } = useCurrentUser();
+  const navigate = useNavigate();
+  const username = profile?.username ?? "";
+  const displayName = profile?.display_name ?? username ?? "Admin";
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "A";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  };
+
   return (
     <div className="min-h-screen bg-foreground text-background">
       <header className="sticky top-0 z-30 border-b border-background/10 bg-foreground/95 backdrop-blur">
@@ -42,11 +57,17 @@ export function AdminDashboard() {
               <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
             </button>
             <div className="flex items-center gap-2">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">AJ</div>
               <div className="hidden text-right sm:block">
-                <p className="text-xs font-semibold leading-tight">Alex Johnson</p>
-                <p className="text-[10px] text-background/60 leading-tight">Admin</p>
+                <p className="text-xs font-semibold leading-tight">{displayName}</p>
+                <p className="text-[10px] text-background/60 leading-tight capitalize">{profile?.role ?? "Admin"}</p>
               </div>
+              {username ? (
+                <Link to="/$username/profile" params={{ username }} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground hover:opacity-90" aria-label="My profile">
+                  {initials}
+                </Link>
+              ) : (
+                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{initials}</div>
+              )}
             </div>
           </div>
         </div>
@@ -65,7 +86,9 @@ export function AdminDashboard() {
           </nav>
           <div className="mt-8 space-y-1 text-sm text-background/60">
             <a href="#" className="block px-3 py-2 hover:text-background">? Support</a>
-            <a href="#" className="block px-3 py-2 hover:text-background">→ Logout</a>
+            <button onClick={handleLogout} className="flex w-full items-center gap-2 px-3 py-2 text-left text-destructive hover:text-destructive/80">
+              <LogOut className="h-4 w-4" /> Logout
+            </button>
           </div>
         </aside>
 
