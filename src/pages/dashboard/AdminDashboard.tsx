@@ -26,6 +26,18 @@ const apis = [
 ];
 
 export function AdminDashboard() {
+  const { profile } = useCurrentUser();
+  const navigate = useNavigate();
+  const username = profile?.username ?? "";
+  const displayName = profile?.display_name ?? username ?? "Admin";
+  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "A";
+
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
+    toast.success("Signed out");
+    navigate({ to: "/" });
+  };
+
   return (
     <div className="min-h-screen bg-foreground text-background">
       <header className="sticky top-0 z-30 border-b border-background/10 bg-foreground/95 backdrop-blur">
