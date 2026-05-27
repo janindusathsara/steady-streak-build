@@ -93,11 +93,21 @@ export function Navbar() {
           </div>
           {isAuthed ? (
             <div className="mt-4 grid grid-cols-2 gap-2">
+              {isHomeowner && (
+                <Link
+                  to="/$username/book"
+                  params={{ username }}
+                  onClick={() => setOpen(false)}
+                  className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                >
+                  Book Now
+                </Link>
+              )}
               <Link
                 to="/$username/dashboard"
                 params={{ username }}
                 onClick={() => setOpen(false)}
-                className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors"
+                className={`rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors ${!isHomeowner ? "col-span-2" : ""}`}
               >
                 Dashboard
               </Link>
