@@ -4,6 +4,7 @@ import { ChevronRight, Search, MapPin, Star, Shield, CheckCircle2, Zap, Clock, C
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { getService } from "@/lib/services-data";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const DISTRICTS = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Galle", "Negombo"];
 const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evening (4 PM – 8 PM)", "ASAP"];
@@ -11,6 +12,10 @@ const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evenin
 export function ServiceDetailPage() {
   const { serviceId } = useParams({ from: "/services/$serviceId/" });
   const service = getService(serviceId);
+  const { profile } = useCurrentUser();
+  const bookLink = profile?.username
+    ? { to: "/$username/book", params: { username: profile.username } } as const
+    : { to: "/login", search: { redirect: "/services" } };
 
   const [filter, setFilter] = useState("all");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -76,7 +81,7 @@ export function ServiceDetailPage() {
             <div className="rounded-2xl bg-background/95 p-5 text-foreground shadow-xl backdrop-blur sm:min-w-[240px]">
               <p className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground">Starting From</p>
               <p className="mt-1.5 text-3xl font-bold">Rs. {service.startingPrice.toLocaleString()} <span className="text-sm font-medium text-muted-foreground">/service</span></p>
-              <Link to="/book" className="mt-4 block w-full rounded-xl bg-primary py-2.5 text-center text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now →</Link>
+              <Link {...bookLink} className="mt-4 block w-full rounded-xl bg-primary py-2.5 text-center text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now →</Link>
             </div>
           </div>
         </div>
@@ -173,7 +178,7 @@ export function ServiceDetailPage() {
                     </div>
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                       <p className="text-sm"><span className="text-lg font-bold">Rs. {p.hourly.toLocaleString()}</span><span className="text-xs text-muted-foreground"> /hr</span></p>
-                      <Link to="/book" className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
+                      <Link {...bookLink} className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
                     </div>
                   </div>
                 ))}

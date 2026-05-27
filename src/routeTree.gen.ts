@@ -13,7 +13,6 @@ import { Route as SignupRouteImport } from './routes/signup'
 import { Route as ProfileRouteImport } from './routes/profile'
 import { Route as NewsRouteImport } from './routes/news'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as BookRouteImport } from './routes/book'
 import { Route as AboutRouteImport } from './routes/about'
 import { Route as AuthenticatedRouteImport } from './routes/_authenticated'
 import { Route as IndexRouteImport } from './routes/index'
@@ -23,6 +22,7 @@ import { Route as DashboardProviderRouteImport } from './routes/dashboard.provid
 import { Route as DashboardHomeownerRouteImport } from './routes/dashboard.homeowner'
 import { Route as DashboardAdminRouteImport } from './routes/dashboard.admin'
 import { Route as AdminLoginRouteImport } from './routes/admin.login'
+import { Route as UsernameBookRouteImport } from './routes/$username.book'
 import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
@@ -47,11 +47,6 @@ const NewsRoute = NewsRouteImport.update({
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const BookRoute = BookRouteImport.update({
-  id: '/book',
-  path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AboutRoute = AboutRouteImport.update({
@@ -98,6 +93,11 @@ const AdminLoginRoute = AdminLoginRouteImport.update({
   path: '/admin/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const UsernameBookRoute = UsernameBookRouteImport.update({
+  id: '/$username/book',
+  path: '/$username/book',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ServicesServiceIdIndexRoute = ServicesServiceIdIndexRouteImport.update({
   id: '/',
   path: '/',
@@ -131,11 +131,11 @@ const AuthenticatedUsernameDashboardRoute =
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/$username/book': typeof UsernameBookRoute
   '/admin/login': typeof AdminLoginRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
@@ -151,11 +151,11 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/about': typeof AboutRoute
-  '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/$username/book': typeof UsernameBookRoute
   '/admin/login': typeof AdminLoginRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
@@ -172,11 +172,11 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/_authenticated': typeof AuthenticatedRouteWithChildren
   '/about': typeof AboutRoute
-  '/book': typeof BookRoute
   '/login': typeof LoginRoute
   '/news': typeof NewsRoute
   '/profile': typeof ProfileRoute
   '/signup': typeof SignupRoute
+  '/$username/book': typeof UsernameBookRoute
   '/admin/login': typeof AdminLoginRoute
   '/dashboard/admin': typeof DashboardAdminRoute
   '/dashboard/homeowner': typeof DashboardHomeownerRoute
@@ -194,11 +194,11 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/about'
-    | '/book'
     | '/login'
     | '/news'
     | '/profile'
     | '/signup'
+    | '/$username/book'
     | '/admin/login'
     | '/dashboard/admin'
     | '/dashboard/homeowner'
@@ -214,11 +214,11 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/about'
-    | '/book'
     | '/login'
     | '/news'
     | '/profile'
     | '/signup'
+    | '/$username/book'
     | '/admin/login'
     | '/dashboard/admin'
     | '/dashboard/homeowner'
@@ -234,11 +234,11 @@ export interface FileRouteTypes {
     | '/'
     | '/_authenticated'
     | '/about'
-    | '/book'
     | '/login'
     | '/news'
     | '/profile'
     | '/signup'
+    | '/$username/book'
     | '/admin/login'
     | '/dashboard/admin'
     | '/dashboard/homeowner'
@@ -256,11 +256,11 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AuthenticatedRoute: typeof AuthenticatedRouteWithChildren
   AboutRoute: typeof AboutRoute
-  BookRoute: typeof BookRoute
   LoginRoute: typeof LoginRoute
   NewsRoute: typeof NewsRoute
   ProfileRoute: typeof ProfileRoute
   SignupRoute: typeof SignupRoute
+  UsernameBookRoute: typeof UsernameBookRoute
   AdminLoginRoute: typeof AdminLoginRoute
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardHomeownerRoute: typeof DashboardHomeownerRoute
@@ -297,13 +297,6 @@ declare module '@tanstack/react-router' {
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/book': {
-      id: '/book'
-      path: '/book'
-      fullPath: '/book'
-      preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/about': {
@@ -367,6 +360,13 @@ declare module '@tanstack/react-router' {
       path: '/admin/login'
       fullPath: '/admin/login'
       preLoaderRoute: typeof AdminLoginRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/$username/book': {
+      id: '/$username/book'
+      path: '/$username/book'
+      fullPath: '/$username/book'
+      preLoaderRoute: typeof UsernameBookRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/services/$serviceId/': {
@@ -440,11 +440,11 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AuthenticatedRoute: AuthenticatedRouteWithChildren,
   AboutRoute: AboutRoute,
-  BookRoute: BookRoute,
   LoginRoute: LoginRoute,
   NewsRoute: NewsRoute,
   ProfileRoute: ProfileRoute,
   SignupRoute: SignupRoute,
+  UsernameBookRoute: UsernameBookRoute,
   AdminLoginRoute: AdminLoginRoute,
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardHomeownerRoute: DashboardHomeownerRoute,

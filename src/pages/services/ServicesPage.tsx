@@ -3,6 +3,7 @@ import { Search, MapPin, Star, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
+import { useCurrentUser } from "@/hooks/use-current-user";
 
 const POPULAR = ["Faucet Repair", "AC Maintenance", "Roof Inspection", "Garden Design"];
 
@@ -14,6 +15,11 @@ const TOP_RATED = [
 ];
 
 export function ServicesPage() {
+  const { profile } = useCurrentUser();
+  const bookLink = profile?.username
+    ? { to: "/$username/book", params: { username: profile.username } } as const
+    : { to: "/login", search: { redirect: "/services" } };
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
@@ -111,7 +117,7 @@ export function ServicesPage() {
                 <p className="text-xs text-success">✓ {p.avail}</p>
                 <div className="flex items-center justify-between pt-2">
                   <p className="text-sm"><span className="text-lg font-bold">${p.price}</span><span className="text-xs text-muted-foreground">/hr</span></p>
-                  <Link to="/book" className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
+                  <Link {...bookLink} className="rounded-lg bg-primary px-3 py-1.5 text-xs font-semibold text-primary-foreground hover:opacity-90 transition-opacity">
                     Book Now
                   </Link>
                 </div>
