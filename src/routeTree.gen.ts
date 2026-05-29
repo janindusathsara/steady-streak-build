@@ -28,6 +28,7 @@ import { Route as AdminLoginRouteImport } from './routes/admin.login'
 import { Route as UsernameBookRouteImport } from './routes/$username.book'
 import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
+import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
 import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
@@ -127,6 +128,12 @@ const ServicesServiceIdSubServiceIdRoute =
     path: '/$subServiceId',
     getParentRoute: () => ServicesServiceIdRoute,
   } as any)
+const AuthenticatedUsernameSecurityRoute =
+  AuthenticatedUsernameSecurityRouteImport.update({
+    id: '/$username/security',
+    path: '/$username/security',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameProfileRoute =
   AuthenticatedUsernameProfileRouteImport.update({
     id: '/$username/profile',
@@ -166,6 +173,7 @@ export interface FileRoutesByFullPath {
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
 }
@@ -188,6 +196,7 @@ export interface FileRoutesByTo {
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId': typeof ServicesServiceIdIndexRoute
 }
@@ -213,6 +222,7 @@ export interface FileRoutesById {
   '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/_authenticated/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
 }
@@ -238,6 +248,7 @@ export interface FileRouteTypes {
     | '/$username/dashboard'
     | '/$username/jobs'
     | '/$username/profile'
+    | '/$username/security'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
   fileRoutesByTo: FileRoutesByTo
@@ -260,6 +271,7 @@ export interface FileRouteTypes {
     | '/$username/dashboard'
     | '/$username/jobs'
     | '/$username/profile'
+    | '/$username/security'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId'
   id:
@@ -284,6 +296,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/dashboard'
     | '/_authenticated/$username/jobs'
     | '/_authenticated/$username/profile'
+    | '/_authenticated/$username/security'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
   fileRoutesById: FileRoutesById
@@ -443,6 +456,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ServicesServiceIdSubServiceIdRouteImport
       parentRoute: typeof ServicesServiceIdRoute
     }
+    '/_authenticated/$username/security': {
+      id: '/_authenticated/$username/security'
+      path: '/$username/security'
+      fullPath: '/$username/security'
+      preLoaderRoute: typeof AuthenticatedUsernameSecurityRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/profile': {
       id: '/_authenticated/$username/profile'
       path: '/$username/profile'
@@ -471,12 +491,14 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
   AuthenticatedUsernameJobsRoute: typeof AuthenticatedUsernameJobsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
+  AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameDashboardRoute: AuthenticatedUsernameDashboardRoute,
   AuthenticatedUsernameJobsRoute: AuthenticatedUsernameJobsRoute,
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
+  AuthenticatedUsernameSecurityRoute: AuthenticatedUsernameSecurityRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
