@@ -11,10 +11,10 @@ import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-type Tab = "dashboard" | "security" | "system" | "wallet" | "bookings" | "preferences" | "support";
+type Tab = "dashboard" | "security" | "system" | "wallet" | "bookings" | "active" | "preferences" | "support";
 
-export function HomeownerDashboard() {
-  const [tab, setTab] = useState<Tab>("dashboard");
+export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: Tab } = {}) {
+  const [tab, setTab] = useState<Tab>(initialTab);
   const { profile } = useCurrentUser();
   const navigate = useNavigate();
 
@@ -40,7 +40,9 @@ export function HomeownerDashboard() {
           <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
             <Link to="/services" className="hover:text-foreground transition-colors">Find Services</Link>
             <Link to="/$username/book" params={{ username: username }} className="hover:text-foreground transition-colors">Book Now</Link>
-            <button onClick={() => setTab("wallet")} className="hover:text-foreground transition-colors">My Wallet</button>
+            {username ? (
+              <Link to="/$username/wallet" params={{ username }} className="hover:text-foreground transition-colors">My Wallet</Link>
+            ) : null}
           </nav>
           <div className="flex items-center gap-3">
             <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors">
@@ -70,11 +72,12 @@ export function HomeownerDashboard() {
         {/* Sidebar */}
         <aside className="hidden lg:flex flex-col justify-between sticky top-20 self-start h-[calc(100vh-5rem)] overflow-y-auto pb-4">
           <nav className="space-y-1 text-sm">
-            <SideItem icon={LayoutDashboard} label="Dashboard" active={tab === "dashboard"} onClick={() => setTab("dashboard")} />
-            <SideItem icon={ShieldCheck} label="Security Check" active={tab === "security"} onClick={() => setTab("security")} />
+            <SideLink icon={LayoutDashboard} label="Dashboard" to="/$username/dashboard" username={username} active={tab === "dashboard"} />
+            <SideLink icon={ShieldCheck} label="Security Check" to="/$username/security" username={username} active={tab === "security"} />
             <SideItem icon={Activity} label="System Health" active={tab === "system"} onClick={() => setTab("system")} />
-            <SideItem icon={WalletIcon} label="Wallet" active={tab === "wallet"} onClick={() => setTab("wallet")} />
-            <SideItem icon={CalendarDays} label="Past Bookings" active={tab === "bookings"} onClick={() => setTab("bookings")} />
+            <SideLink icon={WalletIcon} label="Wallet" to="/$username/wallet" username={username} active={tab === "wallet"} />
+            <SideLink icon={Clock} label="Active Bookings" to="/$username/active-bookings" username={username} active={tab === "active"} />
+            <SideLink icon={CalendarDays} label="Past Bookings" to="/$username/past-bookings" username={username} active={tab === "bookings"} />
             <SideItem icon={Settings} label="Preferences" active={tab === "preferences"} onClick={() => setTab("preferences")} />
             <div className="my-3 border-t border-border" />
             <SideItem icon={LifeBuoy} label="Support" active={tab === "support"} onClick={() => setTab("support")} />
@@ -90,6 +93,7 @@ export function HomeownerDashboard() {
           {tab === "system" && <SystemHealthView />}
           {tab === "wallet" && <WalletView />}
           {tab === "bookings" && <PastBookingsView />}
+          {tab === "active" && <ActiveBookingsView />}
           {tab === "preferences" && <PreferencesView />}
           {tab === "support" && <SupportView />}
         </main>
@@ -97,6 +101,20 @@ export function HomeownerDashboard() {
 
       <Footer />
     </div>
+  );
+}
+
+function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings"; username: string; active: boolean }) {
+  const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
+    active ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted"
+  }`;
+  if (!username) {
+    return <span className={cls}><Icon className="h-4 w-4" /> {label}</span>;
+  }
+  return (
+    <Link to={to} params={{ username }} className={cls}>
+      <Icon className="h-4 w-4" /> {label}
+    </Link>
   );
 }
 
@@ -110,6 +128,101 @@ function SideItem({ icon: Icon, label, active, onClick }: { icon: any; label: st
     >
       <Icon className="h-4 w-4" /> {label}
     </button>
+  );
+}
+
+/* ---------------- Active Bookings ---------------- */
+function ActiveBookingsView() {
+  const stats = [
+    { icon: "⚙️", v: "3", l: "Active Now" },
+    { icon: "🚗", v: "1", l: "En Route" },
+    { icon: "🛠️", v: "2", l: "In Progress" },
+    { icon: "💰", v: "Rs. 18,500", l: "In Escrow" },
+  ];
+  const bookings = [
+    {
+      icon: "❄️", iconBg: "bg-blue-100",
+      title: "AC Service & Gas Refill", status: "In Progress", tone: "warn", ref: "#FIN-2026-08195",
+      cat: "❄️ HVAC", date: "Today", time: "09:00 AM", addr: "42 Palm Grove, Colombo 3",
+      provider: "James Wilson", pInit: "JW", phase: "Technician on-site · Refilling gas",
+      eta: "Est. completion: 11:30 AM", price: "Rs. 7,500", pay: "Held in escrow",
+      actions: ["Track Live", "Message"],
+    },
+    {
+      icon: "🔧", iconBg: "bg-amber-100",
+      title: "Kitchen Sink Leak Fix", status: "En Route", tone: "ok", ref: "#FIN-2026-08214",
+      cat: "🔧 Plumbing", date: "Today", time: "01:30 PM", addr: "42 Palm Grove, Colombo 3",
+      provider: "Marcus Sterling", pInit: "MS", phase: "Provider en route · ETA 18 mins",
+      eta: "Arriving by 01:48 PM", price: "Rs. 4,800", pay: "Held in escrow",
+      actions: ["Track Live", "Message"],
+    },
+    {
+      icon: "⚡", iconBg: "bg-yellow-100",
+      title: "Outdoor Light Installation", status: "Scheduled", tone: "info", ref: "#FIN-2026-08230",
+      cat: "⚡ Electrical", date: "Tomorrow", time: "10:00 AM", addr: "42 Palm Grove, Colombo 3",
+      provider: "Elena Rodriguez", pInit: "ER", phase: "Confirmed · Awaiting service date",
+      eta: "Starts in 19 hours", price: "Rs. 6,200", pay: "Held in escrow",
+      actions: ["Reschedule", "Cancel"],
+    },
+  ];
+  const toneCls = (t: string) =>
+    t === "ok" ? "bg-emerald-50 text-emerald-700" :
+    t === "warn" ? "bg-amber-50 text-amber-700" :
+    t === "info" ? "bg-blue-50 text-blue-700" : "bg-muted text-foreground";
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h1 className="text-3xl font-bold">Active Bookings</h1>
+        <p className="mt-1 text-sm text-muted-foreground">Live status of your ongoing and upcoming service jobs</p>
+      </div>
+
+      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        {stats.map((s) => (
+          <div key={s.l} className="rounded-2xl border border-border bg-card p-5">
+            <div className="text-2xl">{s.icon}</div>
+            <p className="mt-2 text-2xl font-bold">{s.v}</p>
+            <p className="text-xs text-muted-foreground">{s.l}</p>
+          </div>
+        ))}
+      </div>
+
+      <div className="space-y-3">
+        {bookings.map((b) => (
+          <div key={b.ref} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center">
+            <div className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-2xl ${b.iconBg}`}>{b.icon}</div>
+            <div className="min-w-0 flex-1">
+              <div className="flex flex-wrap items-center gap-2">
+                <p className="font-bold">{b.title}</p>
+                <span className={`rounded-full px-2 py-0.5 text-[10px] font-bold ${toneCls(b.tone)}`}>{b.status}</span>
+                <span className="text-[11px] text-muted-foreground">{b.ref}</span>
+              </div>
+              <div className="mt-1 flex flex-wrap items-center gap-x-3 gap-y-1 text-[11px] text-muted-foreground">
+                <span>{b.cat}</span>
+                <span>📅 {b.date}</span>
+                <span>{b.time}</span>
+                <span>📍 {b.addr}</span>
+              </div>
+              <div className="mt-2 flex flex-wrap items-center gap-2 text-[11px]">
+                <span className="flex h-6 w-6 items-center justify-center rounded-full bg-foreground text-[9px] font-bold text-background">{b.pInit}</span>
+                <span className="font-semibold">{b.provider}</span>
+                <span className="text-primary">• {b.phase}</span>
+              </div>
+              <p className="mt-1 text-[11px] text-muted-foreground">{b.eta}</p>
+            </div>
+            <div className="text-right">
+              <p className="text-base font-bold">{b.price}</p>
+              <p className="text-[10px] text-muted-foreground">{b.pay}</p>
+              <div className="mt-2 flex flex-wrap justify-end gap-1.5">
+                {b.actions.map((a, i) => (
+                  <button key={a} className={`rounded-lg px-3 py-1.5 text-[10px] font-bold ${i === 0 ? "bg-foreground text-background" : "border border-border text-foreground hover:bg-muted"}`}>{a}</button>
+                ))}
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 }
 
