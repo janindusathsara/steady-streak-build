@@ -34,6 +34,7 @@ import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_auth
 import { Route as AuthenticatedUsernamePastBookingsRouteImport } from './routes/_authenticated.$username.past-bookings'
 import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
+import { Route as AuthenticatedUsernameActiveBookingsRouteImport } from './routes/_authenticated.$username.active-bookings'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -166,6 +167,12 @@ const AuthenticatedUsernameDashboardRoute =
     path: '/$username/dashboard',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameActiveBookingsRoute =
+  AuthenticatedUsernameActiveBookingsRouteImport.update({
+    id: '/$username/active-bookings',
+    path: '/$username/active-bookings',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -184,6 +191,7 @@ export interface FileRoutesByFullPath {
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/news/': typeof NewsIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
@@ -209,6 +217,7 @@ export interface FileRoutesByTo {
   '/news/$id': typeof NewsIdRoute
   '/news': typeof NewsIndexRoute
   '/services': typeof ServicesIndexRoute
+  '/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
@@ -237,6 +246,7 @@ export interface FileRoutesById {
   '/services/$serviceId': typeof ServicesServiceIdRouteWithChildren
   '/news/': typeof NewsIndexRoute
   '/services/': typeof ServicesIndexRoute
+  '/_authenticated/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/_authenticated/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/_authenticated/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
@@ -265,6 +275,7 @@ export interface FileRouteTypes {
     | '/services/$serviceId'
     | '/news/'
     | '/services/'
+    | '/$username/active-bookings'
     | '/$username/dashboard'
     | '/$username/jobs'
     | '/$username/past-bookings'
@@ -290,6 +301,7 @@ export interface FileRouteTypes {
     | '/news/$id'
     | '/news'
     | '/services'
+    | '/$username/active-bookings'
     | '/$username/dashboard'
     | '/$username/jobs'
     | '/$username/past-bookings'
@@ -317,6 +329,7 @@ export interface FileRouteTypes {
     | '/services/$serviceId'
     | '/news/'
     | '/services/'
+    | '/_authenticated/$username/active-bookings'
     | '/_authenticated/$username/dashboard'
     | '/_authenticated/$username/jobs'
     | '/_authenticated/$username/past-bookings'
@@ -524,10 +537,18 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameDashboardRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/active-bookings': {
+      id: '/_authenticated/$username/active-bookings'
+      path: '/$username/active-bookings'
+      fullPath: '/$username/active-bookings'
+      preLoaderRoute: typeof AuthenticatedUsernameActiveBookingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
 interface AuthenticatedRouteChildren {
+  AuthenticatedUsernameActiveBookingsRoute: typeof AuthenticatedUsernameActiveBookingsRoute
   AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
   AuthenticatedUsernameJobsRoute: typeof AuthenticatedUsernameJobsRoute
   AuthenticatedUsernamePastBookingsRoute: typeof AuthenticatedUsernamePastBookingsRoute
@@ -537,6 +558,8 @@ interface AuthenticatedRouteChildren {
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
+  AuthenticatedUsernameActiveBookingsRoute:
+    AuthenticatedUsernameActiveBookingsRoute,
   AuthenticatedUsernameDashboardRoute: AuthenticatedUsernameDashboardRoute,
   AuthenticatedUsernameJobsRoute: AuthenticatedUsernameJobsRoute,
   AuthenticatedUsernamePastBookingsRoute:
