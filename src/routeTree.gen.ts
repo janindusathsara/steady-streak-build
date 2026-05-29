@@ -87,9 +87,9 @@ const ServicesServiceIdRoute = ServicesServiceIdRouteImport.update({
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewsIdRoute = NewsIdRouteImport.update({
-  id: '/$id',
-  path: '/$id',
-  getParentRoute: () => NewsRoute,
+  id: '/news/$id',
+  path: '/news/$id',
+  getParentRoute: () => rootRouteImport,
 } as any)
 const DashboardProviderRoute = DashboardProviderRouteImport.update({
   id: '/dashboard/provider',
@@ -302,6 +302,7 @@ export interface RootRouteChildren {
   DashboardAdminRoute: typeof DashboardAdminRoute
   DashboardHomeownerRoute: typeof DashboardHomeownerRoute
   DashboardProviderRoute: typeof DashboardProviderRoute
+  NewsIdRoute: typeof NewsIdRoute
   ServicesServiceIdRoute: typeof ServicesServiceIdRouteWithChildren
   NewsIndexRoute: typeof NewsIndexRoute
   ServicesIndexRoute: typeof ServicesIndexRoute
@@ -388,10 +389,10 @@ declare module '@tanstack/react-router' {
     }
     '/news/$id': {
       id: '/news/$id'
-      path: '/$id'
+      path: '/news/$id'
       fullPath: '/news/$id'
       preLoaderRoute: typeof NewsIdRouteImport
-      parentRoute: typeof NewsRoute
+      parentRoute: typeof rootRouteImport
     }
     '/dashboard/provider': {
       id: '/dashboard/provider'
@@ -509,6 +510,7 @@ const rootRouteChildren: RootRouteChildren = {
   DashboardAdminRoute: DashboardAdminRoute,
   DashboardHomeownerRoute: DashboardHomeownerRoute,
   DashboardProviderRoute: DashboardProviderRoute,
+  NewsIdRoute: NewsIdRoute,
   ServicesServiceIdRoute: ServicesServiceIdRouteWithChildren,
   NewsIndexRoute: NewsIndexRoute,
   ServicesIndexRoute: ServicesIndexRoute,
