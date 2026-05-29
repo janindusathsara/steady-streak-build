@@ -38,8 +38,8 @@ export function Footer() {
         <div className="mt-10 flex flex-col items-start justify-between gap-3 border-t border-background/10 pt-6 text-xs text-background/50 sm:flex-row sm:items-center">
           <p>© {new Date().getFullYear()} FixItNow. All rights reserved.</p>
           <div className="flex flex-wrap gap-x-6 gap-y-2">
-            <a href="#" className="hover:text-background transition-colors">Terms and Conditions</a>
-            <a href="#" className="hover:text-background transition-colors">Privacy and Policy</a>
+            <Link to="/terms" className="hover:text-background transition-colors">Terms and Conditions</Link>
+            <Link to="/privacy" className="hover:text-background transition-colors">Privacy and Policy</Link>
           </div>
         </div>
       </div>

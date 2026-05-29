@@ -193,7 +193,7 @@ function HomeownerForm() {
 
       <label className="mt-6 flex items-start gap-2.5 text-sm text-muted-foreground">
         <input type="checkbox" checked={form.agree} onChange={(e) => update("agree", e.target.checked)} className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary" />
-        <span>I agree to FixItNow's <a className="font-medium text-primary hover:underline" href="#">Terms of Service</a> and <a className="font-medium text-primary hover:underline" href="#">Privacy Policy</a>. I consent to receiving booking confirmations and service updates.</span>
+        <span>I agree to FixItNow's <Link className="font-medium text-primary hover:underline" to="/terms">Terms of Service</Link> and <Link className="font-medium text-primary hover:underline" to="/privacy">Privacy Policy</Link>. I consent to receiving booking confirmations and service updates.</span>
       </label>
 
       <button type="submit" disabled={loading} className="mt-6 w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity disabled:opacity-60">
@@ -369,7 +369,7 @@ function ProviderForm() {
           <Field label="Confirm Password" required><input required type="password" value={form.confirm} onChange={(e) => update("confirm", e.target.value)} placeholder="Re-enter your password" className={inputCls} /></Field>
           <label className="flex items-start gap-2.5 text-sm text-muted-foreground">
             <input type="checkbox" checked={form.agree} onChange={(e) => update("agree", e.target.checked)} className="mt-1 h-4 w-4 rounded border-border text-primary focus:ring-primary" />
-            <span>I confirm that all information provided is accurate. I agree to FixItNow's <a className="font-medium text-primary hover:underline" href="#">Terms of Service</a>, <a className="font-medium text-primary hover:underline" href="#">Privacy Policy</a>, and Provider Code of Conduct.</span>
+            <span>I confirm that all information provided is accurate. I agree to FixItNow's <Link className="font-medium text-primary hover:underline" to="/terms">Terms of Service</Link>, <Link className="font-medium text-primary hover:underline" to="/privacy">Privacy Policy</Link>, and Provider Code of Conduct.</span>
           </label>
           <button type="submit" disabled={loading} className="w-full rounded-xl bg-primary py-3.5 text-sm font-bold text-primary-foreground shadow-sm hover:opacity-90 transition-opacity disabled:opacity-60">
             {loading ? "Submitting…" : "Submit Application for Review →"}
