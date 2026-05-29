@@ -177,8 +177,8 @@ function LoginPage() {
           </p>
 
           <div className="mt-5 flex justify-center gap-4 border-t border-border pt-4 text-[11px] text-muted-foreground">
-            <a href="#" className="hover:text-foreground">Privacy Policy</a>·
-            <a href="#" className="hover:text-foreground">Terms of Service</a>·
+            <Link to="/privacy" className="hover:text-foreground">Privacy Policy</Link>·
+            <Link to="/terms" className="hover:text-foreground">Terms of Service</Link>·
             <a href="#" className="hover:text-foreground">Help Center</a>
           </div>
         </div>
