@@ -8,7 +8,7 @@ export const Route = createFileRoute("/_authenticated/$username/myservices/")({
 });
 
 function RouteCmp() {
-  const { username } = useParams({ from: "/_authenticated/$username/myservices" });
+  const { username } = useParams({ from: "/_authenticated/$username/myservices/" });
   const { loading, profile } = useCurrentUser();
   const navigate = useNavigate();
   useEffect(() => {
