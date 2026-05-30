@@ -38,6 +38,8 @@ import { Route as AuthenticatedUsernameJobsBookingsRouteImport } from './routes/
 import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 import { Route as AuthenticatedUsernameActiveBookingsRouteImport } from './routes/_authenticated.$username.active-bookings'
+import { Route as AuthenticatedUsernameMyservicesNewRouteImport } from './routes/_authenticated.$username.myservices.new'
+import { Route as AuthenticatedUsernameMyservicesCardIdRouteImport } from './routes/_authenticated.$username.myservices.$cardId'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -194,6 +196,18 @@ const AuthenticatedUsernameActiveBookingsRoute =
     path: '/$username/active-bookings',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameMyservicesNewRoute =
+  AuthenticatedUsernameMyservicesNewRouteImport.update({
+    id: '/new',
+    path: '/new',
+    getParentRoute: () => AuthenticatedUsernameMyservicesRoute,
+  } as any)
+const AuthenticatedUsernameMyservicesCardIdRoute =
+  AuthenticatedUsernameMyservicesCardIdRouteImport.update({
+    id: '/$cardId',
+    path: '/$cardId',
+    getParentRoute: () => AuthenticatedUsernameMyservicesRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -216,7 +230,7 @@ export interface FileRoutesByFullPath {
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
-  '/$username/myservices': typeof AuthenticatedUsernameMyservicesRoute
+  '/$username/myservices': typeof AuthenticatedUsernameMyservicesRouteWithChildren
   '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
@@ -224,6 +238,8 @@ export interface FileRoutesByFullPath {
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
+  '/$username/myservices/$cardId': typeof AuthenticatedUsernameMyservicesCardIdRoute
+  '/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -245,7 +261,7 @@ export interface FileRoutesByTo {
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
-  '/$username/myservices': typeof AuthenticatedUsernameMyservicesRoute
+  '/$username/myservices': typeof AuthenticatedUsernameMyservicesRouteWithChildren
   '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
@@ -253,6 +269,8 @@ export interface FileRoutesByTo {
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId': typeof ServicesServiceIdIndexRoute
+  '/$username/myservices/$cardId': typeof AuthenticatedUsernameMyservicesCardIdRoute
+  '/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -277,7 +295,7 @@ export interface FileRoutesById {
   '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/_authenticated/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/_authenticated/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
-  '/_authenticated/$username/myservices': typeof AuthenticatedUsernameMyservicesRoute
+  '/_authenticated/$username/myservices': typeof AuthenticatedUsernameMyservicesRouteWithChildren
   '/_authenticated/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/_authenticated/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
@@ -285,6 +303,8 @@ export interface FileRoutesById {
   '/_authenticated/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
+  '/_authenticated/$username/myservices/$cardId': typeof AuthenticatedUsernameMyservicesCardIdRoute
+  '/_authenticated/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -317,6 +337,8 @@ export interface FileRouteTypes {
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
+    | '/$username/myservices/$cardId'
+    | '/$username/myservices/new'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -346,6 +368,8 @@ export interface FileRouteTypes {
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId'
+    | '/$username/myservices/$cardId'
+    | '/$username/myservices/new'
   id:
     | '__root__'
     | '/'
@@ -377,6 +401,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
+    | '/_authenticated/$username/myservices/$cardId'
+    | '/_authenticated/$username/myservices/new'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -604,15 +630,47 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameActiveBookingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/myservices/new': {
+      id: '/_authenticated/$username/myservices/new'
+      path: '/new'
+      fullPath: '/$username/myservices/new'
+      preLoaderRoute: typeof AuthenticatedUsernameMyservicesNewRouteImport
+      parentRoute: typeof AuthenticatedUsernameMyservicesRoute
+    }
+    '/_authenticated/$username/myservices/$cardId': {
+      id: '/_authenticated/$username/myservices/$cardId'
+      path: '/$cardId'
+      fullPath: '/$username/myservices/$cardId'
+      preLoaderRoute: typeof AuthenticatedUsernameMyservicesCardIdRouteImport
+      parentRoute: typeof AuthenticatedUsernameMyservicesRoute
+    }
   }
 }
+
+interface AuthenticatedUsernameMyservicesRouteChildren {
+  AuthenticatedUsernameMyservicesCardIdRoute: typeof AuthenticatedUsernameMyservicesCardIdRoute
+  AuthenticatedUsernameMyservicesNewRoute: typeof AuthenticatedUsernameMyservicesNewRoute
+}
+
+const AuthenticatedUsernameMyservicesRouteChildren: AuthenticatedUsernameMyservicesRouteChildren =
+  {
+    AuthenticatedUsernameMyservicesCardIdRoute:
+      AuthenticatedUsernameMyservicesCardIdRoute,
+    AuthenticatedUsernameMyservicesNewRoute:
+      AuthenticatedUsernameMyservicesNewRoute,
+  }
+
+const AuthenticatedUsernameMyservicesRouteWithChildren =
+  AuthenticatedUsernameMyservicesRoute._addFileChildren(
+    AuthenticatedUsernameMyservicesRouteChildren,
+  )
 
 interface AuthenticatedRouteChildren {
   AuthenticatedUsernameActiveBookingsRoute: typeof AuthenticatedUsernameActiveBookingsRoute
   AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
   AuthenticatedUsernameJobsRoute: typeof AuthenticatedUsernameJobsRoute
   AuthenticatedUsernameJobsBookingsRoute: typeof AuthenticatedUsernameJobsBookingsRoute
-  AuthenticatedUsernameMyservicesRoute: typeof AuthenticatedUsernameMyservicesRoute
+  AuthenticatedUsernameMyservicesRoute: typeof AuthenticatedUsernameMyservicesRouteWithChildren
   AuthenticatedUsernameNewJobsRoute: typeof AuthenticatedUsernameNewJobsRoute
   AuthenticatedUsernamePastBookingsRoute: typeof AuthenticatedUsernamePastBookingsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
@@ -627,7 +685,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameJobsRoute: AuthenticatedUsernameJobsRoute,
   AuthenticatedUsernameJobsBookingsRoute:
     AuthenticatedUsernameJobsBookingsRoute,
-  AuthenticatedUsernameMyservicesRoute: AuthenticatedUsernameMyservicesRoute,
+  AuthenticatedUsernameMyservicesRoute:
+    AuthenticatedUsernameMyservicesRouteWithChildren,
   AuthenticatedUsernameNewJobsRoute: AuthenticatedUsernameNewJobsRoute,
   AuthenticatedUsernamePastBookingsRoute:
     AuthenticatedUsernamePastBookingsRoute,

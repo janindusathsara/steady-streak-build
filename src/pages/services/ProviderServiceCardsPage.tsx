@@ -1,91 +1,25 @@
 import { useState } from "react";
-import { Plus, AlertTriangle, X } from "lucide-react";
+import { useNavigate } from "@tanstack/react-router";
+import { Plus, AlertTriangle } from "lucide-react";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
-
-type ServiceCard = {
-  id: string;
-  title: string;
-  priceLine: string;
-  description: string;
-  published: boolean;
-  emoji: string;
-  bg: string;
-};
-
-const initialCards: ServiceCard[] = [
-  {
-    id: "1",
-    title: "Emergency Plumbing",
-    priceLine: "Rs. 2,800 / hr · Min Rs. 1,500",
-    description:
-      "24/7 emergency plumbing for burst pipes, leaks, blockages. Arrives within 60 min. 30-day guarantee.",
-    published: true,
-    emoji: "🔧",
-    bg: "from-amber-900 to-amber-700",
-  },
-  {
-    id: "2",
-    title: "Faucet & Tap Repair",
-    priceLine: "Rs. 1,800 / job · Fixed price",
-    description:
-      "Full faucet repair or replacement. Kitchen, bathroom, garden taps. 14-day workmanship guarantee.",
-    published: true,
-    emoji: "🚿",
-    bg: "from-slate-800 to-slate-600",
-  },
-  {
-    id: "3",
-    title: "Pipe Replacement",
-    priceLine: "Rs. 3,200 / hr + materials",
-    description:
-      "Complete pipe inspection, repair or replacement. UPVC, copper and PVC. Pressure testing included. 1-year guarantee.",
-    published: true,
-    emoji: "🪒",
-    bg: "from-emerald-900 to-emerald-700",
-  },
-  {
-    id: "4",
-    title: "Water Heater Service",
-    priceLine: "Rs. 4,500 / job · Incl. fitting",
-    description:
-      "Solar and electric water heater installation and servicing. All brands. 2-year warranty.",
-    published: false,
-    emoji: "💧",
-    bg: "from-slate-400 to-slate-300",
-  },
-];
+import { useCurrentUser } from "@/hooks/use-current-user";
+import { cardsStore, useCards, type ServiceCard } from "@/lib/service-cards-store";
 
 export default function ProviderServiceCardsPage() {
-  const [cards, setCards] = useState<ServiceCard[]>(initialCards);
+  const navigate = useNavigate();
+  const { profile } = useCurrentUser();
+  const username = profile?.username ?? "";
+  const cards = useCards();
   const [confirmDelete, setConfirmDelete] = useState<ServiceCard | null>(null);
-  const [editing, setEditing] = useState<ServiceCard | null>(null);
-  const [creating, setCreating] = useState(false);
-
-  const togglePublish = (id: string) =>
-    setCards((c) => c.map((x) => (x.id === id ? { ...x, published: !x.published } : x)));
 
   const handleDelete = () => {
     if (!confirmDelete) return;
-    setCards((c) => c.filter((x) => x.id !== confirmDelete.id));
+    cardsStore.remove(confirmDelete.id);
     toast.success(`Deleted "${confirmDelete.title}"`);
     setConfirmDelete(null);
-  };
-
-  const handleSave = (card: ServiceCard) => {
-    setCards((c) => {
-      const exists = c.find((x) => x.id === card.id);
-      if (exists) return c.map((x) => (x.id === card.id ? card : x));
-      return [...c, card];
-    });
-    toast.success(exists(cards, card.id) ? "Card updated" : "Card created");
-    setEditing(null);
-    setCreating(false);
   };
 
   return (
@@ -98,7 +32,7 @@ export default function ProviderServiceCardsPage() {
           </p>
         </div>
         <Button
-          onClick={() => setCreating(true)}
+          onClick={() => navigate({ to: "/$username/myservices/new", params: { username } })}
           className="rounded-xl bg-foreground px-4 py-5 font-semibold text-background hover:bg-foreground/90"
         >
           <Plus className="mr-1 h-4 w-4" /> Create New Card
@@ -135,7 +69,7 @@ export default function ProviderServiceCardsPage() {
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={card.published}
-                    onCheckedChange={() => togglePublish(card.id)}
+                    onCheckedChange={() => cardsStore.togglePublish(card.id)}
                   />
                   <span className="text-xs font-medium text-muted-foreground">
                     {card.published ? "Published" : "Hidden"}
@@ -144,7 +78,12 @@ export default function ProviderServiceCardsPage() {
                 <div className="flex gap-2">
                   <Button
                     size="sm"
-                    onClick={() => setEditing(card)}
+                    onClick={() =>
+                      navigate({
+                        to: "/$username/myservices/$cardId",
+                        params: { username, cardId: card.id },
+                      })
+                    }
                     className="h-8 rounded-lg bg-foreground px-3 text-xs text-background hover:bg-foreground/90"
                   >
                     Edit
@@ -193,115 +132,6 @@ export default function ProviderServiceCardsPage() {
           </div>
         </div>
       )}
-
-      {(editing || creating) && (
-        <CardEditor
-          initial={editing}
-          onClose={() => {
-            setEditing(null);
-            setCreating(false);
-          }}
-          onSave={handleSave}
-        />
-      )}
     </ProviderLayout>
-  );
-}
-
-function exists(cards: ServiceCard[], id: string) {
-  return cards.some((c) => c.id === id);
-}
-
-function CardEditor({
-  initial,
-  onClose,
-  onSave,
-}: {
-  initial: ServiceCard | null;
-  onClose: () => void;
-  onSave: (c: ServiceCard) => void;
-}) {
-  const [form, setForm] = useState<ServiceCard>(
-    initial ?? {
-      id: crypto.randomUUID(),
-      title: "",
-      priceLine: "",
-      description: "",
-      published: true,
-      emoji: "🛠️",
-      bg: "from-slate-800 to-slate-600",
-    }
-  );
-
-  return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4">
-      <div className="w-full max-w-lg rounded-2xl bg-card p-6 shadow-xl">
-        <div className="flex items-center justify-between">
-          <h2 className="text-lg font-bold">
-            {initial ? "Edit Service Card" : "New Service Card"}
-          </h2>
-          <button onClick={onClose} className="rounded-full p-1 hover:bg-muted">
-            <X className="h-4 w-4" />
-          </button>
-        </div>
-        <div className="mt-4 space-y-3">
-          <div>
-            <Label>Title</Label>
-            <Input
-              value={form.title}
-              onChange={(e) => setForm({ ...form, title: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label>Price line</Label>
-            <Input
-              value={form.priceLine}
-              placeholder="Rs. 2,800 / hr · Min Rs. 1,500"
-              onChange={(e) => setForm({ ...form, priceLine: e.target.value })}
-            />
-          </div>
-          <div>
-            <Label>Description</Label>
-            <Textarea
-              rows={3}
-              value={form.description}
-              onChange={(e) => setForm({ ...form, description: e.target.value })}
-            />
-          </div>
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label>Emoji</Label>
-              <Input
-                value={form.emoji}
-                onChange={(e) => setForm({ ...form, emoji: e.target.value })}
-              />
-            </div>
-            <div className="flex items-end gap-2">
-              <Switch
-                checked={form.published}
-                onCheckedChange={(v) => setForm({ ...form, published: v })}
-              />
-              <span className="pb-1 text-sm font-medium">
-                {form.published ? "Published" : "Hidden"}
-              </span>
-            </div>
-          </div>
-        </div>
-        <div className="mt-6 flex justify-end gap-2">
-          <Button variant="outline" onClick={onClose}>
-            Cancel
-          </Button>
-          <Button
-            onClick={() => {
-              if (!form.title.trim()) return toast.error("Title required");
-              onSave(form);
-            }}
-            className="bg-foreground text-background hover:bg-foreground/90"
-          >
-            Save
-          </Button>
-        </div>
-      </div>
-    </div>
   );
 }
