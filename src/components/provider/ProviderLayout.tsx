@@ -196,7 +196,7 @@ function NavLink({
     dashboard: "/$username/dashboard",
     "jobs-bookings": "/$username/jobs-bookings",
     "new-jobs": "/$username/new-jobs",
-    "service-cards": "/$username/dashboard",
+    "service-cards": "/$username/myservices",
     "update-profile": "/$username/profile",
     wallet: "/$username/dashboard",
     reviews: "/$username/dashboard",
