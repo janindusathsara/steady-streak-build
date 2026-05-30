@@ -129,11 +129,14 @@ export function ProviderLayout({ active, newRequestsCount = 0, reviewsCount = 0,
             </NavGroup>
 
             <NavGroup label="Finances">
-              <NavStub icon={Wallet} label="Wallet & Earnings" />
+              <NavLink to="wallet" active={active} username={username} icon={Wallet} label="Wallet & Earnings" />
             </NavGroup>
 
             <NavGroup label="Performance">
-              <NavStub
+              <NavLink
+                to="reviews"
+                active={active}
+                username={username}
                 icon={Star}
                 label="Reviews & History"
                 badge={reviewsCount > 0 ? reviewsCount : undefined}
@@ -198,8 +201,8 @@ function NavLink({
     "new-jobs": "/$username/new-jobs",
     "service-cards": "/$username/myservices",
     "update-profile": "/$username/profile",
-    wallet: "/$username/dashboard",
-    reviews: "/$username/dashboard",
+    wallet: "/$username/wallet",
+    reviews: "/$username/reviews",
     support: "/$username/dashboard",
   };
   return (

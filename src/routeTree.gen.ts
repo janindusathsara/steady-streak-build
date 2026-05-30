@@ -30,6 +30,7 @@ import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$s
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 import { Route as AuthenticatedUsernameWalletRouteImport } from './routes/_authenticated.$username.wallet'
 import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
+import { Route as AuthenticatedUsernameReviewsRouteImport } from './routes/_authenticated.$username.reviews'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
 import { Route as AuthenticatedUsernamePastBookingsRouteImport } from './routes/_authenticated.$username.past-bookings'
 import { Route as AuthenticatedUsernameNewJobsRouteImport } from './routes/_authenticated.$username.new-jobs'
@@ -148,6 +149,12 @@ const AuthenticatedUsernameSecurityRoute =
     path: '/$username/security',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameReviewsRoute =
+  AuthenticatedUsernameReviewsRouteImport.update({
+    id: '/$username/reviews',
+    path: '/$username/reviews',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameProfileRoute =
   AuthenticatedUsernameProfileRouteImport.update({
     id: '/$username/profile',
@@ -234,6 +241,7 @@ export interface FileRoutesByFullPath {
   '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
@@ -265,6 +273,7 @@ export interface FileRoutesByTo {
   '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
@@ -299,6 +308,7 @@ export interface FileRoutesById {
   '/_authenticated/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/_authenticated/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/_authenticated/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/_authenticated/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
@@ -333,6 +343,7 @@ export interface FileRouteTypes {
     | '/$username/new-jobs'
     | '/$username/past-bookings'
     | '/$username/profile'
+    | '/$username/reviews'
     | '/$username/security'
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
@@ -364,6 +375,7 @@ export interface FileRouteTypes {
     | '/$username/new-jobs'
     | '/$username/past-bookings'
     | '/$username/profile'
+    | '/$username/reviews'
     | '/$username/security'
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
@@ -397,6 +409,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/new-jobs'
     | '/_authenticated/$username/past-bookings'
     | '/_authenticated/$username/profile'
+    | '/_authenticated/$username/reviews'
     | '/_authenticated/$username/security'
     | '/_authenticated/$username/wallet'
     | '/services/$serviceId/$subServiceId'
@@ -574,6 +587,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameSecurityRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/reviews': {
+      id: '/_authenticated/$username/reviews'
+      path: '/$username/reviews'
+      fullPath: '/$username/reviews'
+      preLoaderRoute: typeof AuthenticatedUsernameReviewsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/profile': {
       id: '/_authenticated/$username/profile'
       path: '/$username/profile'
@@ -674,6 +694,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameNewJobsRoute: typeof AuthenticatedUsernameNewJobsRoute
   AuthenticatedUsernamePastBookingsRoute: typeof AuthenticatedUsernamePastBookingsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
+  AuthenticatedUsernameReviewsRoute: typeof AuthenticatedUsernameReviewsRoute
   AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
   AuthenticatedUsernameWalletRoute: typeof AuthenticatedUsernameWalletRoute
 }
@@ -691,6 +712,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernamePastBookingsRoute:
     AuthenticatedUsernamePastBookingsRoute,
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
+  AuthenticatedUsernameReviewsRoute: AuthenticatedUsernameReviewsRoute,
   AuthenticatedUsernameSecurityRoute: AuthenticatedUsernameSecurityRoute,
   AuthenticatedUsernameWalletRoute: AuthenticatedUsernameWalletRoute,
 }
