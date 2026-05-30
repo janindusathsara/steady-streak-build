@@ -104,12 +104,9 @@ export function ProviderProfilePage() {
                 <Trash2 className="h-3.5 w-3.5" /> Delete Account
               </button>
             </section>
-          </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </ProviderLayout>
   );
 }
 
