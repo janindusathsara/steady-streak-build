@@ -32,6 +32,8 @@ import { Route as AuthenticatedUsernameWalletRouteImport } from './routes/_authe
 import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
 import { Route as AuthenticatedUsernamePastBookingsRouteImport } from './routes/_authenticated.$username.past-bookings'
+import { Route as AuthenticatedUsernameNewJobsRouteImport } from './routes/_authenticated.$username.new-jobs'
+import { Route as AuthenticatedUsernameJobsBookingsRouteImport } from './routes/_authenticated.$username.jobs-bookings'
 import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 import { Route as AuthenticatedUsernameActiveBookingsRouteImport } from './routes/_authenticated.$username.active-bookings'
@@ -155,6 +157,18 @@ const AuthenticatedUsernamePastBookingsRoute =
     path: '/$username/past-bookings',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameNewJobsRoute =
+  AuthenticatedUsernameNewJobsRouteImport.update({
+    id: '/$username/new-jobs',
+    path: '/$username/new-jobs',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsernameJobsBookingsRoute =
+  AuthenticatedUsernameJobsBookingsRouteImport.update({
+    id: '/$username/jobs-bookings',
+    path: '/$username/jobs-bookings',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameJobsRoute =
   AuthenticatedUsernameJobsRouteImport.update({
     id: '/$username/jobs',
@@ -194,6 +208,8 @@ export interface FileRoutesByFullPath {
   '/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
+  '/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
+  '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
@@ -220,6 +236,8 @@ export interface FileRoutesByTo {
   '/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
+  '/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
+  '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
@@ -249,6 +267,8 @@ export interface FileRoutesById {
   '/_authenticated/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
   '/_authenticated/$username/jobs': typeof AuthenticatedUsernameJobsRoute
+  '/_authenticated/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
+  '/_authenticated/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/_authenticated/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
@@ -278,6 +298,8 @@ export interface FileRouteTypes {
     | '/$username/active-bookings'
     | '/$username/dashboard'
     | '/$username/jobs'
+    | '/$username/jobs-bookings'
+    | '/$username/new-jobs'
     | '/$username/past-bookings'
     | '/$username/profile'
     | '/$username/security'
@@ -304,6 +326,8 @@ export interface FileRouteTypes {
     | '/$username/active-bookings'
     | '/$username/dashboard'
     | '/$username/jobs'
+    | '/$username/jobs-bookings'
+    | '/$username/new-jobs'
     | '/$username/past-bookings'
     | '/$username/profile'
     | '/$username/security'
@@ -332,6 +356,8 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/active-bookings'
     | '/_authenticated/$username/dashboard'
     | '/_authenticated/$username/jobs'
+    | '/_authenticated/$username/jobs-bookings'
+    | '/_authenticated/$username/new-jobs'
     | '/_authenticated/$username/past-bookings'
     | '/_authenticated/$username/profile'
     | '/_authenticated/$username/security'
@@ -523,6 +549,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernamePastBookingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/new-jobs': {
+      id: '/_authenticated/$username/new-jobs'
+      path: '/$username/new-jobs'
+      fullPath: '/$username/new-jobs'
+      preLoaderRoute: typeof AuthenticatedUsernameNewJobsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/$username/jobs-bookings': {
+      id: '/_authenticated/$username/jobs-bookings'
+      path: '/$username/jobs-bookings'
+      fullPath: '/$username/jobs-bookings'
+      preLoaderRoute: typeof AuthenticatedUsernameJobsBookingsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/jobs': {
       id: '/_authenticated/$username/jobs'
       path: '/$username/jobs'
@@ -551,6 +591,8 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameActiveBookingsRoute: typeof AuthenticatedUsernameActiveBookingsRoute
   AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
   AuthenticatedUsernameJobsRoute: typeof AuthenticatedUsernameJobsRoute
+  AuthenticatedUsernameJobsBookingsRoute: typeof AuthenticatedUsernameJobsBookingsRoute
+  AuthenticatedUsernameNewJobsRoute: typeof AuthenticatedUsernameNewJobsRoute
   AuthenticatedUsernamePastBookingsRoute: typeof AuthenticatedUsernamePastBookingsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
   AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
@@ -562,6 +604,9 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedUsernameActiveBookingsRoute,
   AuthenticatedUsernameDashboardRoute: AuthenticatedUsernameDashboardRoute,
   AuthenticatedUsernameJobsRoute: AuthenticatedUsernameJobsRoute,
+  AuthenticatedUsernameJobsBookingsRoute:
+    AuthenticatedUsernameJobsBookingsRoute,
+  AuthenticatedUsernameNewJobsRoute: AuthenticatedUsernameNewJobsRoute,
   AuthenticatedUsernamePastBookingsRoute:
     AuthenticatedUsernamePastBookingsRoute,
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
