@@ -3,7 +3,7 @@ import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ProviderServiceCardsPage from "@/pages/services/ProviderServiceCardsPage";
 
-export const Route = createFileRoute("/_authenticated/$username/myservices")({
+export const Route = createFileRoute("/_authenticated/$username/myservices/")({
   component: RouteCmp,
 });
 
