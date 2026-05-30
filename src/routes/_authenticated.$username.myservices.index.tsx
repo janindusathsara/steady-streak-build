@@ -3,12 +3,12 @@ import { useEffect } from "react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import ProviderServiceCardsPage from "@/pages/services/ProviderServiceCardsPage";
 
-export const Route = createFileRoute("/_authenticated/$username/myservices")({
+export const Route = createFileRoute("/_authenticated/$username/myservices/")({
   component: RouteCmp,
 });
 
 function RouteCmp() {
-  const { username } = useParams({ from: "/_authenticated/$username/myservices" });
+  const { username } = useParams({ from: "/_authenticated/$username/myservices/" });
   const { loading, profile } = useCurrentUser();
   const navigate = useNavigate();
   useEffect(() => {
