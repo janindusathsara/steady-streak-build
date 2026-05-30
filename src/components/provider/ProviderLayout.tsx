@@ -201,8 +201,8 @@ function NavLink({
     "new-jobs": "/$username/new-jobs",
     "service-cards": "/$username/myservices",
     "update-profile": "/$username/profile",
-    wallet: "/$username/dashboard",
-    reviews: "/$username/dashboard",
+    wallet: "/$username/wallet",
+    reviews: "/$username/reviews",
     support: "/$username/dashboard",
   };
   return (
