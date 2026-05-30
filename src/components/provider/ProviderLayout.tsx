@@ -118,7 +118,7 @@ export function ProviderLayout({ active, newRequestsCount = 0, reviewsCount = 0,
             </NavGroup>
 
             <NavGroup label="Profile">
-              <NavStub icon={IdCard} label="Service Cards" />
+              <NavLink to="service-cards" active={active} username={username} icon={IdCard} label="Service Cards" />
               <NavLink
                 to="update-profile"
                 active={active}
@@ -196,7 +196,7 @@ function NavLink({
     dashboard: "/$username/dashboard",
     "jobs-bookings": "/$username/jobs-bookings",
     "new-jobs": "/$username/new-jobs",
-    "service-cards": "/$username/dashboard",
+    "service-cards": "/$username/myservices",
     "update-profile": "/$username/profile",
     wallet: "/$username/dashboard",
     reviews: "/$username/dashboard",
