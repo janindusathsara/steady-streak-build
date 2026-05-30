@@ -1,6 +1,6 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Wrench, Bell, LogOut, Trash2 } from "lucide-react";
-import { Footer } from "@/components/common/Footer";
+import { useNavigate } from "@tanstack/react-router";
+import { LogOut, Trash2 } from "lucide-react";
+import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -19,50 +19,16 @@ export function ProviderProfilePage() {
   };
 
   return (
-    <div className="min-h-screen bg-background text-foreground flex flex-col">
-      {/* Header — matches ProviderDashboard */}
-      <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
-            <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
-          </Link>
-          <nav className="hidden gap-6 text-sm text-muted-foreground md:flex">
-            {username && (
-              <Link to="/$username/dashboard" params={{ username }} className="hover:text-foreground">Dashboard</Link>
-            )}
-            <a href="#" className="hover:text-foreground">Jobs</a>
-            <a href="#" className="hover:text-foreground">Earnings</a>
-            <a href="#" className="hover:text-foreground">Reviews</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <button className="rounded-full p-2 hover:bg-muted"><Bell className="h-5 w-5 text-muted-foreground" /></button>
-            {username ? (
-              <Link
-                to="/$username/profile"
-                params={{ username }}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground hover:opacity-90"
-                aria-label="My profile"
-              >
-                {initials}
-              </Link>
-            ) : (
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{initials}</div>
-            )}
-          </div>
+    <ProviderLayout active="update-profile" newRequestsCount={2} reviewsCount={128}>
+      <div className="flex items-start justify-between gap-4">
+        <div>
+          <h1 className="text-3xl font-bold">My Profile</h1>
+          <p className="mt-1 text-sm text-muted-foreground">Manage your provider information and account settings</p>
         </div>
-      </header>
-
-      <main className="mx-auto w-full max-w-6xl flex-1 px-5 py-8">
-        <div className="flex items-start justify-between gap-4">
-          <div>
-            <h1 className="text-3xl font-bold">My Profile</h1>
-            <p className="mt-1 text-sm text-muted-foreground">Manage your provider information and account settings</p>
-          </div>
-          <button onClick={handleLogout} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs font-semibold text-destructive hover:bg-muted">
-            <LogOut className="h-3.5 w-3.5" /> Logout
-          </button>
-        </div>
+        <button onClick={handleLogout} className="inline-flex items-center gap-1.5 rounded-xl border border-border px-3 py-2 text-xs font-semibold text-destructive hover:bg-muted">
+          <LogOut className="h-3.5 w-3.5" /> Logout
+        </button>
+      </div>
 
         <div className="mt-6 grid gap-6 lg:grid-cols-[280px_1fr]">
           <div className="rounded-2xl border border-border bg-card p-6 text-center">
@@ -138,12 +104,9 @@ export function ProviderProfilePage() {
                 <Trash2 className="h-3.5 w-3.5" /> Delete Account
               </button>
             </section>
-          </div>
         </div>
-      </main>
-
-      <Footer />
-    </div>
+      </div>
+    </ProviderLayout>
   );
 }
 
