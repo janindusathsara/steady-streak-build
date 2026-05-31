@@ -1,6 +1,7 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
 import { ProviderReviewsPage } from "@/pages/reviews/ProviderReviewsPage";
+import { AdminReviewsPage } from "@/pages/admin/AdminReviewsPage";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { userDashboardPath } from "@/lib/role";
 
@@ -19,9 +20,8 @@ function ReviewsRoute() {
   }, [loading, profile, username, navigate]);
   if (loading || !profile) return <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Loading…</div>;
   if (profile.username.toLowerCase() !== username.toLowerCase()) return null;
-  if (profile.role !== "provider") {
-    navigate({ to: userDashboardPath(profile.username), replace: true });
-    return null;
-  }
-  return <ProviderReviewsPage />;
+  if (profile.role === "admin") return <AdminReviewsPage />;
+  if (profile.role === "provider") return <ProviderReviewsPage />;
+  navigate({ to: userDashboardPath(profile.username), replace: true });
+  return null;
 }
