@@ -162,12 +162,12 @@ function NavGroup({ label, children }: { label: string; children: ReactNode }) {
 
 const pathMap: Record<AdminNavKey, string> = {
   dashboard: "/$username/dashboard",
-  monthly: "/$username/dashboard",
+  monthly: "/$username/overview",
   homeowners: "/$username/dashboard",
   providers: "/$username/dashboard",
   "provider-requests": "/$username/dashboard",
   "category-requests": "/$username/dashboard",
-  news: "/$username/dashboard",
+  news: "/$username/update-news",
   reviews: "/$username/reviews",
   security: "/$username/dashboard",
   "system-health": "/$username/dashboard",
