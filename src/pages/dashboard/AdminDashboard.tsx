@@ -1,218 +1,169 @@
-import { Link, useNavigate } from "@tanstack/react-router";
-import { Activity, Users, DollarSign, AlertTriangle, ShieldCheck, RefreshCw, Bell, Wrench, LogOut } from "lucide-react";
-import { Footer } from "@/components/common/Footer";
-import { useCurrentUser } from "@/hooks/use-current-user";
-import { supabase } from "@/integrations/supabase/client";
-import { toast } from "sonner";
+import { AdminLayout } from "@/components/admin/AdminLayout";
+import { Home, Users, FileText, DollarSign, Check, X, Leaf, ShieldCheck, Bug } from "lucide-react";
 
-const logs = [
-  { time: "14:20:11", tag: "SUCCESS", src: "@BK-01", text: "Backup cycle complete (Cluster A)", tone: "text-success" },
-  { time: "14:20:45", tag: "INFO", src: "@AUTH-P", text: "User Alexander_J logged in via Auth-01", tone: "text-primary" },
-  { time: "14:21:02", tag: "WARN", src: "@DB-01", text: "Latency spike detected in MySQL-Primary", tone: "text-primary" },
-  { time: "14:21:15", tag: "SUCCESS", src: "@GATEWAY", text: "Auto-scaling: Added 2 nodes to API-Fleet", tone: "text-success" },
-  { time: "14:22:30", tag: "ERROR", src: "@CERT-M", text: "SSL Certificate expiring in 48h for repair-svc.internal", tone: "text-destructive" },
+const providerRegs = [
+  { initials: "KP", name: "Kamal Perera", meta: "Plumbing · Colombo · 2h ago" },
+  { initials: "SR", name: "Saman Ranasinghe", meta: "Electrical · Kandy · 5h ago" },
+  { initials: "NF", name: "Nisha Fernando", meta: "HVAC · Gampaha · 1d ago" },
 ];
 
-const dbs = [
-  { name: "MySQL-Primary-01", kind: "READ/WRITE", load: "42%", status: "ONLINE" },
-  { name: "MySQL-Replica-01", kind: "READ ONLY", load: "12%", status: "ONLINE" },
-  { name: "Redis-Cache-Main", kind: "MEMORY", load: "8%", status: "ONLINE" },
+const categoryReqs = [
+  { icon: Leaf, tint: "oklch(0.65 0.14 145)", name: "Garden & Landscaping", meta: "Ruwan Silva · 3h ago · 12 waiting" },
+  { icon: ShieldCheck, tint: "oklch(0.6 0.14 250)", name: "Smart Home & Security", meta: "Dinesh Jayawardena · 1d ago · 8 waiting" },
+  { icon: Bug, tint: "oklch(0.6 0.16 30)", name: "Pest Control", meta: "Amara Dissanayake · 2d ago · 6 waiting" },
 ];
 
-const apis = [
-  { name: "API-Gateway-North", kind: "EDGE", load: "58%", status: "ONLINE" },
-  { name: "API-Gateway-South", kind: "EDGE", load: "0%", status: "FAULT", bad: true },
-  { name: "Worker-Pool-B", kind: "BACKGROUND", load: "33%", status: "ONLINE" },
+const activity = [
+  { dot: "success", text: <>✅ Provider <b>Marcus Sterling</b> approved · Plumbing</>, time: "8 min ago" },
+  { dot: "primary", text: <>⚡ New provider — <b>Kamal Perera</b> awaiting review</>, time: "2 hr ago" },
+  { dot: "info", text: <>📂 Category request — <b>Garden & Landscaping</b></>, time: "3 hr ago" },
+  { dot: "destructive", text: <>❌ Provider <b>Thilanka Bandara</b> rejected — incomplete docs</>, time: "6 hr ago" },
+  { dot: "success", text: <>✅ Category <b>Pool Cleaning</b> approved & went live</>, time: "Yesterday" },
+  { dot: "info", text: <>🏠 New homeowner — <b>Priya Mendis</b> registered</>, time: "Yesterday" },
+];
+
+const metrics = [
+  { label: "Core CPU Load", value: "32%", pct: 32, tone: "success" },
+  { label: "API Latency", value: "14ms", pct: 18, tone: "success" },
+  { label: "DB Utilization", value: "68%", pct: 68, tone: "primary" },
+  { label: "Storage Used", value: "72%", pct: 72, tone: "primary" },
+  { label: "Active Repairs", value: "89%", pct: 89, tone: "primary" },
 ];
 
 export function AdminDashboard() {
-  const { profile } = useCurrentUser();
-  const navigate = useNavigate();
-  const username = profile?.username ?? "";
-  const displayName = profile?.display_name ?? username ?? "Admin";
-  const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "A";
-
-  const handleLogout = async () => {
-    await supabase.auth.signOut();
-    toast.success("Signed out");
-    navigate({ to: "/" });
-  };
+  const today = new Date().toLocaleDateString("en-US", { weekday: "long", day: "numeric", month: "long", year: "numeric" });
 
   return (
-    <div className="min-h-screen bg-foreground text-background">
-      <header className="sticky top-0 z-30 border-b border-background/10 bg-foreground/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />
-            <span className="text-base font-bold tracking-tight sm:text-lg">FixItNow</span>
-          </Link>
-          <nav className="hidden gap-6 text-sm text-background/70 md:flex">
-            <a href="#" className="hover:text-background">Find Services</a>
-            <a href="#" className="hover:text-background">My Wallet</a>
-            <a href="#" className="hover:text-background">Go Gold</a>
-          </nav>
-          <div className="flex items-center gap-3">
-            <button className="relative rounded-full p-2 hover:bg-background/10">
-              <Bell className="h-5 w-5 text-background/70" />
-              <span className="absolute right-1.5 top-1.5 h-2 w-2 rounded-full bg-primary" />
-            </button>
-            <div className="flex items-center gap-2">
-              <div className="hidden text-right sm:block">
-                <p className="text-xs font-semibold leading-tight">{displayName}</p>
-                <p className="text-[10px] text-background/60 leading-tight capitalize">{profile?.role ?? "Admin"}</p>
-              </div>
-              {username ? (
-                <Link to="/$username/profile" params={{ username }} className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground hover:opacity-90" aria-label="My profile">
-                  {initials}
-                </Link>
-              ) : (
-                <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary text-xs font-bold text-primary-foreground">{initials}</div>
-              )}
-            </div>
-          </div>
+    <AdminLayout active="dashboard">
+      <div className="space-y-5">
+        {/* Title */}
+        <div>
+          <h1 className="text-3xl font-bold">Admin Dashboard</h1>
+          <p className="mt-1 text-sm text-background/60">Platform overview · FixItNow Control Centre · {today}</p>
         </div>
-      </header>
 
+        {/* Stat cards */}
+        <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+          <StatCard icon={Home} tint="oklch(0.6 0.14 250)" label="HOMEOWNERS" value="1,284" sub="↑ 24 this week" />
+          <StatCard icon={Users} tint="oklch(0.65 0.14 145)" label="ACTIVE PROVIDERS" value="142" sub="↑ 6 this week" />
+          <StatCard icon={FileText} tint="oklch(0.6 0.16 30)" label="PENDING REQUESTS" value="8" sub="🏆 5 provider · 3 cat" />
+          <StatCard icon={DollarSign} tint="var(--primary)" label="REVENUE TODAY" value="Rs. 84K" sub="↑ 8% vs yesterday" />
+        </div>
 
-
-
-      <div className="mx-auto flex max-w-7xl gap-6 px-5 py-6">
-        {/* Sidebar */}
-        <aside className="hidden w-48 shrink-0 lg:block">
-          <nav className="space-y-1 text-sm">
-            {["Dashboard", "Security Check", "System Health", "Wallet", "Preferences"].map((n, i) => (
-              <a key={n} href="#" className={`block rounded-lg px-3 py-2 ${i === 0 ? "bg-primary text-primary-foreground font-semibold" : "text-background/70 hover:bg-background/5"}`}>{n}</a>
-            ))}
-          </nav>
-          <div className="mt-8 space-y-1 text-sm text-background/60">
-            <a href="#" className="block px-3 py-2 hover:text-background">? Support</a>
-            <button onClick={handleLogout} className="flex w-full items-center gap-2 px-3 py-2 text-left text-destructive hover:text-destructive/80">
-              <LogOut className="h-4 w-4" /> Logout
-            </button>
-          </div>
-        </aside>
-
-        {/* Main */}
-        <main className="flex-1 space-y-5">
-          {/* Stat cards */}
-          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-            {[
-              { label: "Core CPU Load", value: "32%", icon: Activity, tint: "oklch(0.55 0.10 60)" },
-              { label: "API Latency", value: "14%", icon: ShieldCheck, tint: "oklch(0.78 0.14 75)" },
-              { label: "DB Utilization", value: "68%", icon: Users, tint: "var(--primary)" },
-              { label: "Active Repairs", value: "89%", icon: DollarSign, tint: "oklch(0.55 0.10 60)" },
-            ].map((s) => {
-              const Icon = s.icon;
-              return (
-                <div key={s.label} className="rounded-2xl border border-background/10 bg-background/[0.03] p-5">
-                  <div className="flex items-center gap-3">
-                    <div className="flex h-12 w-12 items-center justify-center rounded-full" style={{ background: `color-mix(in oklab, ${s.tint} 25%, transparent)` }}>
-                      <Icon className="h-5 w-5" style={{ color: s.tint }} />
-                    </div>
-                    <div>
-                      <p className="text-[10px] font-bold uppercase tracking-wider text-background/60">{s.label}</p>
-                      <p className="text-2xl font-bold">{s.value}</p>
-                    </div>
+        {/* Two columns: Provider Regs + Category Requests */}
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Panel title="🔔 PROVIDER REGISTRATIONS" action="View All →">
+            <div className="space-y-2">
+              {providerRegs.map((p) => (
+                <div key={p.initials} className="flex items-center gap-3 rounded-xl border border-background/10 bg-background/[0.04] p-3">
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-background/10 text-xs font-bold">{p.initials}</div>
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold">{p.name}</p>
+                    <p className="text-[11px] text-background/55">{p.meta}</p>
                   </div>
-                </div>
-              );
-            })}
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-[1.5fr_1fr]">
-            {/* Global map placeholder */}
-            <div className="rounded-2xl border border-background/10 bg-background/[0.03] p-5">
-              <div className="flex items-center justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wider text-background/60">🌐 Live Service Network</p>
-                  <p className="mt-1 text-xs text-background/50">Real-time pulse of active service provider coordinates</p>
-                </div>
-                <span className="inline-flex items-center gap-1.5 rounded-full bg-background/10 px-2.5 py-1 text-[10px] font-semibold">
-                  <span className="h-1.5 w-1.5 rounded-full bg-primary" /> GLOBAL STREAM
-                </span>
-              </div>
-              <div className="mt-4 grid h-56 place-items-center rounded-xl border border-background/10 bg-background/[0.04]">
-                <div className="text-center text-background/50">
-                  <div className="mx-auto h-3 w-3 animate-ping rounded-full bg-primary" />
-                  <p className="mt-3 text-xs">Streaming 4 active regions</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Storage donut + log */}
-            <div className="space-y-5">
-              <div className="rounded-2xl border border-background/10 bg-background/[0.03] p-5 text-center">
-                <p className="text-xs font-bold uppercase tracking-wider text-background/60">Storage</p>
-                <div className="mx-auto mt-3 grid h-28 w-28 place-items-center rounded-full border-[10px] border-primary/30 border-t-primary">
-                  <p className="text-xl font-bold">72%</p>
-                </div>
-                <div className="mt-4 flex items-center justify-between text-xs">
-                  <span className="text-background/70">✓ Daily Snapshots</span>
-                  <span className="rounded-full bg-success/30 px-2 py-0.5 font-semibold">Synced</span>
-                </div>
-              </div>
-              <div className="grid grid-cols-2 gap-3">
-                <button className="rounded-xl border border-background/10 bg-background/[0.03] py-4 text-xs font-semibold hover:bg-background/[0.07] transition-colors">
-                  <AlertTriangle className="mx-auto mb-1 h-4 w-4 text-destructive" /> SECURITY LOCK
-                </button>
-                <button className="rounded-xl border border-background/10 bg-background/[0.03] py-4 text-xs font-semibold hover:bg-background/[0.07] transition-colors">
-                  <RefreshCw className="mx-auto mb-1 h-4 w-4 text-primary" /> FLUSH CACHE
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="grid gap-5 lg:grid-cols-2">
-            <NodeList title="Database Cluster" items={dbs} />
-            <NodeList title="API Gateways" items={apis} />
-          </div>
-
-          {/* Log */}
-          <div className="rounded-2xl border border-background/10 bg-background/[0.03] p-5">
-            <div className="flex items-center justify-between">
-              <p className="text-xs font-bold uppercase tracking-wider text-background/60">⚡ System Severity Log V2.0.4</p>
-              <span className="rounded-full bg-destructive/30 px-2 py-0.5 text-[10px] font-bold">LIVE</span>
-            </div>
-            <div className="mt-3 space-y-1.5 font-mono text-[11px]">
-              {logs.map((l) => (
-                <div key={l.time} className="flex gap-3 rounded px-2 py-1 hover:bg-background/[0.04]">
-                  <span className="text-background/40">[{l.time}]</span>
-                  <span className={`font-bold ${l.tone}`}>[{l.tag}]</span>
-                  <span className="text-background/60">{l.src}</span>
-                  <span className="text-background/80">{l.text}</span>
+                  <span className="rounded-full bg-primary/20 px-2.5 py-0.5 text-[10px] font-bold text-primary">Pending</span>
+                  <button className="flex h-7 w-7 items-center justify-center rounded-md bg-success/30 text-success hover:bg-success/40"><Check className="h-3.5 w-3.5" /></button>
+                  <button className="flex h-7 w-7 items-center justify-center rounded-md bg-destructive/30 text-destructive hover:bg-destructive/40"><X className="h-3.5 w-3.5" /></button>
                 </div>
               ))}
             </div>
-          </div>
-        </main>
+          </Panel>
+
+          <Panel title="📁 CATEGORY REQUESTS" action="View All →">
+            <div className="space-y-2">
+              {categoryReqs.map((c) => {
+                const Icon = c.icon;
+                return (
+                  <div key={c.name} className="flex items-center gap-3 rounded-xl border border-background/10 bg-background/[0.04] p-3">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-full" style={{ background: `color-mix(in oklab, ${c.tint} 25%, transparent)` }}>
+                      <Icon className="h-5 w-5" style={{ color: c.tint }} />
+                    </div>
+                    <div className="min-w-0 flex-1">
+                      <p className="text-sm font-semibold">{c.name}</p>
+                      <p className="text-[11px] text-background/55">{c.meta}</p>
+                    </div>
+                    <button className="flex h-7 w-7 items-center justify-center rounded-md bg-success/30 text-success hover:bg-success/40"><Check className="h-3.5 w-3.5" /></button>
+                    <button className="flex h-7 w-7 items-center justify-center rounded-md bg-destructive/30 text-destructive hover:bg-destructive/40"><X className="h-3.5 w-3.5" /></button>
+                  </div>
+                );
+              })}
+            </div>
+          </Panel>
+        </div>
+
+        {/* Recent Activity + Platform Metrics */}
+        <div className="grid gap-5 lg:grid-cols-2">
+          <Panel title="RECENT ACTIVITY">
+            <div className="space-y-3">
+              {activity.map((a, i) => (
+                <div key={i} className="flex items-start gap-3">
+                  <span className={`mt-1.5 h-2 w-2 shrink-0 rounded-full ${
+                    a.dot === "success" ? "bg-success" :
+                    a.dot === "primary" ? "bg-primary" :
+                    a.dot === "destructive" ? "bg-destructive" : "bg-sky-400"
+                  }`} />
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm">{a.text}</p>
+                    <p className="text-[11px] text-background/50">{a.time}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+
+          <Panel title="PLATFORM METRICS">
+            <div className="space-y-4">
+              {metrics.map((m) => (
+                <div key={m.label}>
+                  <div className="mb-1 flex items-center justify-between text-xs">
+                    <span className="text-background/70">{m.label}</span>
+                    <span className={`font-bold ${m.tone === "success" ? "text-success" : "text-primary"}`}>{m.value}</span>
+                  </div>
+                  <div className="h-1.5 overflow-hidden rounded-full bg-background/10">
+                    <div
+                      className={`h-full rounded-full ${m.tone === "success" ? "bg-success" : "bg-primary"}`}
+                      style={{ width: `${m.pct}%` }}
+                    />
+                  </div>
+                </div>
+              ))}
+            </div>
+          </Panel>
+        </div>
       </div>
-      <Footer />
+    </AdminLayout>
+  );
+}
+
+function StatCard({ icon: Icon, tint, label, value, sub }: { icon: typeof Home; tint: string; label: string; value: string; sub: string }) {
+  return (
+    <div className="rounded-2xl border border-background/10 bg-background/[0.04] p-4">
+      <div className="flex items-start gap-3">
+        <div className="flex h-11 w-11 shrink-0 items-center justify-center rounded-xl" style={{ background: `color-mix(in oklab, ${tint} 22%, transparent)` }}>
+          <Icon className="h-5 w-5" style={{ color: tint }} />
+        </div>
+        <div className="min-w-0">
+          <p className="text-[10px] font-bold uppercase tracking-wider text-background/55">{label}</p>
+          <p className="mt-0.5 text-2xl font-bold leading-tight">{value}</p>
+          <p className="text-[11px] text-background/55">{sub}</p>
+        </div>
+      </div>
     </div>
   );
 }
 
-
-function NodeList({ title, items }: { title: string; items: { name: string; kind: string; load: string; status: string; bad?: boolean }[] }) {
+function Panel({ title, action, children }: { title: string; action?: string; children: React.ReactNode }) {
   return (
     <div className="rounded-2xl border border-background/10 bg-background/[0.03] p-5">
-      <p className="text-xs font-bold uppercase tracking-wider text-background/60">{title}</p>
-      <div className="mt-4 space-y-2">
-        {items.map((it) => (
-          <div key={it.name} className="flex items-center gap-3 rounded-xl border border-background/10 bg-background/[0.03] p-3">
-            <div className={`h-8 w-8 rounded-lg ${it.bad ? "bg-destructive/30" : "bg-success/30"}`} />
-            <div className="min-w-0 flex-1">
-              <p className="text-sm font-semibold">{it.name}</p>
-              <p className="text-[10px] text-background/60">{it.kind}</p>
-            </div>
-            <div className="text-right">
-              <p className="text-xs font-bold">{it.load} LOAD</p>
-              <p className={`text-[10px] font-bold ${it.bad ? "text-destructive" : "text-success"}`}>{it.status}</p>
-            </div>
-          </div>
-        ))}
+      <div className="mb-3 flex items-center justify-between">
+        <p className="text-xs font-bold uppercase tracking-wider text-background/60">{title}</p>
+        {action && (
+          <button className="rounded-full border border-background/15 px-3 py-1 text-[11px] font-semibold text-background/70 hover:bg-background/5">
+            {action}
+          </button>
+        )}
       </div>
+      {children}
     </div>
   );
 }
-
-
