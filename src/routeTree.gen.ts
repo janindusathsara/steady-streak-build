@@ -29,6 +29,7 @@ import { Route as UsernameBookRouteImport } from './routes/$username.book'
 import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 import { Route as AuthenticatedUsernameWalletRouteImport } from './routes/_authenticated.$username.wallet'
+import { Route as AuthenticatedUsernameUpdateNewsRouteImport } from './routes/_authenticated.$username.update-news'
 import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
 import { Route as AuthenticatedUsernameReviewsRouteImport } from './routes/_authenticated.$username.reviews'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
@@ -144,6 +145,12 @@ const AuthenticatedUsernameWalletRoute =
     path: '/$username/wallet',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameUpdateNewsRoute =
+  AuthenticatedUsernameUpdateNewsRouteImport.update({
+    id: '/$username/update-news',
+    path: '/$username/update-news',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameSecurityRoute =
   AuthenticatedUsernameSecurityRouteImport.update({
     id: '/$username/security',
@@ -250,6 +257,7 @@ export interface FileRoutesByFullPath {
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
+  '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
@@ -283,6 +291,7 @@ export interface FileRoutesByTo {
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
+  '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId': typeof ServicesServiceIdIndexRoute
@@ -319,6 +328,7 @@ export interface FileRoutesById {
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
   '/_authenticated/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
+  '/_authenticated/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
   '/_authenticated/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
@@ -355,6 +365,7 @@ export interface FileRouteTypes {
     | '/$username/profile'
     | '/$username/reviews'
     | '/$username/security'
+    | '/$username/update-news'
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
@@ -388,6 +399,7 @@ export interface FileRouteTypes {
     | '/$username/profile'
     | '/$username/reviews'
     | '/$username/security'
+    | '/$username/update-news'
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId'
@@ -423,6 +435,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/profile'
     | '/_authenticated/$username/reviews'
     | '/_authenticated/$username/security'
+    | '/_authenticated/$username/update-news'
     | '/_authenticated/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
@@ -593,6 +606,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/update-news': {
+      id: '/_authenticated/$username/update-news'
+      path: '/$username/update-news'
+      fullPath: '/$username/update-news'
+      preLoaderRoute: typeof AuthenticatedUsernameUpdateNewsRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/security': {
       id: '/_authenticated/$username/security'
       path: '/$username/security'
@@ -698,6 +718,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
   AuthenticatedUsernameReviewsRoute: typeof AuthenticatedUsernameReviewsRoute
   AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
+  AuthenticatedUsernameUpdateNewsRoute: typeof AuthenticatedUsernameUpdateNewsRoute
   AuthenticatedUsernameWalletRoute: typeof AuthenticatedUsernameWalletRoute
   AuthenticatedUsernameMyservicesCardIdRoute: typeof AuthenticatedUsernameMyservicesCardIdRoute
   AuthenticatedUsernameMyservicesNewRoute: typeof AuthenticatedUsernameMyservicesNewRoute
@@ -718,6 +739,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
   AuthenticatedUsernameReviewsRoute: AuthenticatedUsernameReviewsRoute,
   AuthenticatedUsernameSecurityRoute: AuthenticatedUsernameSecurityRoute,
+  AuthenticatedUsernameUpdateNewsRoute: AuthenticatedUsernameUpdateNewsRoute,
   AuthenticatedUsernameWalletRoute: AuthenticatedUsernameWalletRoute,
   AuthenticatedUsernameMyservicesCardIdRoute:
     AuthenticatedUsernameMyservicesCardIdRoute,
