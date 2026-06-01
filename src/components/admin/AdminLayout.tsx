@@ -163,10 +163,10 @@ function NavGroup({ label, children }: { label: string; children: ReactNode }) {
 const pathMap: Record<AdminNavKey, string> = {
   dashboard: "/$username/dashboard",
   monthly: "/$username/overview",
-  homeowners: "/$username/dashboard",
+  homeowners: "/$username/homeowners",
   providers: "/$username/dashboard",
   "provider-requests": "/$username/dashboard",
-  "category-requests": "/$username/dashboard",
+  "category-requests": "/$username/category-request",
   news: "/$username/update-news",
   reviews: "/$username/reviews",
   security: "/$username/dashboard",
