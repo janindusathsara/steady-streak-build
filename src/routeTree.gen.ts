@@ -32,6 +32,7 @@ import { Route as AuthenticatedUsernameWalletRouteImport } from './routes/_authe
 import { Route as AuthenticatedUsernameUpdateNewsRouteImport } from './routes/_authenticated.$username.update-news'
 import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
 import { Route as AuthenticatedUsernameReviewsRouteImport } from './routes/_authenticated.$username.reviews'
+import { Route as AuthenticatedUsernameProvidersRouteImport } from './routes/_authenticated.$username.providers'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
 import { Route as AuthenticatedUsernamePastBookingsRouteImport } from './routes/_authenticated.$username.past-bookings'
 import { Route as AuthenticatedUsernameOverviewRouteImport } from './routes/_authenticated.$username.overview'
@@ -41,8 +42,10 @@ import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authent
 import { Route as AuthenticatedUsernameHomeownersRouteImport } from './routes/_authenticated.$username.homeowners'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 import { Route as AuthenticatedUsernameActiveBookingsRouteImport } from './routes/_authenticated.$username.active-bookings'
+import { Route as AuthenticatedUsernameProviderRequestIndexRouteImport } from './routes/_authenticated.$username.provider-request.index'
 import { Route as AuthenticatedUsernameMyservicesIndexRouteImport } from './routes/_authenticated.$username.myservices.index'
 import { Route as AuthenticatedUsernameCategoryRequestIndexRouteImport } from './routes/_authenticated.$username.category-request.index'
+import { Route as AuthenticatedUsernameProviderRequestIdRouteImport } from './routes/_authenticated.$username.provider-request.$id'
 import { Route as AuthenticatedUsernameMyservicesNewRouteImport } from './routes/_authenticated.$username.myservices.new'
 import { Route as AuthenticatedUsernameMyservicesCardIdRouteImport } from './routes/_authenticated.$username.myservices.$cardId'
 import { Route as AuthenticatedUsernameCategoryRequestIdRouteImport } from './routes/_authenticated.$username.category-request.$id'
@@ -166,6 +169,12 @@ const AuthenticatedUsernameReviewsRoute =
     path: '/$username/reviews',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameProvidersRoute =
+  AuthenticatedUsernameProvidersRouteImport.update({
+    id: '/$username/providers',
+    path: '/$username/providers',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameProfileRoute =
   AuthenticatedUsernameProfileRouteImport.update({
     id: '/$username/profile',
@@ -220,6 +229,12 @@ const AuthenticatedUsernameActiveBookingsRoute =
     path: '/$username/active-bookings',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameProviderRequestIndexRoute =
+  AuthenticatedUsernameProviderRequestIndexRouteImport.update({
+    id: '/$username/provider-request/',
+    path: '/$username/provider-request/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameMyservicesIndexRoute =
   AuthenticatedUsernameMyservicesIndexRouteImport.update({
     id: '/$username/myservices/',
@@ -230,6 +245,12 @@ const AuthenticatedUsernameCategoryRequestIndexRoute =
   AuthenticatedUsernameCategoryRequestIndexRouteImport.update({
     id: '/$username/category-request/',
     path: '/$username/category-request/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsernameProviderRequestIdRoute =
+  AuthenticatedUsernameProviderRequestIdRouteImport.update({
+    id: '/$username/provider-request/$id',
+    path: '/$username/provider-request/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsernameMyservicesNewRoute =
@@ -277,6 +298,7 @@ export interface FileRoutesByFullPath {
   '/$username/overview': typeof AuthenticatedUsernameOverviewRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/$username/providers': typeof AuthenticatedUsernameProvidersRoute
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
@@ -286,8 +308,10 @@ export interface FileRoutesByFullPath {
   '/$username/category-request/$id': typeof AuthenticatedUsernameCategoryRequestIdRoute
   '/$username/myservices/$cardId': typeof AuthenticatedUsernameMyservicesCardIdRoute
   '/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
+  '/$username/provider-request/$id': typeof AuthenticatedUsernameProviderRequestIdRoute
   '/$username/category-request/': typeof AuthenticatedUsernameCategoryRequestIndexRoute
   '/$username/myservices/': typeof AuthenticatedUsernameMyservicesIndexRoute
+  '/$username/provider-request/': typeof AuthenticatedUsernameProviderRequestIndexRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -314,6 +338,7 @@ export interface FileRoutesByTo {
   '/$username/overview': typeof AuthenticatedUsernameOverviewRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/$username/providers': typeof AuthenticatedUsernameProvidersRoute
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
@@ -323,8 +348,10 @@ export interface FileRoutesByTo {
   '/$username/category-request/$id': typeof AuthenticatedUsernameCategoryRequestIdRoute
   '/$username/myservices/$cardId': typeof AuthenticatedUsernameMyservicesCardIdRoute
   '/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
+  '/$username/provider-request/$id': typeof AuthenticatedUsernameProviderRequestIdRoute
   '/$username/category-request': typeof AuthenticatedUsernameCategoryRequestIndexRoute
   '/$username/myservices': typeof AuthenticatedUsernameMyservicesIndexRoute
+  '/$username/provider-request': typeof AuthenticatedUsernameProviderRequestIndexRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -354,6 +381,7 @@ export interface FileRoutesById {
   '/_authenticated/$username/overview': typeof AuthenticatedUsernameOverviewRoute
   '/_authenticated/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
+  '/_authenticated/$username/providers': typeof AuthenticatedUsernameProvidersRoute
   '/_authenticated/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/_authenticated/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
@@ -363,8 +391,10 @@ export interface FileRoutesById {
   '/_authenticated/$username/category-request/$id': typeof AuthenticatedUsernameCategoryRequestIdRoute
   '/_authenticated/$username/myservices/$cardId': typeof AuthenticatedUsernameMyservicesCardIdRoute
   '/_authenticated/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
+  '/_authenticated/$username/provider-request/$id': typeof AuthenticatedUsernameProviderRequestIdRoute
   '/_authenticated/$username/category-request/': typeof AuthenticatedUsernameCategoryRequestIndexRoute
   '/_authenticated/$username/myservices/': typeof AuthenticatedUsernameMyservicesIndexRoute
+  '/_authenticated/$username/provider-request/': typeof AuthenticatedUsernameProviderRequestIndexRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -394,6 +424,7 @@ export interface FileRouteTypes {
     | '/$username/overview'
     | '/$username/past-bookings'
     | '/$username/profile'
+    | '/$username/providers'
     | '/$username/reviews'
     | '/$username/security'
     | '/$username/update-news'
@@ -403,8 +434,10 @@ export interface FileRouteTypes {
     | '/$username/category-request/$id'
     | '/$username/myservices/$cardId'
     | '/$username/myservices/new'
+    | '/$username/provider-request/$id'
     | '/$username/category-request/'
     | '/$username/myservices/'
+    | '/$username/provider-request/'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -431,6 +464,7 @@ export interface FileRouteTypes {
     | '/$username/overview'
     | '/$username/past-bookings'
     | '/$username/profile'
+    | '/$username/providers'
     | '/$username/reviews'
     | '/$username/security'
     | '/$username/update-news'
@@ -440,8 +474,10 @@ export interface FileRouteTypes {
     | '/$username/category-request/$id'
     | '/$username/myservices/$cardId'
     | '/$username/myservices/new'
+    | '/$username/provider-request/$id'
     | '/$username/category-request'
     | '/$username/myservices'
+    | '/$username/provider-request'
   id:
     | '__root__'
     | '/'
@@ -470,6 +506,7 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/overview'
     | '/_authenticated/$username/past-bookings'
     | '/_authenticated/$username/profile'
+    | '/_authenticated/$username/providers'
     | '/_authenticated/$username/reviews'
     | '/_authenticated/$username/security'
     | '/_authenticated/$username/update-news'
@@ -479,8 +516,10 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/category-request/$id'
     | '/_authenticated/$username/myservices/$cardId'
     | '/_authenticated/$username/myservices/new'
+    | '/_authenticated/$username/provider-request/$id'
     | '/_authenticated/$username/category-request/'
     | '/_authenticated/$username/myservices/'
+    | '/_authenticated/$username/provider-request/'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -666,6 +705,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameReviewsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/providers': {
+      id: '/_authenticated/$username/providers'
+      path: '/$username/providers'
+      fullPath: '/$username/providers'
+      preLoaderRoute: typeof AuthenticatedUsernameProvidersRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/profile': {
       id: '/_authenticated/$username/profile'
       path: '/$username/profile'
@@ -729,6 +775,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameActiveBookingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/provider-request/': {
+      id: '/_authenticated/$username/provider-request/'
+      path: '/$username/provider-request'
+      fullPath: '/$username/provider-request/'
+      preLoaderRoute: typeof AuthenticatedUsernameProviderRequestIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/myservices/': {
       id: '/_authenticated/$username/myservices/'
       path: '/$username/myservices'
@@ -741,6 +794,13 @@ declare module '@tanstack/react-router' {
       path: '/$username/category-request'
       fullPath: '/$username/category-request/'
       preLoaderRoute: typeof AuthenticatedUsernameCategoryRequestIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/$username/provider-request/$id': {
+      id: '/_authenticated/$username/provider-request/$id'
+      path: '/$username/provider-request/$id'
+      fullPath: '/$username/provider-request/$id'
+      preLoaderRoute: typeof AuthenticatedUsernameProviderRequestIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/$username/myservices/new': {
@@ -777,6 +837,7 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameOverviewRoute: typeof AuthenticatedUsernameOverviewRoute
   AuthenticatedUsernamePastBookingsRoute: typeof AuthenticatedUsernamePastBookingsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
+  AuthenticatedUsernameProvidersRoute: typeof AuthenticatedUsernameProvidersRoute
   AuthenticatedUsernameReviewsRoute: typeof AuthenticatedUsernameReviewsRoute
   AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
   AuthenticatedUsernameUpdateNewsRoute: typeof AuthenticatedUsernameUpdateNewsRoute
@@ -784,8 +845,10 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameCategoryRequestIdRoute: typeof AuthenticatedUsernameCategoryRequestIdRoute
   AuthenticatedUsernameMyservicesCardIdRoute: typeof AuthenticatedUsernameMyservicesCardIdRoute
   AuthenticatedUsernameMyservicesNewRoute: typeof AuthenticatedUsernameMyservicesNewRoute
+  AuthenticatedUsernameProviderRequestIdRoute: typeof AuthenticatedUsernameProviderRequestIdRoute
   AuthenticatedUsernameCategoryRequestIndexRoute: typeof AuthenticatedUsernameCategoryRequestIndexRoute
   AuthenticatedUsernameMyservicesIndexRoute: typeof AuthenticatedUsernameMyservicesIndexRoute
+  AuthenticatedUsernameProviderRequestIndexRoute: typeof AuthenticatedUsernameProviderRequestIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -801,6 +864,7 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernamePastBookingsRoute:
     AuthenticatedUsernamePastBookingsRoute,
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
+  AuthenticatedUsernameProvidersRoute: AuthenticatedUsernameProvidersRoute,
   AuthenticatedUsernameReviewsRoute: AuthenticatedUsernameReviewsRoute,
   AuthenticatedUsernameSecurityRoute: AuthenticatedUsernameSecurityRoute,
   AuthenticatedUsernameUpdateNewsRoute: AuthenticatedUsernameUpdateNewsRoute,
@@ -811,10 +875,14 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedUsernameMyservicesCardIdRoute,
   AuthenticatedUsernameMyservicesNewRoute:
     AuthenticatedUsernameMyservicesNewRoute,
+  AuthenticatedUsernameProviderRequestIdRoute:
+    AuthenticatedUsernameProviderRequestIdRoute,
   AuthenticatedUsernameCategoryRequestIndexRoute:
     AuthenticatedUsernameCategoryRequestIndexRoute,
   AuthenticatedUsernameMyservicesIndexRoute:
     AuthenticatedUsernameMyservicesIndexRoute,
+  AuthenticatedUsernameProviderRequestIndexRoute:
+    AuthenticatedUsernameProviderRequestIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
