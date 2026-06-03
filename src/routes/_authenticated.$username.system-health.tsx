@@ -1,24 +1,27 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { HomeownerDashboard } from "@/pages/dashboard/HomeownerDashboard";
-import { AdminSecurityPage } from "@/pages/admin/AdminSecurityPage";
+import { AdminSystemHealthPage } from "@/pages/admin/AdminSystemHealthPage";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { userDashboardPath } from "@/lib/role";
 
-export const Route = createFileRoute("/_authenticated/$username/security")({
-  component: SecurityRoute,
+export const Route = createFileRoute("/_authenticated/$username/system-health")({
+  component: SystemHealthRoute,
 });
 
-function SecurityRoute() {
-  const { username } = useParams({ from: "/_authenticated/$username/security" });
+function SystemHealthRoute() {
+  const { username } = useParams({ from: "/_authenticated/$username/system-health" });
   const { loading, profile } = useCurrentUser();
   const navigate = useNavigate();
   useEffect(() => {
     if (!loading && profile && profile.username.toLowerCase() !== username.toLowerCase()) {
-      navigate({ to: "/$username/security", params: { username: profile.username }, replace: true });
+      navigate({ to: "/$username/system-health", params: { username: profile.username }, replace: true });
     }
   }, [loading, profile, username, navigate]);
   if (loading || !profile) return <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Loading…</div>;
   if (profile.username.toLowerCase() !== username.toLowerCase()) return null;
-  if (profile.role === "admin") return <AdminSecurityPage />;
-  return <HomeownerDashboard initialTab="security" />;
+  if (profile.role !== "admin") {
+    navigate({ to: userDashboardPath(profile.username), replace: true });
+    return null;
+  }
+  return <AdminSystemHealthPage />;
 }
