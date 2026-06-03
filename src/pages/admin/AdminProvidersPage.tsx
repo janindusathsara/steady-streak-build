@@ -1,21 +1,22 @@
 import { useState } from "react";
+import { Link, useParams } from "@tanstack/react-router";
 import { Search, Star } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { toast } from "sonner";
 
 interface Provider {
-  initials: string; name: string; email: string;
+  id: string; initials: string; name: string; email: string;
   category: string; icon: string; district: string;
   jobs: number; rating: number; status: "Active" | "Suspended" | "New" | "Top";
 }
 
 const PROVIDERS: Provider[] = [
-  { initials: "MS", name: "Marcus Sterling", email: "marcus.s@gmail.com", category: "Plumbing", icon: "🔧", district: "Colombo", jobs: 342, rating: 4.9, status: "Top" },
-  { initials: "ER", name: "Elena Rodriguez", email: "elena.r@gmail.com", category: "Electrical", icon: "⚡", district: "Colombo", jobs: 218, rating: 4.8, status: "Top" },
-  { initials: "JW", name: "James Wilson", email: "james.w@yahoo.com", category: "HVAC", icon: "❄️", district: "Gampaha", jobs: 156, rating: 4.6, status: "Active" },
-  { initials: "RP", name: "Rajan Perera", email: "rajan.p@gmail.com", category: "Painting", icon: "🎨", district: "Kandy", jobs: 94, rating: 4.9, status: "Top" },
-  { initials: "TB", name: "Thilanka Bandara", email: "thilanka.b@gmail.com", category: "Carpentry", icon: "🪚", district: "Matara", jobs: 12, rating: 3.8, status: "Suspended" },
-  { initials: "AK", name: "Ashan Kumara", email: "ashan.k@gmail.com", category: "Plumbing", icon: "🔧", district: "Colombo", jobs: 67, rating: 4.7, status: "New" },
+  { id: "marcus-sterling", initials: "MS", name: "Marcus Sterling", email: "marcus.s@gmail.com", category: "Plumbing", icon: "🔧", district: "Colombo", jobs: 342, rating: 4.9, status: "Top" },
+  { id: "elena-rodriguez", initials: "ER", name: "Elena Rodriguez", email: "elena.r@gmail.com", category: "Electrical", icon: "⚡", district: "Colombo", jobs: 218, rating: 4.8, status: "Top" },
+  { id: "james-wilson", initials: "JW", name: "James Wilson", email: "james.w@yahoo.com", category: "HVAC", icon: "❄️", district: "Gampaha", jobs: 156, rating: 4.6, status: "Active" },
+  { id: "rajan-perera", initials: "RP", name: "Rajan Perera", email: "rajan.p@gmail.com", category: "Painting", icon: "🎨", district: "Kandy", jobs: 94, rating: 4.9, status: "Top" },
+  { id: "thilanka-bandara", initials: "TB", name: "Thilanka Bandara", email: "thilanka.b@gmail.com", category: "Carpentry", icon: "🪚", district: "Matara", jobs: 12, rating: 3.8, status: "Suspended" },
+  { id: "ashan-kumara", initials: "AK", name: "Ashan Kumara", email: "ashan.k@gmail.com", category: "Plumbing", icon: "🔧", district: "Colombo", jobs: 67, rating: 4.7, status: "New" },
 ];
 
 type Tab = "all" | "top" | "new" | "suspended";
@@ -23,6 +24,8 @@ type Tab = "all" | "top" | "new" | "suspended";
 export function AdminProvidersPage() {
   const [tab, setTab] = useState<Tab>("all");
   const [q, setQ] = useState("");
+  const { username } = useParams({ from: "/_authenticated/$username/providers/" });
+
 
   const filtered = PROVIDERS.filter((p) => {
     if (tab === "top" && p.status !== "Top") return false;
@@ -96,7 +99,7 @@ export function AdminProvidersPage() {
                 </td>
                 <td className="px-5 py-3">
                   <div className="flex justify-end gap-2">
-                    <button onClick={() => toast("Coming soon")} className="rounded-md border border-background/15 px-3 py-1 text-xs font-semibold text-background/80 hover:bg-background/10">View</button>
+                    <Link to="/$username/providers/$id" params={{ username, id: p.id }} className="rounded-md border border-background/15 px-3 py-1 text-xs font-semibold text-background/80 hover:bg-background/10">View</Link>
                     {p.status === "Suspended" ? (
                       <button onClick={() => toast.success("Reinstated")} className="rounded-md border border-emerald-400/40 px-3 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-400/10">Reinstate</button>
                     ) : (
