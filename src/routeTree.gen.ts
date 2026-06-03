@@ -33,14 +33,12 @@ import { Route as AuthenticatedUsernameUpdateNewsRouteImport } from './routes/_a
 import { Route as AuthenticatedUsernameSystemHealthRouteImport } from './routes/_authenticated.$username.system-health'
 import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
 import { Route as AuthenticatedUsernameReviewsRouteImport } from './routes/_authenticated.$username.reviews'
-import { Route as AuthenticatedUsernameProvidersRouteImport } from './routes/_authenticated.$username.providers'
 import { Route as AuthenticatedUsernameProfileRouteImport } from './routes/_authenticated.$username.profile'
 import { Route as AuthenticatedUsernamePastBookingsRouteImport } from './routes/_authenticated.$username.past-bookings'
 import { Route as AuthenticatedUsernameOverviewRouteImport } from './routes/_authenticated.$username.overview'
 import { Route as AuthenticatedUsernameNewJobsRouteImport } from './routes/_authenticated.$username.new-jobs'
 import { Route as AuthenticatedUsernameJobsBookingsRouteImport } from './routes/_authenticated.$username.jobs-bookings'
 import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
-import { Route as AuthenticatedUsernameHomeownersRouteImport } from './routes/_authenticated.$username.homeowners'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 import { Route as AuthenticatedUsernameActiveBookingsRouteImport } from './routes/_authenticated.$username.active-bookings'
 import { Route as AuthenticatedUsernameProvidersIndexRouteImport } from './routes/_authenticated.$username.providers.index'
@@ -180,12 +178,6 @@ const AuthenticatedUsernameReviewsRoute =
     path: '/$username/reviews',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsernameProvidersRoute =
-  AuthenticatedUsernameProvidersRouteImport.update({
-    id: '/$username/providers',
-    path: '/$username/providers',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedUsernameProfileRoute =
   AuthenticatedUsernameProfileRouteImport.update({
     id: '/$username/profile',
@@ -222,12 +214,6 @@ const AuthenticatedUsernameJobsRoute =
     path: '/$username/jobs',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsernameHomeownersRoute =
-  AuthenticatedUsernameHomeownersRouteImport.update({
-    id: '/$username/homeowners',
-    path: '/$username/homeowners',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedUsernameDashboardRoute =
   AuthenticatedUsernameDashboardRouteImport.update({
     id: '/$username/dashboard',
@@ -242,9 +228,9 @@ const AuthenticatedUsernameActiveBookingsRoute =
   } as any)
 const AuthenticatedUsernameProvidersIndexRoute =
   AuthenticatedUsernameProvidersIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedUsernameProvidersRoute,
+    id: '/$username/providers/',
+    path: '/$username/providers/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsernameProviderRequestIndexRoute =
   AuthenticatedUsernameProviderRequestIndexRouteImport.update({
@@ -260,9 +246,9 @@ const AuthenticatedUsernameMyservicesIndexRoute =
   } as any)
 const AuthenticatedUsernameHomeownersIndexRoute =
   AuthenticatedUsernameHomeownersIndexRouteImport.update({
-    id: '/',
-    path: '/',
-    getParentRoute: () => AuthenticatedUsernameHomeownersRoute,
+    id: '/$username/homeowners/',
+    path: '/$username/homeowners/',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsernameCategoryRequestIndexRoute =
   AuthenticatedUsernameCategoryRequestIndexRouteImport.update({
@@ -272,9 +258,9 @@ const AuthenticatedUsernameCategoryRequestIndexRoute =
   } as any)
 const AuthenticatedUsernameProvidersIdRoute =
   AuthenticatedUsernameProvidersIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedUsernameProvidersRoute,
+    id: '/$username/providers/$id',
+    path: '/$username/providers/$id',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsernameProviderRequestIdRoute =
   AuthenticatedUsernameProviderRequestIdRouteImport.update({
@@ -296,9 +282,9 @@ const AuthenticatedUsernameMyservicesCardIdRoute =
   } as any)
 const AuthenticatedUsernameHomeownersIdRoute =
   AuthenticatedUsernameHomeownersIdRouteImport.update({
-    id: '/$id',
-    path: '/$id',
-    getParentRoute: () => AuthenticatedUsernameHomeownersRoute,
+    id: '/$username/homeowners/$id',
+    path: '/$username/homeowners/$id',
+    getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsernameCategoryRequestIdRoute =
   AuthenticatedUsernameCategoryRequestIdRouteImport.update({
@@ -326,14 +312,12 @@ export interface FileRoutesByFullPath {
   '/services/': typeof ServicesIndexRoute
   '/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
-  '/$username/homeowners': typeof AuthenticatedUsernameHomeownersRouteWithChildren
   '/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
   '/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/$username/overview': typeof AuthenticatedUsernameOverviewRoute
   '/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/$username/profile': typeof AuthenticatedUsernameProfileRoute
-  '/$username/providers': typeof AuthenticatedUsernameProvidersRouteWithChildren
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/system-health': typeof AuthenticatedUsernameSystemHealthRoute
@@ -417,14 +401,12 @@ export interface FileRoutesById {
   '/services/': typeof ServicesIndexRoute
   '/_authenticated/$username/active-bookings': typeof AuthenticatedUsernameActiveBookingsRoute
   '/_authenticated/$username/dashboard': typeof AuthenticatedUsernameDashboardRoute
-  '/_authenticated/$username/homeowners': typeof AuthenticatedUsernameHomeownersRouteWithChildren
   '/_authenticated/$username/jobs': typeof AuthenticatedUsernameJobsRoute
   '/_authenticated/$username/jobs-bookings': typeof AuthenticatedUsernameJobsBookingsRoute
   '/_authenticated/$username/new-jobs': typeof AuthenticatedUsernameNewJobsRoute
   '/_authenticated/$username/overview': typeof AuthenticatedUsernameOverviewRoute
   '/_authenticated/$username/past-bookings': typeof AuthenticatedUsernamePastBookingsRoute
   '/_authenticated/$username/profile': typeof AuthenticatedUsernameProfileRoute
-  '/_authenticated/$username/providers': typeof AuthenticatedUsernameProvidersRouteWithChildren
   '/_authenticated/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/_authenticated/$username/system-health': typeof AuthenticatedUsernameSystemHealthRoute
@@ -465,14 +447,12 @@ export interface FileRouteTypes {
     | '/services/'
     | '/$username/active-bookings'
     | '/$username/dashboard'
-    | '/$username/homeowners'
     | '/$username/jobs'
     | '/$username/jobs-bookings'
     | '/$username/new-jobs'
     | '/$username/overview'
     | '/$username/past-bookings'
     | '/$username/profile'
-    | '/$username/providers'
     | '/$username/reviews'
     | '/$username/security'
     | '/$username/system-health'
@@ -555,14 +535,12 @@ export interface FileRouteTypes {
     | '/services/'
     | '/_authenticated/$username/active-bookings'
     | '/_authenticated/$username/dashboard'
-    | '/_authenticated/$username/homeowners'
     | '/_authenticated/$username/jobs'
     | '/_authenticated/$username/jobs-bookings'
     | '/_authenticated/$username/new-jobs'
     | '/_authenticated/$username/overview'
     | '/_authenticated/$username/past-bookings'
     | '/_authenticated/$username/profile'
-    | '/_authenticated/$username/providers'
     | '/_authenticated/$username/reviews'
     | '/_authenticated/$username/security'
     | '/_authenticated/$username/system-health'
@@ -773,13 +751,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameReviewsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/$username/providers': {
-      id: '/_authenticated/$username/providers'
-      path: '/$username/providers'
-      fullPath: '/$username/providers'
-      preLoaderRoute: typeof AuthenticatedUsernameProvidersRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/$username/profile': {
       id: '/_authenticated/$username/profile'
       path: '/$username/profile'
@@ -822,13 +793,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameJobsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/$username/homeowners': {
-      id: '/_authenticated/$username/homeowners'
-      path: '/$username/homeowners'
-      fullPath: '/$username/homeowners'
-      preLoaderRoute: typeof AuthenticatedUsernameHomeownersRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/$username/dashboard': {
       id: '/_authenticated/$username/dashboard'
       path: '/$username/dashboard'
@@ -845,10 +809,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/$username/providers/': {
       id: '/_authenticated/$username/providers/'
-      path: '/'
+      path: '/$username/providers'
       fullPath: '/$username/providers/'
       preLoaderRoute: typeof AuthenticatedUsernameProvidersIndexRouteImport
-      parentRoute: typeof AuthenticatedUsernameProvidersRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/$username/provider-request/': {
       id: '/_authenticated/$username/provider-request/'
@@ -866,10 +830,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/$username/homeowners/': {
       id: '/_authenticated/$username/homeowners/'
-      path: '/'
+      path: '/$username/homeowners'
       fullPath: '/$username/homeowners/'
       preLoaderRoute: typeof AuthenticatedUsernameHomeownersIndexRouteImport
-      parentRoute: typeof AuthenticatedUsernameHomeownersRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/$username/category-request/': {
       id: '/_authenticated/$username/category-request/'
@@ -880,10 +844,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/$username/providers/$id': {
       id: '/_authenticated/$username/providers/$id'
-      path: '/$id'
+      path: '/$username/providers/$id'
       fullPath: '/$username/providers/$id'
       preLoaderRoute: typeof AuthenticatedUsernameProvidersIdRouteImport
-      parentRoute: typeof AuthenticatedUsernameProvidersRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/$username/provider-request/$id': {
       id: '/_authenticated/$username/provider-request/$id'
@@ -908,10 +872,10 @@ declare module '@tanstack/react-router' {
     }
     '/_authenticated/$username/homeowners/$id': {
       id: '/_authenticated/$username/homeowners/$id'
-      path: '/$id'
+      path: '/$username/homeowners/$id'
       fullPath: '/$username/homeowners/$id'
       preLoaderRoute: typeof AuthenticatedUsernameHomeownersIdRouteImport
-      parentRoute: typeof AuthenticatedUsernameHomeownersRoute
+      parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/$username/category-request/$id': {
       id: '/_authenticated/$username/category-request/$id'
@@ -923,73 +887,37 @@ declare module '@tanstack/react-router' {
   }
 }
 
-interface AuthenticatedUsernameHomeownersRouteChildren {
-  AuthenticatedUsernameHomeownersIdRoute: typeof AuthenticatedUsernameHomeownersIdRoute
-  AuthenticatedUsernameHomeownersIndexRoute: typeof AuthenticatedUsernameHomeownersIndexRoute
-}
-
-const AuthenticatedUsernameHomeownersRouteChildren: AuthenticatedUsernameHomeownersRouteChildren =
-  {
-    AuthenticatedUsernameHomeownersIdRoute:
-      AuthenticatedUsernameHomeownersIdRoute,
-    AuthenticatedUsernameHomeownersIndexRoute:
-      AuthenticatedUsernameHomeownersIndexRoute,
-  }
-
-const AuthenticatedUsernameHomeownersRouteWithChildren =
-  AuthenticatedUsernameHomeownersRoute._addFileChildren(
-    AuthenticatedUsernameHomeownersRouteChildren,
-  )
-
-interface AuthenticatedUsernameProvidersRouteChildren {
-  AuthenticatedUsernameProvidersIdRoute: typeof AuthenticatedUsernameProvidersIdRoute
-  AuthenticatedUsernameProvidersIndexRoute: typeof AuthenticatedUsernameProvidersIndexRoute
-}
-
-const AuthenticatedUsernameProvidersRouteChildren: AuthenticatedUsernameProvidersRouteChildren =
-  {
-    AuthenticatedUsernameProvidersIdRoute:
-      AuthenticatedUsernameProvidersIdRoute,
-    AuthenticatedUsernameProvidersIndexRoute:
-      AuthenticatedUsernameProvidersIndexRoute,
-  }
-
-const AuthenticatedUsernameProvidersRouteWithChildren =
-  AuthenticatedUsernameProvidersRoute._addFileChildren(
-    AuthenticatedUsernameProvidersRouteChildren,
-  )
-
 interface AuthenticatedRouteChildren {
   AuthenticatedUsernameActiveBookingsRoute: typeof AuthenticatedUsernameActiveBookingsRoute
   AuthenticatedUsernameDashboardRoute: typeof AuthenticatedUsernameDashboardRoute
-  AuthenticatedUsernameHomeownersRoute: typeof AuthenticatedUsernameHomeownersRouteWithChildren
   AuthenticatedUsernameJobsRoute: typeof AuthenticatedUsernameJobsRoute
   AuthenticatedUsernameJobsBookingsRoute: typeof AuthenticatedUsernameJobsBookingsRoute
   AuthenticatedUsernameNewJobsRoute: typeof AuthenticatedUsernameNewJobsRoute
   AuthenticatedUsernameOverviewRoute: typeof AuthenticatedUsernameOverviewRoute
   AuthenticatedUsernamePastBookingsRoute: typeof AuthenticatedUsernamePastBookingsRoute
   AuthenticatedUsernameProfileRoute: typeof AuthenticatedUsernameProfileRoute
-  AuthenticatedUsernameProvidersRoute: typeof AuthenticatedUsernameProvidersRouteWithChildren
   AuthenticatedUsernameReviewsRoute: typeof AuthenticatedUsernameReviewsRoute
   AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
   AuthenticatedUsernameSystemHealthRoute: typeof AuthenticatedUsernameSystemHealthRoute
   AuthenticatedUsernameUpdateNewsRoute: typeof AuthenticatedUsernameUpdateNewsRoute
   AuthenticatedUsernameWalletRoute: typeof AuthenticatedUsernameWalletRoute
   AuthenticatedUsernameCategoryRequestIdRoute: typeof AuthenticatedUsernameCategoryRequestIdRoute
+  AuthenticatedUsernameHomeownersIdRoute: typeof AuthenticatedUsernameHomeownersIdRoute
   AuthenticatedUsernameMyservicesCardIdRoute: typeof AuthenticatedUsernameMyservicesCardIdRoute
   AuthenticatedUsernameMyservicesNewRoute: typeof AuthenticatedUsernameMyservicesNewRoute
   AuthenticatedUsernameProviderRequestIdRoute: typeof AuthenticatedUsernameProviderRequestIdRoute
+  AuthenticatedUsernameProvidersIdRoute: typeof AuthenticatedUsernameProvidersIdRoute
   AuthenticatedUsernameCategoryRequestIndexRoute: typeof AuthenticatedUsernameCategoryRequestIndexRoute
+  AuthenticatedUsernameHomeownersIndexRoute: typeof AuthenticatedUsernameHomeownersIndexRoute
   AuthenticatedUsernameMyservicesIndexRoute: typeof AuthenticatedUsernameMyservicesIndexRoute
   AuthenticatedUsernameProviderRequestIndexRoute: typeof AuthenticatedUsernameProviderRequestIndexRoute
+  AuthenticatedUsernameProvidersIndexRoute: typeof AuthenticatedUsernameProvidersIndexRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameActiveBookingsRoute:
     AuthenticatedUsernameActiveBookingsRoute,
   AuthenticatedUsernameDashboardRoute: AuthenticatedUsernameDashboardRoute,
-  AuthenticatedUsernameHomeownersRoute:
-    AuthenticatedUsernameHomeownersRouteWithChildren,
   AuthenticatedUsernameJobsRoute: AuthenticatedUsernameJobsRoute,
   AuthenticatedUsernameJobsBookingsRoute:
     AuthenticatedUsernameJobsBookingsRoute,
@@ -998,8 +926,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernamePastBookingsRoute:
     AuthenticatedUsernamePastBookingsRoute,
   AuthenticatedUsernameProfileRoute: AuthenticatedUsernameProfileRoute,
-  AuthenticatedUsernameProvidersRoute:
-    AuthenticatedUsernameProvidersRouteWithChildren,
   AuthenticatedUsernameReviewsRoute: AuthenticatedUsernameReviewsRoute,
   AuthenticatedUsernameSecurityRoute: AuthenticatedUsernameSecurityRoute,
   AuthenticatedUsernameSystemHealthRoute:
@@ -1008,18 +934,25 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameWalletRoute: AuthenticatedUsernameWalletRoute,
   AuthenticatedUsernameCategoryRequestIdRoute:
     AuthenticatedUsernameCategoryRequestIdRoute,
+  AuthenticatedUsernameHomeownersIdRoute:
+    AuthenticatedUsernameHomeownersIdRoute,
   AuthenticatedUsernameMyservicesCardIdRoute:
     AuthenticatedUsernameMyservicesCardIdRoute,
   AuthenticatedUsernameMyservicesNewRoute:
     AuthenticatedUsernameMyservicesNewRoute,
   AuthenticatedUsernameProviderRequestIdRoute:
     AuthenticatedUsernameProviderRequestIdRoute,
+  AuthenticatedUsernameProvidersIdRoute: AuthenticatedUsernameProvidersIdRoute,
   AuthenticatedUsernameCategoryRequestIndexRoute:
     AuthenticatedUsernameCategoryRequestIndexRoute,
+  AuthenticatedUsernameHomeownersIndexRoute:
+    AuthenticatedUsernameHomeownersIndexRoute,
   AuthenticatedUsernameMyservicesIndexRoute:
     AuthenticatedUsernameMyservicesIndexRoute,
   AuthenticatedUsernameProviderRequestIndexRoute:
     AuthenticatedUsernameProviderRequestIndexRoute,
+  AuthenticatedUsernameProvidersIndexRoute:
+    AuthenticatedUsernameProvidersIndexRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
