@@ -169,11 +169,12 @@ const pathMap: Record<AdminNavKey, string> = {
   "category-requests": "/$username/category-request",
   news: "/$username/update-news",
   reviews: "/$username/reviews",
-  security: "/$username/dashboard",
-  "system-health": "/$username/dashboard",
+  security: "/$username/security",
+  "system-health": "/$username/system-health",
   wallet: "/$username/wallet",
   support: "/$username/dashboard",
 };
+
 
 function NavItem({
   to,
