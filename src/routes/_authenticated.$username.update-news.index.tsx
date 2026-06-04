@@ -4,7 +4,7 @@ import { AdminNewsPage } from "@/pages/admin/AdminNewsPage";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { userDashboardPath } from "@/lib/role";
 
-export const Route = createFileRoute("/_authenticated/$username/update-news")({
+export const Route = createFileRoute("/_authenticated/$username/update-news/")({
   component: UpdateNewsRoute,
 });
 
