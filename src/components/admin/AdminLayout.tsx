@@ -31,7 +31,6 @@ export type AdminNavKey =
   | "reviews"
   | "security"
   | "system-health"
-  | "wallet"
   | "support";
 
 interface Props {
