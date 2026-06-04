@@ -14,7 +14,6 @@ import {
   Star,
   ShieldCheck,
   Activity,
-  Wallet,
   LifeBuoy,
 } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
