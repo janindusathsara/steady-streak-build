@@ -39,7 +39,7 @@ export function AdminNewsEditorPage({ mode }: Props) {
   useEffect(() => {
     if (mode !== "edit" || !params.id) return;
     (async () => {
-      const { data, error } = await supabase.from("news_articles").select("*").eq("id", params.id).maybeSingle();
+      const { data, error } = await supabase.from("news_articles").select("*").eq("id", params.id!).maybeSingle();
       if (error || !data) {
         toast.error("Article not found");
         navigate({ to: "/$username/update-news", params: { username } });
