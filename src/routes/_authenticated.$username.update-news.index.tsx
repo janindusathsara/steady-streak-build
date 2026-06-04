@@ -9,7 +9,7 @@ export const Route = createFileRoute("/_authenticated/$username/update-news/")({
 });
 
 function UpdateNewsRoute() {
-  const { username } = useParams({ from: "/_authenticated/$username/update-news" });
+  const { username } = useParams({ from: "/_authenticated/$username/update-news/" });
   const { loading, profile } = useCurrentUser();
   const navigate = useNavigate();
   useEffect(() => {
