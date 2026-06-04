@@ -168,7 +168,6 @@ const pathMap: Record<AdminNavKey, string> = {
   reviews: "/$username/reviews",
   security: "/$username/security",
   "system-health": "/$username/system-health",
-  wallet: "/$username/wallet",
   support: "/$username/dashboard",
 };
 
