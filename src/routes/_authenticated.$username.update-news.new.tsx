@@ -1,20 +1,20 @@
 import { createFileRoute, useNavigate, useParams } from "@tanstack/react-router";
 import { useEffect } from "react";
-import { AdminNewsPage } from "@/pages/admin/AdminNewsPage";
+import { AdminNewsEditorPage } from "@/pages/admin/AdminNewsEditorPage";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { userDashboardPath } from "@/lib/role";
 
-export const Route = createFileRoute("/_authenticated/$username/update-news")({
-  component: UpdateNewsRoute,
+export const Route = createFileRoute("/_authenticated/$username/update-news/new")({
+  component: NewArticleRoute,
 });
 
-function UpdateNewsRoute() {
-  const { username } = useParams({ from: "/_authenticated/$username/update-news" });
+function NewArticleRoute() {
+  const { username } = useParams({ from: "/_authenticated/$username/update-news/new" });
   const { loading, profile } = useCurrentUser();
   const navigate = useNavigate();
   useEffect(() => {
     if (!loading && profile && profile.username.toLowerCase() !== username.toLowerCase()) {
-      navigate({ to: "/$username/update-news", params: { username: profile.username }, replace: true });
+      navigate({ to: "/$username/update-news/new", params: { username: profile.username }, replace: true });
     }
   }, [loading, profile, username, navigate]);
   if (loading || !profile) return <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Loading…</div>;
@@ -23,5 +23,5 @@ function UpdateNewsRoute() {
     navigate({ to: userDashboardPath(profile.username), replace: true });
     return null;
   }
-  return <AdminNewsPage />;
+  return <AdminNewsEditorPage mode="new" />;
 }

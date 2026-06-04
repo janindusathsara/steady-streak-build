@@ -14,7 +14,6 @@ import {
   Star,
   ShieldCheck,
   Activity,
-  Wallet,
   LifeBuoy,
 } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -32,7 +31,6 @@ export type AdminNavKey =
   | "reviews"
   | "security"
   | "system-health"
-  | "wallet"
   | "support";
 
 interface Props {
@@ -121,7 +119,6 @@ export function AdminLayout({ active, children }: Props) {
             <NavGroup label="System">
               <NavItem to="security" active={active} username={username} icon={ShieldCheck} label="Security Check" />
               <NavItem to="system-health" active={active} username={username} icon={Activity} label="System Health" />
-              <NavItem to="wallet" active={active} username={username} icon={Wallet} label="Wallet" />
             </NavGroup>
 
             <div className="pt-1">
@@ -171,7 +168,6 @@ const pathMap: Record<AdminNavKey, string> = {
   reviews: "/$username/reviews",
   security: "/$username/security",
   "system-health": "/$username/system-health",
-  wallet: "/$username/wallet",
   support: "/$username/dashboard",
 };
 

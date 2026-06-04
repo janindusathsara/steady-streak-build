@@ -179,6 +179,51 @@ export type Database = {
         }
         Relationships: []
       }
+      news_articles: {
+        Row: {
+          author_id: string
+          body: string
+          category: string
+          created_at: string
+          excerpt: string
+          id: string
+          image_url: string | null
+          publish_at: string | null
+          status: string
+          tag: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          author_id: string
+          body?: string
+          category?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          publish_at?: string | null
+          status?: string
+          tag?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          author_id?: string
+          body?: string
+          category?: string
+          created_at?: string
+          excerpt?: string
+          id?: string
+          image_url?: string | null
+          publish_at?: string | null
+          status?: string
+          tag?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
@@ -399,7 +444,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      is_admin: { Args: { _user_id: string }; Returns: boolean }
     }
     Enums: {
       [_ in never]: never

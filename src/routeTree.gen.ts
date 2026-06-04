@@ -29,7 +29,6 @@ import { Route as UsernameBookRouteImport } from './routes/$username.book'
 import { Route as ServicesServiceIdIndexRouteImport } from './routes/services.$serviceId.index'
 import { Route as ServicesServiceIdSubServiceIdRouteImport } from './routes/services.$serviceId.$subServiceId'
 import { Route as AuthenticatedUsernameWalletRouteImport } from './routes/_authenticated.$username.wallet'
-import { Route as AuthenticatedUsernameUpdateNewsRouteImport } from './routes/_authenticated.$username.update-news'
 import { Route as AuthenticatedUsernameSystemHealthRouteImport } from './routes/_authenticated.$username.system-health'
 import { Route as AuthenticatedUsernameSecurityRouteImport } from './routes/_authenticated.$username.security'
 import { Route as AuthenticatedUsernameReviewsRouteImport } from './routes/_authenticated.$username.reviews'
@@ -41,17 +40,20 @@ import { Route as AuthenticatedUsernameJobsBookingsRouteImport } from './routes/
 import { Route as AuthenticatedUsernameJobsRouteImport } from './routes/_authenticated.$username.jobs'
 import { Route as AuthenticatedUsernameDashboardRouteImport } from './routes/_authenticated.$username.dashboard'
 import { Route as AuthenticatedUsernameActiveBookingsRouteImport } from './routes/_authenticated.$username.active-bookings'
+import { Route as AuthenticatedUsernameUpdateNewsIndexRouteImport } from './routes/_authenticated.$username.update-news.index'
 import { Route as AuthenticatedUsernameProvidersIndexRouteImport } from './routes/_authenticated.$username.providers.index'
 import { Route as AuthenticatedUsernameProviderRequestIndexRouteImport } from './routes/_authenticated.$username.provider-request.index'
 import { Route as AuthenticatedUsernameMyservicesIndexRouteImport } from './routes/_authenticated.$username.myservices.index'
 import { Route as AuthenticatedUsernameHomeownersIndexRouteImport } from './routes/_authenticated.$username.homeowners.index'
 import { Route as AuthenticatedUsernameCategoryRequestIndexRouteImport } from './routes/_authenticated.$username.category-request.index'
+import { Route as AuthenticatedUsernameUpdateNewsNewRouteImport } from './routes/_authenticated.$username.update-news.new'
 import { Route as AuthenticatedUsernameProvidersIdRouteImport } from './routes/_authenticated.$username.providers.$id'
 import { Route as AuthenticatedUsernameProviderRequestIdRouteImport } from './routes/_authenticated.$username.provider-request.$id'
 import { Route as AuthenticatedUsernameMyservicesNewRouteImport } from './routes/_authenticated.$username.myservices.new'
 import { Route as AuthenticatedUsernameMyservicesCardIdRouteImport } from './routes/_authenticated.$username.myservices.$cardId'
 import { Route as AuthenticatedUsernameHomeownersIdRouteImport } from './routes/_authenticated.$username.homeowners.$id'
 import { Route as AuthenticatedUsernameCategoryRequestIdRouteImport } from './routes/_authenticated.$username.category-request.$id'
+import { Route as AuthenticatedUsernameUpdateNewsIdEditRouteImport } from './routes/_authenticated.$username.update-news.$id.edit'
 
 const TermsRoute = TermsRouteImport.update({
   id: '/terms',
@@ -154,12 +156,6 @@ const AuthenticatedUsernameWalletRoute =
     path: '/$username/wallet',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
-const AuthenticatedUsernameUpdateNewsRoute =
-  AuthenticatedUsernameUpdateNewsRouteImport.update({
-    id: '/$username/update-news',
-    path: '/$username/update-news',
-    getParentRoute: () => AuthenticatedRoute,
-  } as any)
 const AuthenticatedUsernameSystemHealthRoute =
   AuthenticatedUsernameSystemHealthRouteImport.update({
     id: '/$username/system-health',
@@ -226,6 +222,12 @@ const AuthenticatedUsernameActiveBookingsRoute =
     path: '/$username/active-bookings',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameUpdateNewsIndexRoute =
+  AuthenticatedUsernameUpdateNewsIndexRouteImport.update({
+    id: '/$username/update-news/',
+    path: '/$username/update-news/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 const AuthenticatedUsernameProvidersIndexRoute =
   AuthenticatedUsernameProvidersIndexRouteImport.update({
     id: '/$username/providers/',
@@ -254,6 +256,12 @@ const AuthenticatedUsernameCategoryRequestIndexRoute =
   AuthenticatedUsernameCategoryRequestIndexRouteImport.update({
     id: '/$username/category-request/',
     path: '/$username/category-request/',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
+const AuthenticatedUsernameUpdateNewsNewRoute =
+  AuthenticatedUsernameUpdateNewsNewRouteImport.update({
+    id: '/$username/update-news/new',
+    path: '/$username/update-news/new',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
 const AuthenticatedUsernameProvidersIdRoute =
@@ -292,6 +300,12 @@ const AuthenticatedUsernameCategoryRequestIdRoute =
     path: '/$username/category-request/$id',
     getParentRoute: () => AuthenticatedRoute,
   } as any)
+const AuthenticatedUsernameUpdateNewsIdEditRoute =
+  AuthenticatedUsernameUpdateNewsIdEditRouteImport.update({
+    id: '/$username/update-news/$id/edit',
+    path: '/$username/update-news/$id/edit',
+    getParentRoute: () => AuthenticatedRoute,
+  } as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -321,7 +335,6 @@ export interface FileRoutesByFullPath {
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/system-health': typeof AuthenticatedUsernameSystemHealthRoute
-  '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
@@ -331,11 +344,14 @@ export interface FileRoutesByFullPath {
   '/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
   '/$username/provider-request/$id': typeof AuthenticatedUsernameProviderRequestIdRoute
   '/$username/providers/$id': typeof AuthenticatedUsernameProvidersIdRoute
+  '/$username/update-news/new': typeof AuthenticatedUsernameUpdateNewsNewRoute
   '/$username/category-request/': typeof AuthenticatedUsernameCategoryRequestIndexRoute
   '/$username/homeowners/': typeof AuthenticatedUsernameHomeownersIndexRoute
   '/$username/myservices/': typeof AuthenticatedUsernameMyservicesIndexRoute
   '/$username/provider-request/': typeof AuthenticatedUsernameProviderRequestIndexRoute
   '/$username/providers/': typeof AuthenticatedUsernameProvidersIndexRoute
+  '/$username/update-news/': typeof AuthenticatedUsernameUpdateNewsIndexRoute
+  '/$username/update-news/$id/edit': typeof AuthenticatedUsernameUpdateNewsIdEditRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -364,7 +380,6 @@ export interface FileRoutesByTo {
   '/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/$username/system-health': typeof AuthenticatedUsernameSystemHealthRoute
-  '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
   '/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId': typeof ServicesServiceIdIndexRoute
@@ -374,11 +389,14 @@ export interface FileRoutesByTo {
   '/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
   '/$username/provider-request/$id': typeof AuthenticatedUsernameProviderRequestIdRoute
   '/$username/providers/$id': typeof AuthenticatedUsernameProvidersIdRoute
+  '/$username/update-news/new': typeof AuthenticatedUsernameUpdateNewsNewRoute
   '/$username/category-request': typeof AuthenticatedUsernameCategoryRequestIndexRoute
   '/$username/homeowners': typeof AuthenticatedUsernameHomeownersIndexRoute
   '/$username/myservices': typeof AuthenticatedUsernameMyservicesIndexRoute
   '/$username/provider-request': typeof AuthenticatedUsernameProviderRequestIndexRoute
   '/$username/providers': typeof AuthenticatedUsernameProvidersIndexRoute
+  '/$username/update-news': typeof AuthenticatedUsernameUpdateNewsIndexRoute
+  '/$username/update-news/$id/edit': typeof AuthenticatedUsernameUpdateNewsIdEditRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -410,7 +428,6 @@ export interface FileRoutesById {
   '/_authenticated/$username/reviews': typeof AuthenticatedUsernameReviewsRoute
   '/_authenticated/$username/security': typeof AuthenticatedUsernameSecurityRoute
   '/_authenticated/$username/system-health': typeof AuthenticatedUsernameSystemHealthRoute
-  '/_authenticated/$username/update-news': typeof AuthenticatedUsernameUpdateNewsRoute
   '/_authenticated/$username/wallet': typeof AuthenticatedUsernameWalletRoute
   '/services/$serviceId/$subServiceId': typeof ServicesServiceIdSubServiceIdRoute
   '/services/$serviceId/': typeof ServicesServiceIdIndexRoute
@@ -420,11 +437,14 @@ export interface FileRoutesById {
   '/_authenticated/$username/myservices/new': typeof AuthenticatedUsernameMyservicesNewRoute
   '/_authenticated/$username/provider-request/$id': typeof AuthenticatedUsernameProviderRequestIdRoute
   '/_authenticated/$username/providers/$id': typeof AuthenticatedUsernameProvidersIdRoute
+  '/_authenticated/$username/update-news/new': typeof AuthenticatedUsernameUpdateNewsNewRoute
   '/_authenticated/$username/category-request/': typeof AuthenticatedUsernameCategoryRequestIndexRoute
   '/_authenticated/$username/homeowners/': typeof AuthenticatedUsernameHomeownersIndexRoute
   '/_authenticated/$username/myservices/': typeof AuthenticatedUsernameMyservicesIndexRoute
   '/_authenticated/$username/provider-request/': typeof AuthenticatedUsernameProviderRequestIndexRoute
   '/_authenticated/$username/providers/': typeof AuthenticatedUsernameProvidersIndexRoute
+  '/_authenticated/$username/update-news/': typeof AuthenticatedUsernameUpdateNewsIndexRoute
+  '/_authenticated/$username/update-news/$id/edit': typeof AuthenticatedUsernameUpdateNewsIdEditRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -456,7 +476,6 @@ export interface FileRouteTypes {
     | '/$username/reviews'
     | '/$username/security'
     | '/$username/system-health'
-    | '/$username/update-news'
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
@@ -466,11 +485,14 @@ export interface FileRouteTypes {
     | '/$username/myservices/new'
     | '/$username/provider-request/$id'
     | '/$username/providers/$id'
+    | '/$username/update-news/new'
     | '/$username/category-request/'
     | '/$username/homeowners/'
     | '/$username/myservices/'
     | '/$username/provider-request/'
     | '/$username/providers/'
+    | '/$username/update-news/'
+    | '/$username/update-news/$id/edit'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -499,7 +521,6 @@ export interface FileRouteTypes {
     | '/$username/reviews'
     | '/$username/security'
     | '/$username/system-health'
-    | '/$username/update-news'
     | '/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId'
@@ -509,11 +530,14 @@ export interface FileRouteTypes {
     | '/$username/myservices/new'
     | '/$username/provider-request/$id'
     | '/$username/providers/$id'
+    | '/$username/update-news/new'
     | '/$username/category-request'
     | '/$username/homeowners'
     | '/$username/myservices'
     | '/$username/provider-request'
     | '/$username/providers'
+    | '/$username/update-news'
+    | '/$username/update-news/$id/edit'
   id:
     | '__root__'
     | '/'
@@ -544,7 +568,6 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/reviews'
     | '/_authenticated/$username/security'
     | '/_authenticated/$username/system-health'
-    | '/_authenticated/$username/update-news'
     | '/_authenticated/$username/wallet'
     | '/services/$serviceId/$subServiceId'
     | '/services/$serviceId/'
@@ -554,11 +577,14 @@ export interface FileRouteTypes {
     | '/_authenticated/$username/myservices/new'
     | '/_authenticated/$username/provider-request/$id'
     | '/_authenticated/$username/providers/$id'
+    | '/_authenticated/$username/update-news/new'
     | '/_authenticated/$username/category-request/'
     | '/_authenticated/$username/homeowners/'
     | '/_authenticated/$username/myservices/'
     | '/_authenticated/$username/provider-request/'
     | '/_authenticated/$username/providers/'
+    | '/_authenticated/$username/update-news/'
+    | '/_authenticated/$username/update-news/$id/edit'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -723,13 +749,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameWalletRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
-    '/_authenticated/$username/update-news': {
-      id: '/_authenticated/$username/update-news'
-      path: '/$username/update-news'
-      fullPath: '/$username/update-news'
-      preLoaderRoute: typeof AuthenticatedUsernameUpdateNewsRouteImport
-      parentRoute: typeof AuthenticatedRoute
-    }
     '/_authenticated/$username/system-health': {
       id: '/_authenticated/$username/system-health'
       path: '/$username/system-health'
@@ -807,6 +826,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameActiveBookingsRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/update-news/': {
+      id: '/_authenticated/$username/update-news/'
+      path: '/$username/update-news'
+      fullPath: '/$username/update-news/'
+      preLoaderRoute: typeof AuthenticatedUsernameUpdateNewsIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
     '/_authenticated/$username/providers/': {
       id: '/_authenticated/$username/providers/'
       path: '/$username/providers'
@@ -840,6 +866,13 @@ declare module '@tanstack/react-router' {
       path: '/$username/category-request'
       fullPath: '/$username/category-request/'
       preLoaderRoute: typeof AuthenticatedUsernameCategoryRequestIndexRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
+    '/_authenticated/$username/update-news/new': {
+      id: '/_authenticated/$username/update-news/new'
+      path: '/$username/update-news/new'
+      fullPath: '/$username/update-news/new'
+      preLoaderRoute: typeof AuthenticatedUsernameUpdateNewsNewRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
     '/_authenticated/$username/providers/$id': {
@@ -884,6 +917,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof AuthenticatedUsernameCategoryRequestIdRouteImport
       parentRoute: typeof AuthenticatedRoute
     }
+    '/_authenticated/$username/update-news/$id/edit': {
+      id: '/_authenticated/$username/update-news/$id/edit'
+      path: '/$username/update-news/$id/edit'
+      fullPath: '/$username/update-news/$id/edit'
+      preLoaderRoute: typeof AuthenticatedUsernameUpdateNewsIdEditRouteImport
+      parentRoute: typeof AuthenticatedRoute
+    }
   }
 }
 
@@ -899,7 +939,6 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameReviewsRoute: typeof AuthenticatedUsernameReviewsRoute
   AuthenticatedUsernameSecurityRoute: typeof AuthenticatedUsernameSecurityRoute
   AuthenticatedUsernameSystemHealthRoute: typeof AuthenticatedUsernameSystemHealthRoute
-  AuthenticatedUsernameUpdateNewsRoute: typeof AuthenticatedUsernameUpdateNewsRoute
   AuthenticatedUsernameWalletRoute: typeof AuthenticatedUsernameWalletRoute
   AuthenticatedUsernameCategoryRequestIdRoute: typeof AuthenticatedUsernameCategoryRequestIdRoute
   AuthenticatedUsernameHomeownersIdRoute: typeof AuthenticatedUsernameHomeownersIdRoute
@@ -907,11 +946,14 @@ interface AuthenticatedRouteChildren {
   AuthenticatedUsernameMyservicesNewRoute: typeof AuthenticatedUsernameMyservicesNewRoute
   AuthenticatedUsernameProviderRequestIdRoute: typeof AuthenticatedUsernameProviderRequestIdRoute
   AuthenticatedUsernameProvidersIdRoute: typeof AuthenticatedUsernameProvidersIdRoute
+  AuthenticatedUsernameUpdateNewsNewRoute: typeof AuthenticatedUsernameUpdateNewsNewRoute
   AuthenticatedUsernameCategoryRequestIndexRoute: typeof AuthenticatedUsernameCategoryRequestIndexRoute
   AuthenticatedUsernameHomeownersIndexRoute: typeof AuthenticatedUsernameHomeownersIndexRoute
   AuthenticatedUsernameMyservicesIndexRoute: typeof AuthenticatedUsernameMyservicesIndexRoute
   AuthenticatedUsernameProviderRequestIndexRoute: typeof AuthenticatedUsernameProviderRequestIndexRoute
   AuthenticatedUsernameProvidersIndexRoute: typeof AuthenticatedUsernameProvidersIndexRoute
+  AuthenticatedUsernameUpdateNewsIndexRoute: typeof AuthenticatedUsernameUpdateNewsIndexRoute
+  AuthenticatedUsernameUpdateNewsIdEditRoute: typeof AuthenticatedUsernameUpdateNewsIdEditRoute
 }
 
 const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
@@ -930,7 +972,6 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameSecurityRoute: AuthenticatedUsernameSecurityRoute,
   AuthenticatedUsernameSystemHealthRoute:
     AuthenticatedUsernameSystemHealthRoute,
-  AuthenticatedUsernameUpdateNewsRoute: AuthenticatedUsernameUpdateNewsRoute,
   AuthenticatedUsernameWalletRoute: AuthenticatedUsernameWalletRoute,
   AuthenticatedUsernameCategoryRequestIdRoute:
     AuthenticatedUsernameCategoryRequestIdRoute,
@@ -943,6 +984,8 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
   AuthenticatedUsernameProviderRequestIdRoute:
     AuthenticatedUsernameProviderRequestIdRoute,
   AuthenticatedUsernameProvidersIdRoute: AuthenticatedUsernameProvidersIdRoute,
+  AuthenticatedUsernameUpdateNewsNewRoute:
+    AuthenticatedUsernameUpdateNewsNewRoute,
   AuthenticatedUsernameCategoryRequestIndexRoute:
     AuthenticatedUsernameCategoryRequestIndexRoute,
   AuthenticatedUsernameHomeownersIndexRoute:
@@ -953,6 +996,10 @@ const AuthenticatedRouteChildren: AuthenticatedRouteChildren = {
     AuthenticatedUsernameProviderRequestIndexRoute,
   AuthenticatedUsernameProvidersIndexRoute:
     AuthenticatedUsernameProvidersIndexRoute,
+  AuthenticatedUsernameUpdateNewsIndexRoute:
+    AuthenticatedUsernameUpdateNewsIndexRoute,
+  AuthenticatedUsernameUpdateNewsIdEditRoute:
+    AuthenticatedUsernameUpdateNewsIdEditRoute,
 }
 
 const AuthenticatedRouteWithChildren = AuthenticatedRoute._addFileChildren(
