@@ -119,7 +119,6 @@ export function AdminLayout({ active, children }: Props) {
             <NavGroup label="System">
               <NavItem to="security" active={active} username={username} icon={ShieldCheck} label="Security Check" />
               <NavItem to="system-health" active={active} username={username} icon={Activity} label="System Health" />
-              <NavItem to="wallet" active={active} username={username} icon={Wallet} label="Wallet" />
             </NavGroup>
 
             <div className="pt-1">
