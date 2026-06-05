@@ -45,9 +45,20 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
             ) : null}
           </nav>
           <div className="flex items-center gap-3">
-            <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors">
-              <Bell className="h-4 w-4" />
-            </button>
+            {username ? (
+              <Link
+                to="/$username/notification"
+                params={{ username }}
+                className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors"
+                aria-label="Notifications"
+              >
+                <Bell className="h-4 w-4" />
+              </Link>
+            ) : (
+              <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors">
+                <Bell className="h-4 w-4" />
+              </button>
+            )}
             <div className="hidden text-right text-xs sm:block">
               <p className="font-semibold">{displayName}</p>
               <p className="text-muted-foreground capitalize">{profile?.role ?? "Member"}</p>

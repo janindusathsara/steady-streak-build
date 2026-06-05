@@ -67,10 +67,21 @@ export function AdminLayout({ active, children }: Props) {
             <Link to="/about" className="hover:text-background">About Us</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <button className="relative rounded-full p-2 hover:bg-background/10">
-              <Bell className="h-5 w-5 text-background/70" />
-              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
-            </button>
+            {username ? (
+              <Link
+                to="/$username/notification"
+                params={{ username }}
+                className="relative rounded-full p-2 hover:bg-background/10"
+                aria-label="Notifications"
+              >
+                <Bell className="h-5 w-5 text-background/70" />
+                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
+              </Link>
+            ) : (
+              <button className="relative rounded-full p-2 hover:bg-background/10">
+                <Bell className="h-5 w-5 text-background/70" />
+              </button>
+            )}
             <div className="hidden text-right text-xs sm:block">
               <p className="font-bold text-background">{displayName}</p>
               <span className="inline-block rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-semibold text-primary">
