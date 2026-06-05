@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, Check, Inbox, ArrowLeft } from "lucide-react";
+import { Bell, Check, Inbox } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
-import { Footer } from "@/components/common/Footer";
+import { HomeownerLayout } from "@/components/homeowner/HomeownerLayout";
 import { toast } from "sonner";
 
 type Notif = {
@@ -224,68 +224,74 @@ function ProviderNotifications({ userId, username }: { userId: string; username:
 }
 
 /* ============ Homeowner (clean light) ============ */
-function HomeownerNotifications({ userId, username }: { userId: string; username: string }) {
+function HomeownerNotifications({ userId, username: _username }: { userId: string; username: string }) {
   const { items, loading, markAllRead, markOneRead } = useNotifications(userId);
   const unread = items.filter((n) => !n.read_at).length;
   return (
-    <div className="min-h-screen bg-muted/40 text-foreground flex flex-col">
-      <header className="sticky top-0 z-30 border-b border-border bg-card">
-        <div className="mx-auto flex h-16 max-w-3xl items-center justify-between px-5">
-          <Link
-            to="/$username/dashboard"
-            params={{ username }}
-            className="inline-flex items-center gap-2 text-sm font-semibold text-muted-foreground hover:text-foreground"
-          >
-            <ArrowLeft className="h-4 w-4" /> Back to dashboard
-          </Link>
-          <button
-            onClick={markAllRead}
-            disabled={unread === 0}
-            className="inline-flex items-center gap-2 rounded-xl bg-foreground px-3 py-1.5 text-xs font-semibold text-background disabled:opacity-50"
-          >
-            <Check className="h-3.5 w-3.5" /> Mark all read
-          </button>
-        </div>
-      </header>
-      <main className="mx-auto w-full max-w-3xl flex-1 px-5 py-6">
-        <div className="mb-6">
+    <HomeownerLayout active="dashboard">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
           <h1 className="text-2xl font-bold">Notifications</h1>
           <p className="text-sm text-muted-foreground">
-            {unread > 0 ? `${unread} unread` : "You're all caught up"}
+            {unread > 0 ? `${unread} unread updates` : "You're all caught up"}
           </p>
         </div>
-        <div className="space-y-2">
-          {loading ? (
-            <p className="text-muted-foreground">Loading…</p>
-          ) : items.length === 0 ? (
-            <EmptyState />
-          ) : (
-            items.map((n) => (
-              <button
-                key={n.id}
-                onClick={() => !n.read_at && markOneRead(n.id)}
-                className={`flex w-full items-start gap-3 rounded-2xl border p-4 text-left transition-colors ${
-                  n.read_at ? "border-border bg-card" : "border-primary/30 bg-primary/5 hover:bg-primary/10"
-                }`}
-              >
-                <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
-                  <Bell className="h-4 w-4" />
-                </div>
-                <div className="min-w-0 flex-1">
-                  <p className="text-sm font-semibold">{n.title}</p>
-                  {n.body && <p className="mt-0.5 text-sm text-muted-foreground">{n.body}</p>}
-                  <p className="mt-1 text-[11px] text-muted-foreground">
+        <button
+          onClick={markAllRead}
+          disabled={unread === 0}
+          className="inline-flex items-center gap-2 rounded-xl bg-foreground px-3 py-2 text-sm font-semibold text-background disabled:opacity-50"
+        >
+          <Check className="h-4 w-4" /> Mark all read
+        </button>
+      </div>
+      <div className="space-y-2">
+        {loading ? (
+          <p className="text-muted-foreground">Loading…</p>
+        ) : items.length === 0 ? (
+          <EmptyState />
+        ) : (
+          items.map((n) => (
+            <div
+              key={n.id}
+              className={`flex items-start gap-3 rounded-2xl border p-4 transition-colors ${
+                n.read_at ? "border-border bg-card" : "border-primary/40 bg-primary/5"
+              }`}
+            >
+              <div className="mt-0.5 flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary/10 text-primary">
+                <Bell className="h-4 w-4" />
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-semibold">{n.title}</p>
+                {n.body && <p className="mt-0.5 text-sm text-muted-foreground">{n.body}</p>}
+                <div className="mt-1 flex items-center gap-3">
+                  <p className="text-[11px] text-muted-foreground">
                     {formatDistanceToNow(new Date(n.created_at), { addSuffix: true })}
                   </p>
+                  {n.booking_id && (
+                    <Link
+                      to="/$username/active-bookings"
+                      params={{ username: _username }}
+                      className="text-[11px] font-semibold text-primary hover:underline"
+                    >
+                      View booking →
+                    </Link>
+                  )}
                 </div>
-                {!n.read_at && <span className="mt-2 h-2 w-2 shrink-0 rounded-full bg-primary" />}
-              </button>
-            ))
-          )}
-        </div>
-      </main>
-      <Footer />
-    </div>
+              </div>
+              {!n.read_at && (
+                <button
+                  onClick={() => markOneRead(n.id)}
+                  className="rounded-full p-1.5 text-muted-foreground hover:bg-muted"
+                  aria-label="Mark read"
+                >
+                  <Check className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          ))
+        )}
+      </div>
+    </HomeownerLayout>
   );
 }
 
