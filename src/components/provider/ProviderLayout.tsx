@@ -66,10 +66,21 @@ export function ProviderLayout({ active, newRequestsCount = 0, reviewsCount = 0,
             <Link to="/about" className="hover:text-foreground">About Us</Link>
           </nav>
           <div className="flex items-center gap-3">
-            <button className="relative rounded-full p-2 hover:bg-muted">
-              <Bell className="h-5 w-5 text-muted-foreground" />
-              <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
-            </button>
+            {username ? (
+              <Link
+                to="/$username/notification"
+                params={{ username }}
+                className="relative rounded-full p-2 hover:bg-muted"
+                aria-label="Notifications"
+              >
+                <Bell className="h-5 w-5 text-muted-foreground" />
+                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
+              </Link>
+            ) : (
+              <button className="relative rounded-full p-2 hover:bg-muted">
+                <Bell className="h-5 w-5 text-muted-foreground" />
+              </button>
+            )}
             <div className="hidden text-right text-xs sm:block">
               <p className="font-bold text-foreground">{displayName}</p>
               <span className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
