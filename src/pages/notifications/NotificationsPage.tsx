@@ -1,12 +1,12 @@
 import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
-import { Bell, Check, Inbox, ArrowLeft } from "lucide-react";
+import { Bell, Check, Inbox } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
-import { Footer } from "@/components/common/Footer";
+import { HomeownerLayout } from "@/components/homeowner/HomeownerLayout";
 import { toast } from "sonner";
 
 type Notif = {
