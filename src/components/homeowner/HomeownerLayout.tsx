@@ -1,8 +1,8 @@
 import { ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
-  Wrench, Bell, LogOut, LayoutDashboard, ShieldCheck, Activity,
-  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy,
+  Wrench, Bell, LogOut, LayoutGrid, ShieldCheck, Activity,
+  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -32,36 +32,40 @@ export function HomeownerLayout({ active, children }: Props) {
   };
 
   return (
-    <div className="min-h-screen bg-muted/40 text-foreground flex flex-col">
-      <header className="sticky top-0 z-30 border-b border-border bg-card">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
+    <div className="min-h-screen bg-background text-foreground">
+      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
             <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
             <span className="text-lg font-bold tracking-tight">FixItNow</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
-            <Link to="/services" className="hover:text-foreground transition-colors">Find Services</Link>
-            {username && (
-              <Link to="/$username/book" params={{ username }} className="hover:text-foreground transition-colors">Book Now</Link>
+          <nav className="hidden gap-8 text-sm font-medium text-muted-foreground md:flex">
+            {username ? (
+              <Link to="/$username/dashboard" params={{ username }} className="font-bold text-foreground">Home</Link>
+            ) : (
+              <Link to="/" className="font-bold text-foreground">Home</Link>
             )}
-            {username && (
-              <Link to="/$username/wallet" params={{ username }} className="hover:text-foreground transition-colors">My Wallet</Link>
-            )}
+            <Link to="/services" className="hover:text-foreground">Services</Link>
+            <Link to="/news" className="hover:text-foreground">News</Link>
+            <Link to="/about" className="hover:text-foreground">About Us</Link>
           </nav>
           <div className="flex items-center gap-3">
             {username && (
               <Link
                 to="/$username/notification"
                 params={{ username }}
-                className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors"
+                className="relative rounded-full p-2 hover:bg-muted"
                 aria-label="Notifications"
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-5 w-5 text-muted-foreground" />
+                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
               </Link>
             )}
             <div className="hidden text-right text-xs sm:block">
-              <p className="font-semibold">{displayName}</p>
-              <p className="text-muted-foreground capitalize">{profile?.role ?? "Member"}</p>
+              <p className="font-bold text-foreground">{displayName}</p>
+              <span className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                Homeowner
+              </span>
             </div>
             {username && (
               <Link
@@ -76,49 +80,104 @@ export function HomeownerLayout({ active, children }: Props) {
         </div>
       </header>
 
-      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-5 py-6 lg:grid-cols-[210px_1fr]">
-        <aside className="hidden lg:flex flex-col justify-between sticky top-20 self-start h-[calc(100vh-5rem)] overflow-y-auto pb-4">
-          <nav className="space-y-1 text-sm">
-            <SideLink icon={LayoutDashboard} label="Dashboard" to="/$username/dashboard" username={username} active={active === "dashboard"} />
-            <SideLink icon={ShieldCheck} label="Security Check" to="/$username/security" username={username} active={active === "security"} />
-            <SideStub icon={Activity} label="System Health" />
-            <SideLink icon={WalletIcon} label="Wallet" to="/$username/wallet" username={username} active={active === "wallet"} />
-            <SideLink icon={Clock} label="Active Bookings" to="/$username/active-bookings" username={username} active={active === "active"} />
-            <SideLink icon={CalendarDays} label="Past Bookings" to="/$username/past-bookings" username={username} active={active === "bookings"} />
-            <SideStub icon={Settings} label="Preferences" />
-            <div className="my-3 border-t border-border" />
-            <SideStub icon={LifeBuoy} label="Support" />
+      <div className="mx-auto flex max-w-7xl gap-6 px-5 py-6">
+        <aside className="sticky top-[73px] hidden h-[calc(100vh-89px)] w-60 shrink-0 flex-col md:flex">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/90 to-primary p-4 text-primary-foreground shadow-sm">
+            <div className="flex items-center gap-2">
+              <Home className="h-5 w-5" />
+              <p className="text-sm font-bold">Welcome Home</p>
+            </div>
+            <p className="mt-1 text-xs font-semibold">{displayName}</p>
+            <p className="text-[11px] opacity-80">Your trusted service hub</p>
+          </div>
+
+          <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
+            <NavGroup label="Main">
+              <NavLink to="dashboard" active={active} username={username} icon={LayoutGrid} label="Dashboard" />
+            </NavGroup>
+
+            <NavGroup label="Bookings">
+              <NavLink to="active" active={active} username={username} icon={Clock} label="Active Bookings" />
+              <NavLink to="bookings" active={active} username={username} icon={CalendarDays} label="Past Bookings" />
+            </NavGroup>
+
+            <NavGroup label="Account">
+              <NavLink to="security" active={active} username={username} icon={ShieldCheck} label="Security Check" />
+              <NavStub icon={Activity} label="System Health" />
+              <NavLink to="wallet" active={active} username={username} icon={WalletIcon} label="Wallet" />
+              <NavStub icon={Settings} label="Preferences" />
+            </NavGroup>
+
+            <div className="pt-1">
+              <NavStub icon={LifeBuoy} label="Support" />
+            </div>
           </nav>
-          <button onClick={handleLogout} className="mt-6 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-muted">
+
+          <button
+            onClick={handleLogout}
+            className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/5"
+          >
             <LogOut className="h-4 w-4" /> Logout
           </button>
         </aside>
-        <main className="min-w-0">{children}</main>
+
+        <main className="min-w-0 flex-1">{children}</main>
       </div>
       <Footer />
     </div>
   );
 }
 
-function SideLink({ icon: Icon, label, to, username, active }: {
-  icon: any; label: string;
-  to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings";
-  username: string; active: boolean;
-}) {
-  const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
-    active ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted"
-  }`;
+function NavGroup({ label, children }: { label: string; children: ReactNode }) {
   return (
-    <Link to={to} params={{ username }} className={cls}>
-      <Icon className="h-4 w-4" /> {label}
+    <div>
+      <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">
+        {label}
+      </p>
+      <div className="space-y-1">{children}</div>
+    </div>
+  );
+}
+
+function NavLink({
+  to, active, username, icon: Icon, label,
+}: {
+  to: HomeownerNavKey; active: HomeownerNavKey; username: string;
+  icon: typeof LayoutGrid; label: string;
+}) {
+  const isActive = to === active;
+  const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings"> = {
+    dashboard: "/$username/dashboard",
+    security: "/$username/security",
+    system: "/$username/dashboard",
+    wallet: "/$username/wallet",
+    active: "/$username/active-bookings",
+    bookings: "/$username/past-bookings",
+    preferences: "/$username/dashboard",
+    support: "/$username/dashboard",
+  };
+  return (
+    <Link
+      to={pathMap[to]}
+      params={{ username }}
+      className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+        isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
+      }`}
+    >
+      <Icon className="h-4 w-4" />
+      {label}
     </Link>
   );
 }
 
-function SideStub({ icon: Icon, label }: { icon: any; label: string }) {
+function NavStub({ icon: Icon, label }: { icon: typeof LayoutGrid; label: string }) {
   return (
-    <button onClick={() => toast("Coming soon")} className="flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left text-muted-foreground hover:bg-muted">
-      <Icon className="h-4 w-4" /> {label}
+    <button
+      onClick={() => toast("Coming soon")}
+      className="flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold text-muted-foreground hover:bg-muted hover:text-foreground"
+    >
+      <Icon className="h-4 w-4" />
+      {label}
     </button>
   );
 }
