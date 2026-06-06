@@ -2,8 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Search, Filter, MapPin, Clock, Star, Bell, Wrench,
-  LayoutDashboard, ShieldCheck, Activity, Wallet as WalletIcon,
-  Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail,
+  LayoutGrid, ShieldCheck, Activity, Wallet as WalletIcon,
+  Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail, Home,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
@@ -29,45 +29,51 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
   };
 
   return (
-    <div className="min-h-screen bg-muted/40 text-foreground flex flex-col">
+    <div className="min-h-screen bg-background text-foreground">
       {/* Top header */}
-      <header className="sticky top-0 z-30 border-b border-border bg-card">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-5">
+      <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
+        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
             <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
             <span className="text-lg font-bold tracking-tight">FixItNow</span>
           </Link>
-          <nav className="hidden items-center gap-8 text-sm font-medium text-muted-foreground md:flex">
-            <Link to="/services" className="hover:text-foreground transition-colors">Find Services</Link>
-            <Link to="/$username/book" params={{ username: username }} className="hover:text-foreground transition-colors">Book Now</Link>
+          <nav className="hidden gap-8 text-sm font-medium text-muted-foreground md:flex">
             {username ? (
-              <Link to="/$username/wallet" params={{ username }} className="hover:text-foreground transition-colors">My Wallet</Link>
-            ) : null}
+              <Link to="/$username/dashboard" params={{ username }} className="font-bold text-foreground">Home</Link>
+            ) : (
+              <Link to="/" className="font-bold text-foreground">Home</Link>
+            )}
+            <Link to="/services" className="hover:text-foreground">Services</Link>
+            <Link to="/news" className="hover:text-foreground">News</Link>
+            <Link to="/about" className="hover:text-foreground">About Us</Link>
           </nav>
           <div className="flex items-center gap-3">
             {username ? (
               <Link
                 to="/$username/notification"
                 params={{ username }}
-                className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors"
+                className="relative rounded-full p-2 hover:bg-muted"
                 aria-label="Notifications"
               >
-                <Bell className="h-4 w-4" />
+                <Bell className="h-5 w-5 text-muted-foreground" />
+                <span className="absolute right-2 top-2 h-1.5 w-1.5 rounded-full bg-primary" />
               </Link>
             ) : (
-              <button className="relative flex h-9 w-9 items-center justify-center rounded-full border border-border hover:bg-muted transition-colors">
-                <Bell className="h-4 w-4" />
+              <button className="relative rounded-full p-2 hover:bg-muted">
+                <Bell className="h-5 w-5 text-muted-foreground" />
               </button>
             )}
             <div className="hidden text-right text-xs sm:block">
-              <p className="font-semibold">{displayName}</p>
-              <p className="text-muted-foreground capitalize">{profile?.role ?? "Member"}</p>
+              <p className="font-bold text-foreground">{displayName}</p>
+              <span className="inline-block rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                Homeowner
+              </span>
             </div>
             {username ? (
               <Link
                 to="/$username/profile"
                 params={{ username }}
-                className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background hover:opacity-90 transition-opacity"
+                className="flex h-9 w-9 items-center justify-center rounded-full bg-foreground text-xs font-bold text-background hover:opacity-90"
                 aria-label="My profile"
               >
                 {initials}
@@ -79,26 +85,46 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
         </div>
       </header>
 
-      <div className="mx-auto grid w-full max-w-7xl flex-1 gap-6 px-5 py-6 lg:grid-cols-[210px_1fr]">
+      <div className="mx-auto flex max-w-7xl gap-6 px-5 py-6">
         {/* Sidebar */}
-        <aside className="hidden lg:flex flex-col justify-between sticky top-20 self-start h-[calc(100vh-5rem)] overflow-y-auto pb-4">
-          <nav className="space-y-1 text-sm">
-            <SideLink icon={LayoutDashboard} label="Dashboard" to="/$username/dashboard" username={username} active={tab === "dashboard"} />
-            <SideLink icon={ShieldCheck} label="Security Check" to="/$username/security" username={username} active={tab === "security"} />
-            <SideItem icon={Activity} label="System Health" active={tab === "system"} onClick={() => setTab("system")} />
-            <SideLink icon={WalletIcon} label="Wallet" to="/$username/wallet" username={username} active={tab === "wallet"} />
-            <SideLink icon={Clock} label="Active Bookings" to="/$username/active-bookings" username={username} active={tab === "active"} />
-            <SideLink icon={CalendarDays} label="Past Bookings" to="/$username/past-bookings" username={username} active={tab === "bookings"} />
-            <SideItem icon={Settings} label="Preferences" active={tab === "preferences"} onClick={() => setTab("preferences")} />
-            <div className="my-3 border-t border-border" />
-            <SideItem icon={LifeBuoy} label="Support" active={tab === "support"} onClick={() => setTab("support")} />
+        <aside className="sticky top-[73px] hidden h-[calc(100vh-89px)] w-60 shrink-0 flex-col md:flex">
+          <div className="rounded-2xl bg-gradient-to-br from-primary/90 to-primary p-4 text-primary-foreground shadow-sm">
+            <div className="flex items-center gap-2">
+              <Home className="h-5 w-5" />
+              <p className="text-sm font-bold">Welcome Home</p>
+            </div>
+            <p className="mt-1 text-xs font-semibold">{displayName}</p>
+            <p className="text-[11px] opacity-80">Your trusted service hub</p>
+          </div>
+
+          <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
+            <NavGroup label="Main">
+              <SideLink icon={LayoutGrid} label="Dashboard" to="/$username/dashboard" username={username} active={tab === "dashboard"} />
+            </NavGroup>
+
+            <NavGroup label="Bookings">
+              <SideLink icon={Clock} label="Active Bookings" to="/$username/active-bookings" username={username} active={tab === "active"} />
+              <SideLink icon={CalendarDays} label="Past Bookings" to="/$username/past-bookings" username={username} active={tab === "bookings"} />
+            </NavGroup>
+
+            <NavGroup label="Account">
+              <SideLink icon={ShieldCheck} label="Security Check" to="/$username/security" username={username} active={tab === "security"} />
+              <SideItem icon={Activity} label="System Health" active={tab === "system"} onClick={() => setTab("system")} />
+              <SideLink icon={WalletIcon} label="Wallet" to="/$username/wallet" username={username} active={tab === "wallet"} />
+              <SideItem icon={Settings} label="Preferences" active={tab === "preferences"} onClick={() => setTab("preferences")} />
+            </NavGroup>
+
+            <div className="pt-1">
+              <SideItem icon={LifeBuoy} label="Support" active={tab === "support"} onClick={() => setTab("support")} />
+            </div>
           </nav>
-          <button onClick={handleLogout} className="mt-6 flex items-center gap-2 rounded-lg px-3 py-2 text-sm text-destructive hover:bg-muted">
+
+          <button onClick={handleLogout} className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/5">
             <LogOut className="h-4 w-4" /> Logout
           </button>
         </aside>
 
-        <main className="min-w-0">
+        <main className="min-w-0 flex-1">
           {tab === "dashboard" && <DashboardView />}
           {tab === "security" && <SecurityView />}
           {tab === "system" && <SystemHealthView />}
@@ -115,9 +141,18 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
   );
 }
 
+function NavGroup({ label, children }: { label: string; children: React.ReactNode }) {
+  return (
+    <div>
+      <p className="mb-1.5 px-3 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70">{label}</p>
+      <div className="space-y-1">{children}</div>
+    </div>
+  );
+}
+
 function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings"; username: string; active: boolean }) {
-  const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
-    active ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted"
+  const cls = `flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+    active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
   }`;
   if (!username) {
     return <span className={cls}><Icon className="h-4 w-4" /> {label}</span>;
@@ -133,8 +168,8 @@ function SideItem({ icon: Icon, label, active, onClick }: { icon: any; label: st
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
-        active ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted"
+      className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+        active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
       <Icon className="h-4 w-4" /> {label}
