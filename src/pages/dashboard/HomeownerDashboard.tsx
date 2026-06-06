@@ -2,8 +2,8 @@ import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
   Search, Filter, MapPin, Clock, Star, Bell, Wrench,
-  LayoutDashboard, ShieldCheck, Activity, Wallet as WalletIcon,
-  Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail,
+  LayoutGrid, ShieldCheck, Activity, Wallet as WalletIcon,
+  Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail, Home,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
