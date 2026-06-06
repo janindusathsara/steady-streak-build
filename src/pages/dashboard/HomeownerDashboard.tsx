@@ -151,8 +151,8 @@ function NavGroup({ label, children }: { label: string; children: React.ReactNod
 }
 
 function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings"; username: string; active: boolean }) {
-  const cls = `flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
-    active ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted"
+  const cls = `flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+    active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
   }`;
   if (!username) {
     return <span className={cls}><Icon className="h-4 w-4" /> {label}</span>;
@@ -168,8 +168,8 @@ function SideItem({ icon: Icon, label, active, onClick }: { icon: any; label: st
   return (
     <button
       onClick={onClick}
-      className={`flex w-full items-center gap-2 rounded-lg px-3 py-2 text-left transition-colors ${
-        active ? "bg-primary text-primary-foreground font-semibold" : "text-muted-foreground hover:bg-muted"
+      className={`flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
+        active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
     >
       <Icon className="h-4 w-4" /> {label}
