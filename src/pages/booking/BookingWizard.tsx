@@ -259,15 +259,21 @@ export function BookingWizard() {
 }
 
 /* ---------- Stepper ---------- */
-function Stepper({ current }: { current: number }) {
+function Stepper({ current, onJump }: { current: number; onJump?: (n: number) => void }) {
   return (
     <div className="mb-8 flex items-center justify-center gap-2 sm:gap-3">
       {STEPS.map((s, i) => {
         const done = current > s.n;
         const active = current === s.n;
+        const canJump = !!onJump && done;
+        const Wrapper: any = canJump ? "button" : "div";
         return (
           <div key={s.n} className="flex items-center gap-2 sm:gap-3">
-            <div className="flex flex-col items-center gap-1.5">
+            <Wrapper
+              type={canJump ? "button" : undefined}
+              onClick={canJump ? () => onJump!(s.n) : undefined}
+              className={`flex flex-col items-center gap-1.5 ${canJump ? "cursor-pointer hover:opacity-80" : ""}`}
+            >
               <div
                 className={`flex h-9 w-9 items-center justify-center rounded-full text-xs font-bold transition-colors ${
                   done ? "bg-emerald-600 text-white" : active ? "bg-foreground text-background" : "border border-border bg-card text-muted-foreground"
@@ -278,7 +284,7 @@ function Stepper({ current }: { current: number }) {
               <span className={`text-[10px] sm:text-xs font-medium ${active ? "text-foreground" : "text-muted-foreground"} hidden sm:block`}>
                 {s.label}
               </span>
-            </div>
+            </Wrapper>
             {i < STEPS.length - 1 && <div className={`h-px w-6 sm:w-12 ${done ? "bg-emerald-600" : "bg-border"}`} />}
           </div>
         );
