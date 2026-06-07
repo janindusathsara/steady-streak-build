@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  Search, Filter, MapPin, Clock, Star, Bell, Wrench,
+  Search, Filter, MapPin, Clock, Star, Bell, Wrench, PlusCircle,
   LayoutGrid, ShieldCheck, Activity, Wallet as WalletIcon,
   Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail, Home,
 } from "lucide-react";
