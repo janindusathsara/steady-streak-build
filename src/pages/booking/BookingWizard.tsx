@@ -714,37 +714,9 @@ function Step4(p: {
             </div>
           </div>
 
-          {/* Payment method */}
+          {/* Confirmation */}
           <div className="rounded-2xl border border-border bg-card p-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-primary">Payment method</p>
-            <div className="mt-4 space-y-3">
-              {[
-                { v: "card", icon: "💳", t: "Visa •••• 4242", d: "Expires 08/27 · Secure & encrypted", tag: "Default" },
-                { v: "wallet", icon: "💰", t: "FixItNow Wallet", d: "Balance: Rs. 124,050 available" },
-                { v: "bank", icon: "🏦", t: "Bank Transfer", d: "Sampath Bank · Manual verification" },
-                { v: "genie", icon: "📱", t: "Dialog Genie", d: "Mobile wallet payment" },
-              ].map((o) => {
-                const active = p.paymentMethod === o.v;
-                return (
-                  <button
-                    key={o.v}
-                    onClick={() => p.setPaymentMethod(o.v)}
-                    className={`flex w-full items-center gap-3 rounded-xl border p-4 text-left transition-colors ${active ? "border-primary bg-primary/10" : "border-border bg-background hover:bg-muted/50"}`}
-                  >
-                    <span className={`flex h-5 w-5 items-center justify-center rounded-full border ${active ? "border-primary bg-primary" : "border-border"}`}>
-                      {active && <span className="h-2 w-2 rounded-full bg-background" />}
-                    </span>
-                    <span className="text-2xl">{o.icon}</span>
-                    <div className="flex-1">
-                      <p className="text-sm font-bold">{o.t} {o.tag && <span className="ml-1 rounded-full bg-primary/20 px-2 py-0.5 text-[10px] font-bold text-primary">{o.tag}</span>}</p>
-                      <p className="text-[11px] text-muted-foreground">{o.d}</p>
-                    </div>
-                  </button>
-                );
-              })}
-            </div>
-
-            <div className="mt-5 rounded-xl bg-emerald-50 p-4 text-xs text-emerald-700">
+            <div className="rounded-xl bg-emerald-50 p-4 text-xs text-emerald-700">
               <p className="font-bold">🛡 Your payment is protected by escrow.</p>
               <p className="mt-1">Funds are held securely by FixItNow and only released to {providerName} after you confirm the job is satisfactorily complete. You are fully protected.</p>
             </div>
@@ -759,9 +731,9 @@ function Step4(p: {
               disabled={!p.canConfirm || p.submitting}
               className="mt-5 w-full rounded-xl bg-foreground py-3.5 text-sm font-bold text-background hover:opacity-90 disabled:opacity-40 flex items-center justify-center gap-2"
             >
-              <Lock className="h-4 w-4" /> {p.submitting ? "Processing…" : `Confirm & Pay Rs. ${p.totalAmount.toLocaleString()} →`}
+              <Lock className="h-4 w-4" /> {p.submitting ? "Processing…" : "Confirm and Book →"}
             </button>
-            <button onClick={p.onBack} className="mt-3 block w-full text-center text-xs text-muted-foreground hover:text-foreground">← Back to schedule | SSL encrypted · PCI compliant</button>
+            <button onClick={p.onBack} className="mt-3 block w-full text-center text-xs text-muted-foreground hover:text-foreground">← Back to schedule</button>
           </div>
         </div>
 
