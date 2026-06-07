@@ -1,7 +1,7 @@
 import { Link, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
 import {
-  Search, Filter, MapPin, Clock, Star, Bell, Wrench,
+  Search, Filter, MapPin, Clock, Star, Bell, Wrench, PlusCircle,
   LayoutGrid, ShieldCheck, Activity, Wallet as WalletIcon,
   Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail, Home,
 } from "lucide-react";
@@ -100,6 +100,7 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
           <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
             <NavGroup label="Main">
               <SideLink icon={LayoutGrid} label="Dashboard" to="/$username/dashboard" username={username} active={tab === "dashboard"} />
+              <SideLink icon={PlusCircle} label="New Booking" to="/$username/book" username={username} active={false} />
             </NavGroup>
 
             <NavGroup label="Bookings">
@@ -150,7 +151,7 @@ function NavGroup({ label, children }: { label: string; children: React.ReactNod
   );
 }
 
-function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings"; username: string; active: boolean }) {
+function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings" | "/$username/book"; username: string; active: boolean }) {
   const cls = `flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
     active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
   }`;

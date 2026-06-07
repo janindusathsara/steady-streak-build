@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Wrench, Bell, LogOut, LayoutGrid, ShieldCheck, Activity,
-  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home,
+  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home, PlusCircle,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export type HomeownerNavKey =
-  | "dashboard" | "security" | "system" | "wallet"
+  | "dashboard" | "book" | "security" | "system" | "wallet"
   | "active" | "bookings" | "preferences" | "support";
 
 interface Props {
@@ -94,6 +94,7 @@ export function HomeownerLayout({ active, children }: Props) {
           <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
             <NavGroup label="Main">
               <NavLink to="dashboard" active={active} username={username} icon={LayoutGrid} label="Dashboard" />
+              <NavLink to="book" active={active} username={username} icon={PlusCircle} label="New Booking" />
             </NavGroup>
 
             <NavGroup label="Bookings">
@@ -146,8 +147,9 @@ function NavLink({
   icon: typeof LayoutGrid; label: string;
 }) {
   const isActive = to === active;
-  const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings"> = {
+  const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings" | "/$username/book"> = {
     dashboard: "/$username/dashboard",
+    book: "/$username/book",
     security: "/$username/security",
     system: "/$username/dashboard",
     wallet: "/$username/wallet",

@@ -21,7 +21,7 @@ const STEPS = [
 type JobType = "on_the_spot" | "scheduled";
 
 export function BookingWizard() {
-  const search = useSearch({ from: "/$username/book" }) as { subService?: string; step?: number };
+  const search = useSearch({ from: "/$username/book" }) as { subService?: string; provider?: string; step?: number };
   const { username } = useParams({ from: "/$username/book" });
   const navigate = useNavigate();
   const { profile, loading: userLoading } = useCurrentUser();
@@ -36,7 +36,7 @@ export function BookingWizard() {
   const [jobType, setJobType] = useState<JobType>("on_the_spot");
   const [problemDesc, setProblemDesc] = useState("");
 
-  const [providerId, setProviderId] = useState<string | null>(null);
+  const [providerId, setProviderId] = useState<string | null>(search.provider ?? null);
 
   const [scheduledDate, setScheduledDate] = useState<Date>(new Date());
   const [scheduledTime, setScheduledTime] = useState<string>("10:00 AM");
@@ -67,6 +67,25 @@ export function BookingWizard() {
       });
     }
   }, [search.subService]);
+
+  // preload provider if passed in (from "Book Now" on a provider card)
+  useEffect(() => {
+    if (!search.provider) return;
+    import("@/integrations/supabase/client").then(({ supabase }) =>
+      supabase
+        .from("providers")
+        .select("*, profile:profiles(id, display_name, username, avatar_url)")
+        .eq("id", search.provider!)
+        .maybeSingle()
+        .then(({ data }) => {
+          if (data) {
+            setProviders((prev) => (prev.some((p) => p.id === (data as any).id) ? prev : [data as any, ...prev]));
+            setProviderId((data as any).id);
+            if (!categoryId && (data as any).category_id) setCategoryId((data as any).category_id);
+          }
+        })
+    );
+  }, [search.provider]);
 
   // load sub-services when category changes
   useEffect(() => {
