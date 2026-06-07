@@ -181,7 +181,7 @@ export function ServiceDetailPage() {
                     </div>
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                       <p className="text-sm"><span className="text-lg font-bold">Rs. {p.hourly.toLocaleString()}</span><span className="text-xs text-muted-foreground"> /hr</span></p>
-                      <Link {...bookLink} className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
+                      <Link {...providerBookLink} className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
                     </div>
                   </div>
                 ))}
