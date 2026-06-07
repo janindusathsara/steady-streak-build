@@ -100,6 +100,7 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
           <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
             <NavGroup label="Main">
               <SideLink icon={LayoutGrid} label="Dashboard" to="/$username/dashboard" username={username} active={tab === "dashboard"} />
+              <SideLink icon={PlusCircle} label="New Booking" to="/$username/book" username={username} active={false} />
             </NavGroup>
 
             <NavGroup label="Bookings">
