@@ -151,7 +151,7 @@ function NavGroup({ label, children }: { label: string; children: React.ReactNod
   );
 }
 
-function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings"; username: string; active: boolean }) {
+function SideLink({ icon: Icon, label, to, username, active }: { icon: any; label: string; to: "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/past-bookings" | "/$username/active-bookings" | "/$username/book"; username: string; active: boolean }) {
   const cls = `flex w-full items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
     active ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
   }`;
