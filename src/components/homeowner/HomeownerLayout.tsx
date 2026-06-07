@@ -147,8 +147,9 @@ function NavLink({
   icon: typeof LayoutGrid; label: string;
 }) {
   const isActive = to === active;
-  const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings"> = {
+  const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings" | "/$username/book"> = {
     dashboard: "/$username/dashboard",
+    book: "/$username/book",
     security: "/$username/security",
     system: "/$username/dashboard",
     wallet: "/$username/wallet",
