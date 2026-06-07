@@ -94,6 +94,7 @@ export function HomeownerLayout({ active, children }: Props) {
           <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
             <NavGroup label="Main">
               <NavLink to="dashboard" active={active} username={username} icon={LayoutGrid} label="Dashboard" />
+              <NavLink to="book" active={active} username={username} icon={PlusCircle} label="New Booking" />
             </NavGroup>
 
             <NavGroup label="Bookings">
