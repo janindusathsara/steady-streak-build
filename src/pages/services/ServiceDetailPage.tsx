@@ -16,6 +16,9 @@ export function ServiceDetailPage() {
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
     : { to: "/login", search: { redirect: "/services" } };
+  const providerBookLink = profile?.username
+    ? { to: "/$username/book", params: { username: profile.username }, search: { step: 3 } } as const
+    : { to: "/login", search: { redirect: "/services" } };
 
   const [filter, setFilter] = useState("all");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
