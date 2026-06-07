@@ -698,7 +698,7 @@ function Step4(p: {
     <div>
       <p className="mx-auto w-fit rounded-full bg-primary/15 px-3 py-1 text-xs font-bold uppercase tracking-wider text-primary">Step 4 of 5 · Final step</p>
       <h1 className="mt-3 text-center text-3xl font-bold sm:text-4xl">Review & Confirm Booking</h1>
-      <p className="mt-2 text-center text-sm text-muted-foreground">Check all details, choose your payment method, and confirm</p>
+      <p className="mt-2 text-center text-sm text-muted-foreground">Check all details and confirm your booking</p>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-[1fr_320px]">
         <div className="space-y-6">
