@@ -14,7 +14,7 @@ const STEPS = [
   { n: 1, label: "Select Service" },
   { n: 2, label: "Choose Provider" },
   { n: 3, label: "Schedule" },
-  { n: 4, label: "Confirm & Pay" },
+  { n: 4, label: "Confirm & Book" },
   { n: 5, label: "Booking Done" },
 ];
 
