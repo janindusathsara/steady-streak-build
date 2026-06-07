@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Wrench, Bell, LogOut, LayoutGrid, ShieldCheck, Activity,
-  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home,
+  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home, PlusCircle,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { useCurrentUser } from "@/hooks/use-current-user";
