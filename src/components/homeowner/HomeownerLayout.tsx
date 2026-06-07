@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export type HomeownerNavKey =
-  | "dashboard" | "security" | "system" | "wallet"
+  | "dashboard" | "book" | "security" | "system" | "wallet"
   | "active" | "bookings" | "preferences" | "support";
 
 interface Props {
