@@ -20,7 +20,7 @@ export function Navbar() {
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
-  const isHomeowner = profile?.role === "homeowner";
+  
 
   const authedDesktop = isAuthed && (
     <>
