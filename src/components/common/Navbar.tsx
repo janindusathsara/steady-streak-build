@@ -24,15 +24,6 @@ export function Navbar() {
 
   const authedDesktop = isAuthed && (
     <>
-      {isHomeowner && (
-        <Link
-          to="/$username/book"
-          params={{ username }}
-          className="rounded-full px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors lg:px-4"
-        >
-          Book Now
-        </Link>
-      )}
       <Link
         to="/$username/dashboard"
         params={{ username }}
@@ -50,6 +41,7 @@ export function Navbar() {
       </Link>
     </>
   );
+
 
   const guestDesktop = !isAuthed && !loading && (
     <>
