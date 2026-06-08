@@ -113,20 +113,24 @@ export function BookingWizard() {
   const canNext = () => {
     if (step === 1) return !!(categoryId && subServiceId);
     if (step === 2) return !!providerId;
-    if (step === 3) return !!(addressLine.trim() && scheduledTime);
-    if (step === 4) return agree && !!profile?.id;
+    if (step === 3) return !!(providerId && addressLine.trim() && scheduledTime);
+    if (step === 4) return agree && !!profile?.id && !!providerId;
     return false;
   };
 
   const handleConfirm = async () => {
-    if (!profile?.id || !provider || !subService) return;
+    if (!profile?.id || !provider) {
+      toast.error("Please choose a provider before confirming.");
+      return;
+    }
     setSubmitting(true);
     try {
+      const serviceName = subService?.name ?? category?.name ?? provider.headline ?? "Service";
       const b = await createBooking({
         homeowner_id: profile.id,
         provider_id: provider.id,
-        sub_service_id: subService.id,
-        service_name: subService.name,
+        sub_service_id: subService?.id ?? null,
+        service_name: serviceName,
         job_type: jobType,
         scheduled_date: jobType === "scheduled" ? scheduledDate.toISOString().slice(0, 10) : null,
         scheduled_time: scheduledTime,
@@ -149,6 +153,7 @@ export function BookingWizard() {
       setSubmitting(false);
     }
   };
+
 
   if (userLoading) {
     return <div className="flex min-h-screen items-center justify-center text-sm text-muted-foreground">Loading…</div>;
