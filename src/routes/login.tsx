@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Mail, Lock, Wrench, ChevronLeft, User as UserIcon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { setRole, dashboardPathFor, userDashboardPath, type Role } from "@/lib/role";
