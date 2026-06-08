@@ -20,19 +20,10 @@ export function Navbar() {
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
-  const isHomeowner = profile?.role === "homeowner";
+  
 
   const authedDesktop = isAuthed && (
     <>
-      {isHomeowner && (
-        <Link
-          to="/$username/book"
-          params={{ username }}
-          className="rounded-full px-3 py-2 text-sm font-medium text-foreground hover:bg-muted transition-colors lg:px-4"
-        >
-          Book Now
-        </Link>
-      )}
       <Link
         to="/$username/dashboard"
         params={{ username }}
@@ -50,6 +41,7 @@ export function Navbar() {
       </Link>
     </>
   );
+
 
   const guestDesktop = !isAuthed && !loading && (
     <>
@@ -93,21 +85,11 @@ export function Navbar() {
           </div>
           {isAuthed ? (
             <div className="mt-4 grid grid-cols-2 gap-2">
-              {isHomeowner && (
-                <Link
-                  to="/$username/book"
-                  params={{ username }}
-                  onClick={() => setOpen(false)}
-                  className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors"
-                >
-                  Book Now
-                </Link>
-              )}
               <Link
                 to="/$username/dashboard"
                 params={{ username }}
                 onClick={() => setOpen(false)}
-                className={`rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors ${!isHomeowner ? "col-span-2" : ""}`}
+                className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors"
               >
                 Dashboard
               </Link>
@@ -120,6 +102,7 @@ export function Navbar() {
                 Profile
               </Link>
             </div>
+
           ) : !loading ? (
             <div className="mt-4 grid grid-cols-2 gap-2">
               <Link to="/login" onClick={() => setOpen(false)} className="rounded-full border border-border px-4 py-2 text-center text-sm font-medium text-foreground hover:bg-muted transition-colors">Sign In</Link>

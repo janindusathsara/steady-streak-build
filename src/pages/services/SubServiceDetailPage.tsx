@@ -15,10 +15,12 @@ export function SubServiceDetailPage() {
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
-    : { to: "/login", search: { redirect: "/services" } };
-  const providerBookLink = profile?.username
-    ? { to: "/$username/book", params: { username: profile.username }, search: { step: 3 } } as const
-    : { to: "/login", search: { redirect: "/services" } };
+    : { to: "/book" as const };
+  const providerBookFor = (providerId: string) =>
+    profile?.username
+      ? ({ to: "/$username/book", params: { username: profile.username }, search: { step: 3, provider: providerId } } as const)
+      : ({ to: "/book", search: { step: 3, provider: providerId } } as const);
+
 
   const [filter, setFilter] = useState("all");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
@@ -179,7 +181,7 @@ export function SubServiceDetailPage() {
                     </div>
                     <div className="mt-4 flex items-center justify-between border-t border-border pt-4">
                       <p className="text-sm"><span className="text-lg font-bold">Rs. {p.hourly.toLocaleString()}</span><span className="text-xs text-muted-foreground"> /hr</span></p>
-                      <Link {...providerBookLink} className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
+                      <Link {...providerBookFor(p.id)} className="rounded-lg bg-primary px-4 py-2 text-xs font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
                     </div>
                   </div>
                 ))}
