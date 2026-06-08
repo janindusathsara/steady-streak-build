@@ -1,5 +1,5 @@
 import { createFileRoute, Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { Mail, Lock, Wrench, ChevronLeft, User as UserIcon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { setRole, dashboardPathFor, userDashboardPath, type Role } from "@/lib/role";
@@ -41,13 +41,37 @@ function LoginPage() {
   const [loading, setLoading] = useState(false);
   const [googleLoading, setGoogleLoading] = useState(false);
 
+  const navigated = useRef(false);
+
+  // Auto-navigate when an authenticated session appears (e.g. after returning
+  // from Google OAuth). Honors the `redirect` search param so booking deep
+  // links are preserved through the login round-trip.
+  useEffect(() => {
+    let cancelled = false;
+    import("@/integrations/supabase/client").then(({ supabase }) => {
+      const handle = (hasSession: boolean) => {
+        if (!hasSession || cancelled || navigated.current) return;
+        navigated.current = true;
+        const fallback = (typeof window !== "undefined" && (localStorage.getItem("fixitnow:role") as Role | null)) || "homeowner";
+        void navigateAfterLogin(navigate, fallback, search.redirect);
+      };
+      supabase.auth.getSession().then(({ data }) => handle(!!data.session));
+      const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => handle(!!session));
+      return () => { cancelled = true; subscription.unsubscribe(); };
+    });
+  }, [navigate, search.redirect]);
+
   const handleGoogleSignIn = async () => {
     setGoogleLoading(true);
     try {
       setRole(role);
       const { lovable } = await import("@/integrations/lovable/index");
+      // Always come back to /login so we can reliably honor `redirect`
+      // even when the OAuth round-trip races route guards (e.g. /book).
+      const callback = new URL("/login", window.location.origin);
+      if (search.redirect) callback.searchParams.set("redirect", search.redirect);
       const result = await lovable.auth.signInWithOAuth("google", {
-        redirect_uri: `${window.location.origin}${search.redirect ?? dashboardPathFor(role)}`,
+        redirect_uri: callback.toString(),
       });
       if (result.error) toast.error("Google sign-in failed");
       else if (!result.redirected) await navigateAfterLogin(navigate, role, search.redirect);
