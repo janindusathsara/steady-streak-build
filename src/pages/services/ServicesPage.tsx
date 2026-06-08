@@ -18,7 +18,9 @@ export function ServicesPage() {
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
-    : { to: "/login", search: { redirect: "/services" } };
+    : { to: "/book" as const };
+
+
 
   return (
     <div className="min-h-screen bg-background text-foreground">
