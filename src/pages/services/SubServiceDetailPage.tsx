@@ -15,10 +15,12 @@ export function SubServiceDetailPage() {
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
-    : { to: "/login", search: { redirect: "/services" } };
-  const providerBookLink = profile?.username
-    ? { to: "/$username/book", params: { username: profile.username }, search: { step: 3 } } as const
-    : { to: "/login", search: { redirect: "/services" } };
+    : { to: "/book" as const };
+  const providerBookFor = (providerId: string) =>
+    profile?.username
+      ? ({ to: "/$username/book", params: { username: profile.username }, search: { step: 3, provider: providerId } } as const)
+      : ({ to: "/book", search: { step: 3, provider: providerId } } as const);
+
 
   const [filter, setFilter] = useState("all");
   const [openFaq, setOpenFaq] = useState<number | null>(0);
