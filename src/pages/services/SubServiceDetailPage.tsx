@@ -41,7 +41,7 @@ export function SubServiceDetailPage() {
     return (
       <div className="min-h-screen bg-background text-foreground">
         <Navbar />
-        <div className="mx-auto max-w-6xl px-5 py-24 text-center">
+        <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] py-24 text-center">
           <h1 className="text-2xl font-semibold">Sub-service not found</h1>
           <Link to="/services" className="mt-4 inline-block text-primary hover:underline">Back to services →</Link>
         </div>
@@ -62,7 +62,7 @@ export function SubServiceDetailPage() {
         style={{ background: "linear-gradient(135deg, oklch(0.42 0.10 60) 0%, oklch(0.32 0.06 50) 100%)" }}
       >
         <div className="absolute inset-0 opacity-[0.07]" style={{ backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)", backgroundSize: "24px 24px" }} />
-        <div className="relative mx-auto max-w-6xl px-5 pt-10 pb-14 sm:pt-12 sm:pb-20">
+        <div className="relative mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] pt-10 pb-14 sm:pt-12 sm:pb-20">
           <nav className="flex items-center gap-1.5 text-xs text-background/70">
             <Link to="/" className="hover:text-background">Home</Link>
             <ChevronRight className="h-3 w-3" />
@@ -98,7 +98,7 @@ export function SubServiceDetailPage() {
       </section>
 
       {/* Main */}
-      <section className="mx-auto max-w-6xl px-5 py-12">
+      <section className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] py-12">
         <div className="grid gap-8 lg:grid-cols-[1fr_340px]">
           <div className="space-y-10">
             {/* What's included */}
