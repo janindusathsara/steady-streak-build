@@ -5,6 +5,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { getService } from "@/lib/services-data";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { setBookingIntent } from "@/lib/booking";
 
 const DISTRICTS = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Galle", "Negombo"];
 const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evening (4 PM – 8 PM)", "ASAP"];
@@ -15,11 +16,11 @@ export function ServiceDetailPage() {
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
-    : { to: "/book" as const };
+    : { to: "/login" as const, onClick: () => setBookingIntent({}) };
   const providerBookFor = (providerId: string) =>
     profile?.username
       ? ({ to: "/$username/book", params: { username: profile.username }, search: { step: 3, provider: providerId } } as const)
-      : ({ to: "/book", search: { step: 3, provider: providerId } } as const);
+      : ({ to: "/login" as const, onClick: () => setBookingIntent({ step: 3, provider: providerId }) });
 
 
   const [filter, setFilter] = useState("all");
