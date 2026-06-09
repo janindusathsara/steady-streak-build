@@ -32,7 +32,7 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
     <div className="min-h-screen bg-background text-foreground">
       {/* Top header */}
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-5 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
           <Link to="/" className="flex items-center gap-2">
             <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
             <span className="text-lg font-bold tracking-tight">FixItNow</span>
@@ -85,7 +85,7 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-7xl gap-6 px-5 py-6">
+      <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-6 sm:px-5 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
         {/* Sidebar */}
         <aside className="sticky top-[73px] hidden h-[calc(100vh-89px)] w-60 shrink-0 flex-col md:flex">
           <div className="rounded-2xl bg-gradient-to-br from-primary/90 to-primary p-4 text-primary-foreground shadow-sm">
