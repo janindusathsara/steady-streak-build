@@ -17,6 +17,7 @@ async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fall
     return;
   }
   const { supabase } = await import("@/integrations/supabase/client");
+  const { consumeBookingIntent } = await import("@/lib/booking");
   const { data: sess } = await supabase.auth.getSession();
   if (sess.session) {
     const { data: prof } = await supabase
@@ -25,6 +26,11 @@ async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fall
       .eq("id", sess.session.user.id)
       .maybeSingle();
     if (prof?.username) {
+      const intent = consumeBookingIntent();
+      if (intent) {
+        navigate({ to: "/$username/book", params: { username: prof.username }, search: intent });
+        return;
+      }
       navigate({ to: userDashboardPath(prof.username) });
       return;
     }
