@@ -1,8 +1,8 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Wrench, Bell, LogOut, LayoutGrid, ShieldCheck, Activity,
-  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home, PlusCircle,
+  Wallet as WalletIcon, Clock, CalendarDays, Settings, LifeBuoy, Home, PlusCircle, Menu, X,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
 import { useCurrentUser } from "@/hooks/use-current-user";
@@ -24,6 +24,12 @@ export function HomeownerLayout({ active, children }: Props) {
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
+  const [mobileOpen, setMobileOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.style.overflow = mobileOpen ? "hidden" : "";
+    return () => { document.body.style.overflow = ""; };
+  }, [mobileOpen]);
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
@@ -31,14 +37,66 @@ export function HomeownerLayout({ active, children }: Props) {
     navigate({ to: "/" });
   };
 
+  const sidebarContent = (
+    <>
+      <div className="rounded-2xl bg-gradient-to-br from-primary/90 to-primary p-4 text-primary-foreground shadow-sm">
+        <div className="flex items-center gap-2">
+          <Home className="h-5 w-5" />
+          <p className="text-sm font-bold">Welcome Home</p>
+        </div>
+        <p className="mt-1 text-xs font-semibold">{displayName}</p>
+        <p className="text-[11px] opacity-80">Your trusted service hub</p>
+      </div>
+
+      <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
+        <NavGroup label="Main">
+          <NavLink to="dashboard" active={active} username={username} icon={LayoutGrid} label="Dashboard" onNavigate={() => setMobileOpen(false)} />
+          <NavLink to="book" active={active} username={username} icon={PlusCircle} label="New Booking" onNavigate={() => setMobileOpen(false)} />
+        </NavGroup>
+
+        <NavGroup label="Bookings">
+          <NavLink to="active" active={active} username={username} icon={Clock} label="Active Bookings" onNavigate={() => setMobileOpen(false)} />
+          <NavLink to="bookings" active={active} username={username} icon={CalendarDays} label="Past Bookings" onNavigate={() => setMobileOpen(false)} />
+        </NavGroup>
+
+        <NavGroup label="Account">
+          <NavLink to="security" active={active} username={username} icon={ShieldCheck} label="Security Check" onNavigate={() => setMobileOpen(false)} />
+          <NavStub icon={Activity} label="System Health" />
+          <NavLink to="wallet" active={active} username={username} icon={WalletIcon} label="Wallet" onNavigate={() => setMobileOpen(false)} />
+          <NavStub icon={Settings} label="Preferences" />
+        </NavGroup>
+
+        <div className="pt-1">
+          <NavStub icon={LifeBuoy} label="Support" />
+        </div>
+      </nav>
+
+      <button
+        onClick={handleLogout}
+        className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/5"
+      >
+        <LogOut className="h-4 w-4" /> Logout
+      </button>
+    </>
+  );
+
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-7xl items-center justify-between gap-4 px-5 py-3">
-          <Link to="/" className="flex items-center gap-2">
-            <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
-            <span className="text-lg font-bold tracking-tight">FixItNow</span>
-          </Link>
+        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-5 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
+          <div className="flex items-center gap-2">
+            <button
+              onClick={() => setMobileOpen(true)}
+              className="rounded-md p-1.5 hover:bg-muted md:hidden"
+              aria-label="Open menu"
+            >
+              <Menu className="h-5 w-5" />
+            </button>
+            <Link to="/" className="flex items-center gap-2">
+              <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
+              <span className="text-lg font-bold tracking-tight">FixItNow</span>
+            </Link>
+          </div>
           <nav className="hidden gap-8 text-sm font-medium text-muted-foreground md:flex">
             {username ? (
               <Link to="/$username/dashboard" params={{ username }} className="font-bold text-foreground">Home</Link>
@@ -49,7 +107,7 @@ export function HomeownerLayout({ active, children }: Props) {
             <Link to="/news" className="hover:text-foreground">News</Link>
             <Link to="/about" className="hover:text-foreground">About Us</Link>
           </nav>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-2 sm:gap-3">
             {username && (
               <Link
                 to="/$username/notification"
@@ -80,46 +138,25 @@ export function HomeownerLayout({ active, children }: Props) {
         </div>
       </header>
 
-      <div className="mx-auto flex max-w-7xl gap-6 px-5 py-6">
-        <aside className="sticky top-[73px] hidden h-[calc(100vh-89px)] w-60 shrink-0 flex-col md:flex">
-          <div className="rounded-2xl bg-gradient-to-br from-primary/90 to-primary p-4 text-primary-foreground shadow-sm">
-            <div className="flex items-center gap-2">
-              <Home className="h-5 w-5" />
-              <p className="text-sm font-bold">Welcome Home</p>
+      {/* Mobile drawer */}
+      {mobileOpen && (
+        <>
+          <div className="fixed inset-0 z-50 bg-black/40 md:hidden" onClick={() => setMobileOpen(false)} />
+          <aside className="fixed inset-y-0 left-0 z-50 flex w-72 max-w-[85vw] flex-col overflow-y-auto bg-card p-5 shadow-xl md:hidden">
+            <div className="mb-4 flex items-center justify-between">
+              <span className="text-sm font-bold">Menu</span>
+              <button onClick={() => setMobileOpen(false)} aria-label="Close menu" className="rounded-md p-1 hover:bg-muted">
+                <X className="h-5 w-5" />
+              </button>
             </div>
-            <p className="mt-1 text-xs font-semibold">{displayName}</p>
-            <p className="text-[11px] opacity-80">Your trusted service hub</p>
-          </div>
+            {sidebarContent}
+          </aside>
+        </>
+      )}
 
-          <nav className="mt-4 flex-1 space-y-5 overflow-y-auto pb-4">
-            <NavGroup label="Main">
-              <NavLink to="dashboard" active={active} username={username} icon={LayoutGrid} label="Dashboard" />
-              <NavLink to="book" active={active} username={username} icon={PlusCircle} label="New Booking" />
-            </NavGroup>
-
-            <NavGroup label="Bookings">
-              <NavLink to="active" active={active} username={username} icon={Clock} label="Active Bookings" />
-              <NavLink to="bookings" active={active} username={username} icon={CalendarDays} label="Past Bookings" />
-            </NavGroup>
-
-            <NavGroup label="Account">
-              <NavLink to="security" active={active} username={username} icon={ShieldCheck} label="Security Check" />
-              <NavStub icon={Activity} label="System Health" />
-              <NavLink to="wallet" active={active} username={username} icon={WalletIcon} label="Wallet" />
-              <NavStub icon={Settings} label="Preferences" />
-            </NavGroup>
-
-            <div className="pt-1">
-              <NavStub icon={LifeBuoy} label="Support" />
-            </div>
-          </nav>
-
-          <button
-            onClick={handleLogout}
-            className="mt-2 flex items-center gap-2 rounded-xl px-3 py-2 text-sm font-semibold text-destructive hover:bg-destructive/5"
-          >
-            <LogOut className="h-4 w-4" /> Logout
-          </button>
+      <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-6 sm:px-5 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
+        <aside className="sticky top-[73px] hidden h-[calc(100vh-89px)] w-60 shrink-0 flex-col md:flex 4xl:w-72">
+          {sidebarContent}
         </aside>
 
         <main className="min-w-0 flex-1">{children}</main>
@@ -141,10 +178,10 @@ function NavGroup({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function NavLink({
-  to, active, username, icon: Icon, label,
+  to, active, username, icon: Icon, label, onNavigate,
 }: {
   to: HomeownerNavKey; active: HomeownerNavKey; username: string;
-  icon: typeof LayoutGrid; label: string;
+  icon: typeof LayoutGrid; label: string; onNavigate?: () => void;
 }) {
   const isActive = to === active;
   const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings" | "/$username/book"> = {
@@ -162,6 +199,7 @@ function NavLink({
     <Link
       to={pathMap[to]}
       params={{ username }}
+      onClick={onNavigate}
       className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
         isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
