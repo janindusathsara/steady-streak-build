@@ -199,6 +199,7 @@ function NavLink({
   label,
   badge,
   badgeTone = "primary",
+  onNavigate,
 }: {
   to: NavKey;
   active: NavKey;
@@ -207,6 +208,7 @@ function NavLink({
   label: string;
   badge?: number;
   badgeTone?: "primary" | "success";
+  onNavigate?: () => void;
 }) {
   const isActive = to === active;
   const pathMap: Record<NavKey, string> = {
@@ -223,6 +225,7 @@ function NavLink({
     <Link
       to={pathMap[to]}
       params={{ username }}
+      onClick={onNavigate}
       className={`flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
         isActive
           ? "bg-foreground text-background"
