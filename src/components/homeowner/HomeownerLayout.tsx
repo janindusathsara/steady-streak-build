@@ -178,10 +178,10 @@ function NavGroup({ label, children }: { label: string; children: ReactNode }) {
 }
 
 function NavLink({
-  to, active, username, icon: Icon, label,
+  to, active, username, icon: Icon, label, onNavigate,
 }: {
   to: HomeownerNavKey; active: HomeownerNavKey; username: string;
-  icon: typeof LayoutGrid; label: string;
+  icon: typeof LayoutGrid; label: string; onNavigate?: () => void;
 }) {
   const isActive = to === active;
   const pathMap: Record<HomeownerNavKey, "/$username/dashboard" | "/$username/security" | "/$username/wallet" | "/$username/active-bookings" | "/$username/past-bookings" | "/$username/book"> = {
@@ -199,6 +199,7 @@ function NavLink({
     <Link
       to={pathMap[to]}
       params={{ username }}
+      onClick={onNavigate}
       className={`flex items-center gap-2.5 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
         isActive ? "bg-foreground text-background" : "text-muted-foreground hover:bg-muted hover:text-foreground"
       }`}
