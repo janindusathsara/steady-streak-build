@@ -160,3 +160,21 @@ export async function markNotificationsRead(userId: string) {
     .eq("user_id", userId)
     .is("read_at", null);
 }
+
+// --- Booking intent (unauth deep-link) ---
+const BOOKING_INTENT_KEY = "fixitnow:bookingIntent";
+export type BookingIntent = { provider?: string; subService?: string; step?: number };
+
+export function setBookingIntent(intent: BookingIntent) {
+  if (typeof window === "undefined") return;
+  try { sessionStorage.setItem(BOOKING_INTENT_KEY, JSON.stringify(intent)); } catch {}
+}
+export function consumeBookingIntent(): BookingIntent | null {
+  if (typeof window === "undefined") return null;
+  try {
+    const raw = sessionStorage.getItem(BOOKING_INTENT_KEY);
+    if (!raw) return null;
+    sessionStorage.removeItem(BOOKING_INTENT_KEY);
+    return JSON.parse(raw) as BookingIntent;
+  } catch { return null; }
+}

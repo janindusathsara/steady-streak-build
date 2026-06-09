@@ -4,6 +4,7 @@ import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { setBookingIntent } from "@/lib/booking";
 
 const POPULAR = ["Faucet Repair", "AC Maintenance", "Roof Inspection", "Garden Design"];
 
@@ -18,7 +19,7 @@ export function ServicesPage() {
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
-    : { to: "/book" as const };
+    : { to: "/login" as const, onClick: () => setBookingIntent({}) };
 
 
 
