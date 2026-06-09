@@ -51,6 +51,8 @@
   --color-success: var(--success);
   --font-sans: 'Plus Jakarta Sans', system-ui, sans-serif;
   --font-mono: 'Geist Mono', ui-monospace, monospace;
+  --breakpoint-3xl: 1440px;
+  --breakpoint-4xl: 2560px;
 }
 
 :root {
