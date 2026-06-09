@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, useState, useEffect } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import {
   Wrench,
@@ -15,6 +15,8 @@ import {
   ShieldCheck,
   Activity,
   LifeBuoy,
+  Menu,
+  X,
 } from "lucide-react";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
