@@ -216,6 +216,7 @@ function NavItem({
   label,
   badge,
   badgeTone = "muted",
+  onNavigate,
 }: {
   to: AdminNavKey;
   active: AdminNavKey;
@@ -224,12 +225,14 @@ function NavItem({
   label: string;
   badge?: string | number;
   badgeTone?: "primary" | "muted";
+  onNavigate?: () => void;
 }) {
   const isActive = to === active;
   return (
     <Link
       to={pathMap[to]}
       params={{ username }}
+      onClick={onNavigate}
       className={`flex items-center justify-between gap-2 rounded-xl px-3 py-2 text-sm font-semibold transition-colors ${
         isActive
           ? "bg-primary text-primary-foreground"
