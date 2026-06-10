@@ -1,4 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
+import { api, useNewApi } from "./api-client";
 
 export type Category = {
   id: string;
@@ -55,6 +56,7 @@ export type Booking = {
 };
 
 export async function loadCategories(): Promise<Category[]> {
+  if (useNewApi()) return api.get<Category[]>("/api/v1/service-categories");
   const { data, error } = await supabase
     .from("service_categories")
     .select("*")
@@ -64,6 +66,7 @@ export async function loadCategories(): Promise<Category[]> {
 }
 
 export async function loadSubServices(categoryId: string): Promise<SubService[]> {
+  if (useNewApi()) return api.get<SubService[]>(`/api/v1/service-categories/${categoryId}/sub-services`);
   const { data, error } = await supabase
     .from("sub_services")
     .select("*")
@@ -74,6 +77,7 @@ export async function loadSubServices(categoryId: string): Promise<SubService[]>
 }
 
 export async function loadProvidersForCategory(categoryId: string): Promise<Provider[]> {
+  if (useNewApi()) return api.get<Provider[]>(`/api/v1/providers?category_id=${encodeURIComponent(categoryId)}&available=true`);
   const { data, error } = await supabase
     .from("providers")
     .select("*, profile:profiles(id, display_name, username, avatar_url)")
@@ -85,6 +89,7 @@ export async function loadProvidersForCategory(categoryId: string): Promise<Prov
 }
 
 export async function loadAllProviders(): Promise<Provider[]> {
+  if (useNewApi()) return api.get<Provider[]>("/api/v1/providers?available=true");
   const { data, error } = await supabase
     .from("providers")
     .select("*, profile:profiles(id, display_name, username, avatar_url)")
@@ -95,6 +100,13 @@ export async function loadAllProviders(): Promise<Provider[]> {
 }
 
 export async function getSubService(id: string): Promise<SubService | null> {
+  if (useNewApi()) {
+    try {
+      return await api.get<SubService>(`/api/v1/sub-services/${id}`);
+    } catch {
+      return null;
+    }
+  }
   const { data } = await supabase.from("sub_services").select("*").eq("id", id).maybeSingle();
   return (data as SubService | null) ?? null;
 }
@@ -119,6 +131,7 @@ export type CreateBookingInput = {
 };
 
 export async function createBooking(input: CreateBookingInput): Promise<Booking> {
+  if (useNewApi()) return api.post<Booking>("/api/v1/bookings", input);
   const { data, error } = await supabase
     .from("bookings")
     .insert(input)
@@ -129,6 +142,7 @@ export async function createBooking(input: CreateBookingInput): Promise<Booking>
 }
 
 export async function loadProviderBookings(providerId: string): Promise<Booking[]> {
+  if (useNewApi()) return api.get<Booking[]>(`/api/v1/bookings?role=provider&provider_id=${encodeURIComponent(providerId)}`);
   const { data, error } = await supabase
     .from("bookings")
     .select("*")
@@ -139,11 +153,16 @@ export async function loadProviderBookings(providerId: string): Promise<Booking[
 }
 
 export async function updateBookingStatus(id: string, status: Booking["status"]) {
+  if (useNewApi()) {
+    await api.patch(`/api/v1/bookings/${id}/status`, { status });
+    return;
+  }
   const { error } = await supabase.from("bookings").update({ status }).eq("id", id);
   if (error) throw error;
 }
 
 export async function loadUnreadNotifications(userId: string) {
+  if (useNewApi()) return api.get<unknown[]>("/api/v1/notifications?unread=true");
   const { data } = await supabase
     .from("notifications")
     .select("*")
@@ -154,6 +173,10 @@ export async function loadUnreadNotifications(userId: string) {
 }
 
 export async function markNotificationsRead(userId: string) {
+  if (useNewApi()) {
+    await api.post("/api/v1/notifications/mark-read", {});
+    return;
+  }
   await supabase
     .from("notifications")
     .update({ read_at: new Date().toISOString() })
