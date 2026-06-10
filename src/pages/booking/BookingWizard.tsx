@@ -167,7 +167,7 @@ export function BookingWizard() {
   return (
     <div className="min-h-screen bg-muted/30 text-foreground">
       <Navbar />
-      <main className="mx-auto w-full max-w-6xl px-4 pb-16 pt-6 sm:px-6 3xl:max-w-7xl 4xl:max-w-[1800px]">
+      <main className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 pb-16 pt-6 sm:px-6 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
         <Stepper current={step} onJump={(n) => { if (step < 5 && n < step) setStep(n); }} />
 
         {step === 1 && (

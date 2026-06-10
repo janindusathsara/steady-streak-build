@@ -83,7 +83,7 @@ export function HomeownerLayout({ active, children }: Props) {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-40 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex w-full max-w-7xl items-center justify-between gap-4 px-4 py-3 sm:px-5 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
+        <div className="mx-auto flex w-full max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] items-center justify-between gap-4 px-4 py-3 sm:px-5">
           <div className="flex items-center gap-2">
             <button
               onClick={() => setMobileOpen(true)}
@@ -154,7 +154,7 @@ export function HomeownerLayout({ active, children }: Props) {
         </>
       )}
 
-      <div className="mx-auto flex w-full max-w-7xl gap-6 px-4 py-6 sm:px-5 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
+      <div className="mx-auto flex w-full max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] gap-6 px-4 py-6 sm:px-5">
         <aside className="sticky top-[73px] hidden h-[calc(100vh-89px)] w-60 shrink-0 flex-col md:flex 4xl:w-72">
           {sidebarContent}
         </aside>

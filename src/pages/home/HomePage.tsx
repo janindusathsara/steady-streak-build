@@ -36,7 +36,7 @@ export function HomePage() {
 
 function Hero() {
   return (
-    <section className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] pt-10 pb-14 sm:pt-16 sm:pb-20">
+    <section className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] pt-10 pb-14 sm:pt-16 sm:pb-20">
       <div className="grid gap-10 md:grid-cols-2 md:gap-16">
         <div>
           <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
@@ -90,7 +90,7 @@ function Hero() {
 function Services() {
   return (
     <section id="services" className="bg-secondary/40 py-20">
-      <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px]">
+      <div className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px]">
         <div className="mb-12 flex items-end justify-between gap-6">
           <div>
             <p className="text-xs font-semibold uppercase tracking-widest text-primary">Our services</p>
@@ -132,7 +132,7 @@ function Services() {
 
 function CTA() {
   return (
-    <section id="news" className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] py-16 sm:py-24">
+    <section id="news" className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] py-16 sm:py-24">
       <div className="overflow-hidden rounded-3xl border border-border bg-gradient-to-br from-primary/15 via-card to-card p-6 sm:p-10 md:p-14">
         <div className="grid items-center gap-8 md:grid-cols-[1.4fr_1fr]">
           <div>

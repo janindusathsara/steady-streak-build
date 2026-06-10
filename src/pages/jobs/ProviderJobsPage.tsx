@@ -80,7 +80,7 @@ export function ProviderJobsPage() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       <header className="sticky top-0 z-30 border-b border-border bg-card/95 backdrop-blur">
-        <div className="mx-auto flex max-w-6xl items-center justify-between gap-4 px-5 py-3">
+        <div className="mx-auto flex max-w-6xl 4xl:max-w-[1800px] items-center justify-between gap-4 px-5 py-3">
           <Link to="/" className="flex items-center gap-2">
             <Wrench className="h-6 w-6 text-primary" strokeWidth={2.5} />
             <span className="text-lg font-bold tracking-tight">FixItNow</span>
@@ -108,7 +108,7 @@ export function ProviderJobsPage() {
         </div>
       </header>
 
-      <main className="mx-auto max-w-6xl px-5 py-6">
+      <main className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 py-6">
         <div className="mb-6">
           <h1 className="text-3xl font-bold">My Jobs</h1>
           <p className="mt-1 text-sm text-muted-foreground">Manage incoming booking requests and active jobs</p>

@@ -29,7 +29,7 @@ export function ServicesPage() {
 
       {/* Hero search */}
       <section className="bg-gradient-to-b from-primary/5 via-background to-background">
-        <div className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] py-14 sm:py-20 text-center">
+        <div className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] py-14 sm:py-20 text-center">
           <h1 className="text-3xl font-bold tracking-tight sm:text-5xl md:text-6xl" style={{ lineHeight: 1.05 }}>
             Find the Right <span className="text-primary">Expert</span> for Any Job
           </h1>
@@ -71,7 +71,7 @@ export function ServicesPage() {
       </section>
 
       {/* Categories */}
-      <section className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] py-14">
+      <section className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] py-14">
         <div className="mb-8 flex items-end justify-between gap-4">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Browse All Categories</h2>
           <a href="#" className="text-sm font-medium text-primary hover:underline">View All 30+ Categories →</a>
@@ -97,7 +97,7 @@ export function ServicesPage() {
       </section>
 
       {/* Top rated providers */}
-      <section className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] pb-14">
+      <section className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] pb-14">
         <div className="mb-6 flex items-end justify-between gap-4">
           <h2 className="text-2xl font-bold tracking-tight sm:text-3xl">Top Rated Providers</h2>
           <a href="#" className="text-sm font-medium text-primary hover:underline">View More →</a>
@@ -131,7 +131,7 @@ export function ServicesPage() {
       </section>
 
       {/* Gold CTA */}
-      <section className="mx-auto w-full max-w-6xl px-4 sm:px-5 3xl:max-w-7xl 4xl:max-w-[1800px] pb-14">
+      <section className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 3xl:max-w-7xl 3xl:max-w-[1600px] 4xl:max-w-[2200px] pb-14">
         <div className="flex flex-col items-start justify-between gap-4 rounded-2xl bg-primary px-6 py-7 text-primary-foreground sm:flex-row sm:items-center sm:px-10">
           <div>
             <h3 className="text-xl font-bold sm:text-2xl">Upgrade to Gold Membership</h3>
@@ -145,7 +145,7 @@ export function ServicesPage() {
 
       {/* Trust strip */}
       <section className="border-t border-border">
-        <div className="mx-auto grid max-w-6xl gap-8 px-5 py-12 sm:grid-cols-3">
+        <div className="mx-auto grid max-w-6xl 4xl:max-w-[1800px] gap-8 px-5 py-12 sm:grid-cols-3">
           {[
             { icon: "🛡️", title: "Secure Escrow", desc: "Payment held safely until you confirm the job is complete to your satisfaction." },
             { icon: "⭐", title: "Verified Pros", desc: "Every professional undergoes a rigorous 5-step background and certification check." },
