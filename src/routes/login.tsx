@@ -3,6 +3,8 @@ import { useEffect, useRef, useState } from "react";
 import { Mail, Lock, Wrench, ChevronLeft, User as UserIcon, Shield } from "lucide-react";
 import { toast } from "sonner";
 import { setRole, dashboardPathFor, userDashboardPath, type Role } from "@/lib/role";
+import { useNewApi } from "@/lib/api-client";
+import { authApi } from "@/lib/auth-api";
 
 export const Route = createFileRoute("/login")({
   validateSearch: (s: Record<string, unknown>): { redirect?: string } => ({
@@ -16,8 +18,24 @@ async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fall
     window.location.href = redirectTo;
     return;
   }
-  const { supabase } = await import("@/integrations/supabase/client");
   const { consumeBookingIntent } = await import("@/lib/booking");
+
+  if (useNewApi()) {
+    const s = await authApi.getSession();
+    if (s?.user.username) {
+      const intent = consumeBookingIntent();
+      if (intent) {
+        navigate({ to: "/$username/book", params: { username: s.user.username }, search: intent });
+        return;
+      }
+      navigate({ to: userDashboardPath(s.user.username) });
+      return;
+    }
+    navigate({ to: dashboardPathFor(fallbackRole) });
+    return;
+  }
+
+  const { supabase } = await import("@/integrations/supabase/client");
   const { data: sess } = await supabase.auth.getSession();
   if (sess.session) {
     const { data: prof } = await supabase
@@ -54,13 +72,20 @@ function LoginPage() {
   // links are preserved through the login round-trip.
   useEffect(() => {
     let cancelled = false;
+    const handle = (hasSession: boolean) => {
+      if (!hasSession || cancelled || navigated.current) return;
+      navigated.current = true;
+      const fallback = (typeof window !== "undefined" && (localStorage.getItem("fixitnow:role") as Role | null)) || "homeowner";
+      void navigateAfterLogin(navigate, fallback, search.redirect);
+    };
+
+    if (useNewApi()) {
+      authApi.getSession().then((s) => handle(!!s));
+      const { data: { subscription } } = authApi.onAuthStateChange((_e, s) => handle(!!s));
+      return () => { cancelled = true; subscription.unsubscribe(); };
+    }
+
     import("@/integrations/supabase/client").then(({ supabase }) => {
-      const handle = (hasSession: boolean) => {
-        if (!hasSession || cancelled || navigated.current) return;
-        navigated.current = true;
-        const fallback = (typeof window !== "undefined" && (localStorage.getItem("fixitnow:role") as Role | null)) || "homeowner";
-        void navigateAfterLogin(navigate, fallback, search.redirect);
-      };
       supabase.auth.getSession().then(({ data }) => handle(!!data.session));
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => handle(!!session));
       return () => { cancelled = true; subscription.unsubscribe(); };
@@ -93,9 +118,13 @@ function LoginPage() {
     if (!email.trim() || !password.trim()) return;
     setLoading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (error) throw error;
+      if (useNewApi()) {
+        await authApi.signInWithPassword({ email: email.trim(), password });
+      } else {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
+      }
       setRole(role);
       await navigateAfterLogin(navigate, role, search.redirect);
     } catch (err: any) {

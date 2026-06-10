@@ -4,6 +4,9 @@ import { Home as HomeIcon, Wrench, Upload, User as UserIcon, Eye, EyeOff, AlertC
 import { Footer } from "@/components/common/Footer";
 import { toast } from "sonner";
 import { setRole, dashboardPathFor } from "@/lib/role";
+import { useNewApi } from "@/lib/api-client";
+import { authApi } from "@/lib/auth-api";
+
 
 const DISTRICTS = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Galle", "Matara", "Negombo", "Jaffna", "Kurunegala", "Anuradhapura"];
 const CATEGORIES = [
@@ -110,23 +113,32 @@ function HomeownerForm() {
     if (!form.agree) return toast.error("Please accept the Terms of Service");
     setLoading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.auth.signUp({
-        email: form.email.trim(),
-        password: form.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}${dashboardPathFor("homeowner")}`,
-          data: {
-            full_name: `${form.firstName} ${form.lastName}`.trim(),
-            username: form.username.trim().toLowerCase(),
-            role: "homeowner",
-            phone: form.phone,
-            district: form.district,
-            address: form.address,
+      if (useNewApi()) {
+        await authApi.signUp({
+          email: form.email.trim(),
+          password: form.password,
+          username: form.username.trim().toLowerCase(),
+          role: "homeowner",
+        });
+      } else {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { error } = await supabase.auth.signUp({
+          email: form.email.trim(),
+          password: form.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}${dashboardPathFor("homeowner")}`,
+            data: {
+              full_name: `${form.firstName} ${form.lastName}`.trim(),
+              username: form.username.trim().toLowerCase(),
+              role: "homeowner",
+              phone: form.phone,
+              district: form.district,
+              address: form.address,
+            },
           },
-        },
-      });
-      if (error) throw error;
+        });
+        if (error) throw error;
+      }
       setRole("homeowner");
       toast.success("Account created! Check your email to verify.");
       navigate({ to: dashboardPathFor("homeowner") });
@@ -234,24 +246,33 @@ function ProviderForm() {
     if (!form.agree) return toast.error("Please confirm and accept the terms");
     setLoading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.auth.signUp({
-        email: form.email.trim(),
-        password: form.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}${dashboardPathFor("provider")}`,
-          data: {
-            full_name: `${form.firstName} ${form.lastName}`.trim(),
-            username: form.username.trim().toLowerCase(),
-            role: "provider",
-            nic: form.nic, phone: form.phone, district: form.district,
-            radius: form.radius, business: form.business, years: form.years,
-            category: form.category, bio: form.bio, hourly: form.hourly,
-            availability: form.availability,
+      if (useNewApi()) {
+        await authApi.signUp({
+          email: form.email.trim(),
+          password: form.password,
+          username: form.username.trim().toLowerCase(),
+          role: "provider",
+        });
+      } else {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { error } = await supabase.auth.signUp({
+          email: form.email.trim(),
+          password: form.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}${dashboardPathFor("provider")}`,
+            data: {
+              full_name: `${form.firstName} ${form.lastName}`.trim(),
+              username: form.username.trim().toLowerCase(),
+              role: "provider",
+              nic: form.nic, phone: form.phone, district: form.district,
+              radius: form.radius, business: form.business, years: form.years,
+              category: form.category, bio: form.bio, hourly: form.hourly,
+              availability: form.availability,
+            },
           },
-        },
-      });
-      if (error) throw error;
+        });
+        if (error) throw error;
+      }
       setRole("provider");
       toast.success("Application submitted! We'll review within 24–48 hours.");
       navigate({ to: dashboardPathFor("provider") });
