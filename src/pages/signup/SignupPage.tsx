@@ -113,23 +113,32 @@ function HomeownerForm() {
     if (!form.agree) return toast.error("Please accept the Terms of Service");
     setLoading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.auth.signUp({
-        email: form.email.trim(),
-        password: form.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}${dashboardPathFor("homeowner")}`,
-          data: {
-            full_name: `${form.firstName} ${form.lastName}`.trim(),
-            username: form.username.trim().toLowerCase(),
-            role: "homeowner",
-            phone: form.phone,
-            district: form.district,
-            address: form.address,
+      if (useNewApi()) {
+        await authApi.signUp({
+          email: form.email.trim(),
+          password: form.password,
+          username: form.username.trim().toLowerCase(),
+          role: "homeowner",
+        });
+      } else {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { error } = await supabase.auth.signUp({
+          email: form.email.trim(),
+          password: form.password,
+          options: {
+            emailRedirectTo: `${window.location.origin}${dashboardPathFor("homeowner")}`,
+            data: {
+              full_name: `${form.firstName} ${form.lastName}`.trim(),
+              username: form.username.trim().toLowerCase(),
+              role: "homeowner",
+              phone: form.phone,
+              district: form.district,
+              address: form.address,
+            },
           },
-        },
-      });
-      if (error) throw error;
+        });
+        if (error) throw error;
+      }
       setRole("homeowner");
       toast.success("Account created! Check your email to verify.");
       navigate({ to: dashboardPathFor("homeowner") });
