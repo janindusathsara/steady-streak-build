@@ -118,9 +118,13 @@ function LoginPage() {
     if (!email.trim() || !password.trim()) return;
     setLoading(true);
     try {
-      const { supabase } = await import("@/integrations/supabase/client");
-      const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
-      if (error) throw error;
+      if (useNewApi()) {
+        await authApi.signInWithPassword({ email: email.trim(), password });
+      } else {
+        const { supabase } = await import("@/integrations/supabase/client");
+        const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
+        if (error) throw error;
+      }
       setRole(role);
       await navigateAfterLogin(navigate, role, search.redirect);
     } catch (err: any) {
