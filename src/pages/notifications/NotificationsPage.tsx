@@ -3,21 +3,17 @@ import { Link } from "@tanstack/react-router";
 import { Bell, Check, Inbox } from "lucide-react";
 import { formatDistanceToNow } from "date-fns";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listNotifications,
+  markAllNotificationsRead,
+  markNotificationRead,
+  subscribeNotifications,
+  type Notif,
+} from "@/lib/notifications-data";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { HomeownerLayout } from "@/components/homeowner/HomeownerLayout";
 import { toast } from "sonner";
-
-type Notif = {
-  id: string;
-  type: string;
-  title: string;
-  body: string | null;
-  booking_id: string | null;
-  read_at: string | null;
-  created_at: string;
-};
 
 function useNotifications(userId: string | undefined) {
   const [items, setItems] = useState<Notif[]>([]);
@@ -26,63 +22,45 @@ function useNotifications(userId: string | undefined) {
   useEffect(() => {
     if (!userId) return;
     let cancelled = false;
-    (async () => {
-      const { data, error } = await supabase
-        .from("notifications")
-        .select("id,type,title,body,booking_id,read_at,created_at")
-        .eq("user_id", userId)
-        .order("created_at", { ascending: false });
-      if (cancelled) return;
-      if (error) toast.error(error.message);
-      setItems((data as Notif[]) ?? []);
-      setLoading(false);
-    })();
-
-    const channel = supabase
-      .channel(`notif-${userId}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notifications", filter: `user_id=eq.${userId}` },
-        () => {
-          supabase
-            .from("notifications")
-            .select("id,type,title,body,booking_id,read_at,created_at")
-            .eq("user_id", userId)
-            .order("created_at", { ascending: false })
-            .then(({ data }) => setItems((data as Notif[]) ?? []));
-        },
-      )
-      .subscribe();
-
-    return () => {
-      cancelled = true;
-      supabase.removeChannel(channel);
+    const refresh = async () => {
+      try {
+        const data = await listNotifications(userId);
+        if (cancelled) return;
+        setItems(data);
+      } catch (err: any) {
+        if (!cancelled) toast.error(err?.message ?? "Failed to load notifications");
+      } finally {
+        if (!cancelled) setLoading(false);
+      }
     };
+    void refresh();
+    const unsub = subscribeNotifications(userId, () => { void refresh(); });
+    return () => { cancelled = true; unsub(); };
   }, [userId]);
 
   const markAllRead = async () => {
     if (!userId) return;
-    const { error } = await supabase
-      .from("notifications")
-      .update({ read_at: new Date().toISOString() })
-      .eq("user_id", userId)
-      .is("read_at", null);
-    if (error) return toast.error(error.message);
-    setItems((prev) => prev.map((n) => (n.read_at ? n : { ...n, read_at: new Date().toISOString() })));
-    toast.success("All marked as read");
+    try {
+      await markAllNotificationsRead(userId);
+      setItems((prev) => prev.map((n) => (n.read_at ? n : { ...n, read_at: new Date().toISOString() })));
+      toast.success("All marked as read");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to mark as read");
+    }
   };
 
   const markOneRead = async (id: string) => {
-    const { error } = await supabase
-      .from("notifications")
-      .update({ read_at: new Date().toISOString() })
-      .eq("id", id);
-    if (error) return toast.error(error.message);
-    setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n)));
+    try {
+      await markNotificationRead(id);
+      setItems((prev) => prev.map((n) => (n.id === id ? { ...n, read_at: new Date().toISOString() } : n)));
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to mark as read");
+    }
   };
 
   return { items, loading, markAllRead, markOneRead };
 }
+
 
 export function NotificationsPage() {
   const { profile, loading: userLoading } = useCurrentUser();

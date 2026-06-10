@@ -4,6 +4,8 @@ import { Wrench, Bell, LogOut, CheckCircle2, Clock, PlayCircle, XCircle, MapPin,
 import { Footer } from "@/components/common/Footer";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
+import { useNewApi } from "@/lib/api-client";
+import { authApi } from "@/lib/auth-api";
 import { toast } from "sonner";
 import { loadProviderBookings, updateBookingStatus, loadUnreadNotifications, markNotificationsRead, type Booking } from "@/lib/booking";
 
@@ -48,7 +50,7 @@ export function ProviderJobsPage() {
   }, [profile?.id]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    if (useNewApi()) { await authApi.signOut(); } else { await supabase.auth.signOut(); }
     toast.success("Signed out");
     navigate({ to: "/" });
   };

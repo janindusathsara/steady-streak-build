@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { getNews, createNews, updateNews, uploadNewsImage } from "@/lib/news-admin-data";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, Loader2 } from "lucide-react";
+
 
 const CATEGORIES = ["Platform Updates", "Maintenance Tips", "Provider Stories", "Industry News", "Gold Members"];
 const STATUSES = [
@@ -39,8 +40,8 @@ export function AdminNewsEditorPage({ mode }: Props) {
   useEffect(() => {
     if (mode !== "edit" || !params.id) return;
     (async () => {
-      const { data, error } = await supabase.from("news_articles").select("*").eq("id", params.id!).maybeSingle();
-      if (error || !data) {
+      const data = await getNews(params.id!);
+      if (!data) {
         toast.error("Article not found");
         navigate({ to: "/$username/update-news", params: { username } });
         return;
@@ -49,7 +50,7 @@ export function AdminNewsEditorPage({ mode }: Props) {
       setTag(data.tag);
       setCategory(data.category);
       setExcerpt(data.excerpt);
-      setBody(data.body);
+      setBody(data.body ?? "");
       setImageUrl(data.image_url);
       setStatus(data.status as "draft" | "live" | "scheduled");
       setPublishAt(data.publish_at ? data.publish_at.slice(0, 16) : "");
@@ -60,18 +61,15 @@ export function AdminNewsEditorPage({ mode }: Props) {
   const handleImage = async (file: File) => {
     if (!profile) return;
     setUploading(true);
-    const ext = file.name.split(".").pop() ?? "jpg";
-    const path = `${profile.id}/${Date.now()}.${ext}`;
-    const { error } = await supabase.storage.from("news-images").upload(path, file, { upsert: true });
-    if (error) {
-      toast.error(error.message);
+    try {
+      const url = await uploadNewsImage(file, profile.id);
+      setImageUrl(url);
+      toast.success("Image uploaded");
+    } catch (err: any) {
+      toast.error(err?.message ?? "Upload failed");
+    } finally {
       setUploading(false);
-      return;
     }
-    const { data } = supabase.storage.from("news-images").getPublicUrl(path);
-    setImageUrl(data.publicUrl);
-    setUploading(false);
-    toast.success("Image uploaded");
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -93,16 +91,20 @@ export function AdminNewsEditorPage({ mode }: Props) {
       publish_at: status === "scheduled" && publishAt ? new Date(publishAt).toISOString() : null,
     };
 
-    if (mode === "new") {
-      const { error } = await supabase.from("news_articles").insert({ ...payload, author_id: profile.id });
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Article created");
-    } else {
-      const { error } = await supabase.from("news_articles").update(payload).eq("id", params.id!);
-      if (error) { toast.error(error.message); setSaving(false); return; }
-      toast.success("Article updated");
+    try {
+      if (mode === "new") {
+        await createNews(payload, profile.id);
+        toast.success("Article created");
+      } else {
+        await updateNews(params.id!, payload);
+        toast.success("Article updated");
+      }
+      navigate({ to: "/$username/update-news", params: { username } });
+    } catch (err: any) {
+      toast.error(err?.message ?? "Save failed");
+    } finally {
+      setSaving(false);
     }
-    navigate({ to: "/$username/update-news", params: { username } });
   };
 
   if (loading) {

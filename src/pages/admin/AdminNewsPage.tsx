@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { listNews, deleteNews, publishNews } from "@/lib/news-admin-data";
 import { toast } from "sonner";
 import { Pencil, Trash2, Loader2, Plus } from "lucide-react";
+
 
 type Status = "live" | "draft" | "scheduled";
 interface Article {
@@ -44,13 +45,14 @@ export function AdminNewsPage() {
 
   const load = async () => {
     setLoading(true);
-    const { data, error } = await supabase
-      .from("news_articles")
-      .select("*")
-      .order("updated_at", { ascending: false });
-    if (error) toast.error(error.message);
-    setArticles((data ?? []) as Article[]);
-    setLoading(false);
+    try {
+      const data = await listNews();
+      setArticles(data as Article[]);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to load");
+    } finally {
+      setLoading(false);
+    }
   };
 
   useEffect(() => { load(); }, []);
@@ -70,17 +72,19 @@ export function AdminNewsPage() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete this article?")) return;
-    const { error } = await supabase.from("news_articles").delete().eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Article deleted");
-    load();
+    try {
+      await deleteNews(id);
+      toast.success("Article deleted");
+      load();
+    } catch (err: any) { toast.error(err?.message ?? "Delete failed"); }
   };
 
   const handlePublish = async (id: string) => {
-    const { error } = await supabase.from("news_articles").update({ status: "live", publish_at: null }).eq("id", id);
-    if (error) return toast.error(error.message);
-    toast.success("Article published");
-    load();
+    try {
+      await publishNews(id);
+      toast.success("Article published");
+      load();
+    } catch (err: any) { toast.error(err?.message ?? "Publish failed"); }
   };
 
   return (
