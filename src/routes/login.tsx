@@ -72,13 +72,20 @@ function LoginPage() {
   // links are preserved through the login round-trip.
   useEffect(() => {
     let cancelled = false;
+    const handle = (hasSession: boolean) => {
+      if (!hasSession || cancelled || navigated.current) return;
+      navigated.current = true;
+      const fallback = (typeof window !== "undefined" && (localStorage.getItem("fixitnow:role") as Role | null)) || "homeowner";
+      void navigateAfterLogin(navigate, fallback, search.redirect);
+    };
+
+    if (useNewApi()) {
+      authApi.getSession().then((s) => handle(!!s));
+      const { data: { subscription } } = authApi.onAuthStateChange((_e, s) => handle(!!s));
+      return () => { cancelled = true; subscription.unsubscribe(); };
+    }
+
     import("@/integrations/supabase/client").then(({ supabase }) => {
-      const handle = (hasSession: boolean) => {
-        if (!hasSession || cancelled || navigated.current) return;
-        navigated.current = true;
-        const fallback = (typeof window !== "undefined" && (localStorage.getItem("fixitnow:role") as Role | null)) || "homeowner";
-        void navigateAfterLogin(navigate, fallback, search.redirect);
-      };
       supabase.auth.getSession().then(({ data }) => handle(!!data.session));
       const { data: { subscription } } = supabase.auth.onAuthStateChange((_e, session) => handle(!!session));
       return () => { cancelled = true; subscription.unsubscribe(); };
