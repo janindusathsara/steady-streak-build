@@ -1,10 +1,11 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { getNews, createNews, updateNews, uploadNewsImage } from "@/lib/news-admin-data";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { toast } from "sonner";
 import { ArrowLeft, Upload, Loader2 } from "lucide-react";
+
 
 const CATEGORIES = ["Platform Updates", "Maintenance Tips", "Provider Stories", "Industry News", "Gold Members"];
 const STATUSES = [
