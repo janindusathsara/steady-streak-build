@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { useNewApi } from "@/lib/api-client";
+import { authApi } from "@/lib/auth-api";
 
 export type Profile = {
   id: string;
@@ -20,6 +22,30 @@ export function useCurrentUser(): CurrentUser {
 
   useEffect(() => {
     let cancelled = false;
+
+    if (useNewApi()) {
+      const apply = (s: Awaited<ReturnType<typeof authApi.getSession>>) => {
+        if (cancelled) return;
+        if (!s) {
+          setState({ loading: false, email: null, profile: null });
+          return;
+        }
+        setState({
+          loading: false,
+          email: s.user.email,
+          profile: {
+            id: s.user.id,
+            username: s.user.username ?? "",
+            display_name: s.user.display_name,
+            avatar_url: s.user.avatar_url,
+            role: s.user.role,
+          },
+        });
+      };
+      const { data: { subscription } } = authApi.onAuthStateChange((_e, s) => apply(s));
+      authApi.getSession().then(apply);
+      return () => { cancelled = true; subscription.unsubscribe(); };
+    }
 
     async function loadProfile(userId: string, email: string | null) {
       const { data } = await supabase
