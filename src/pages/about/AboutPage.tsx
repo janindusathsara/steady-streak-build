@@ -61,7 +61,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 py-12">
+      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6 py-10 md:py-12">
         <div className="grid gap-10 md:grid-cols-2">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">Our Mission</h2>
