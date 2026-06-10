@@ -51,7 +51,7 @@ export function Navbar() {
   );
 
   return (
-    <header className="sticky top-2 z-30 mx-auto w-full max-w-6xl px-3 sm:top-4 sm:px-4">
+    <header className="sticky top-2 z-30 mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-3 sm:top-4 sm:px-4">
       <nav className="flex h-14 items-center justify-between rounded-2xl border border-border/60 bg-card/90 px-3 backdrop-blur shadow-sm sm:h-16 sm:px-5">
         <Link to="/" className="flex items-center gap-2" onClick={() => setOpen(false)}>
           <Wrench className="h-5 w-5 text-primary sm:h-6 sm:w-6" strokeWidth={2.5} />

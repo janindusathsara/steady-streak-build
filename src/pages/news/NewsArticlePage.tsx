@@ -54,7 +54,7 @@ export function NewsArticlePage() {
       </article>
 
       {related.length > 0 && (
-        <section className="mx-auto max-w-6xl px-5 pb-16">
+        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 pb-16">
           <h2 className="mb-6 text-2xl font-bold tracking-tight">More in {article.category}</h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((a) => (

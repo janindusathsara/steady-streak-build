@@ -4,7 +4,7 @@ import { Wrench, Phone, Mail, Printer, MapPin } from "lucide-react";
 export function Footer() {
   return (
     <footer className="bg-foreground text-background">
-      <div className="mx-auto max-w-6xl px-5 py-12 sm:py-14">
+      <div className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 py-12 sm:py-14">
         <div className="grid gap-10 sm:grid-cols-2 md:grid-cols-3">
           <div className="sm:col-span-2 md:col-span-1">
             <div className="flex items-center gap-2">
