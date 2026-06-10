@@ -289,3 +289,29 @@
   transform: translateY(0) !important;
   filter: blur(0) !important;
 }
+
+/* ── Responsive helpers (mobile, tablet, 4K) ── */
+
+/* Allow fixed-grid "tables" (e.g. admin pages) to scroll horizontally on small viewports
+   instead of overflowing or squishing their columns. */
+@media (max-width: 1023px) {
+  .grid[class*="grid-cols-["][class*="fr_"] {
+    min-width: 720px;
+  }
+  section:has(> .grid[class*="grid-cols-["][class*="fr_"]),
+  div:has(> .grid[class*="grid-cols-["][class*="fr_"]) {
+    overflow-x: auto;
+  }
+}
+
+/* Tame oversized headings on mobile so they don't break layouts. */
+@media (max-width: 640px) {
+  .text-5xl { font-size: 2.25rem; line-height: 1.1; }
+  .text-4xl { font-size: 1.875rem; line-height: 1.15; }
+  .text-3xl { font-size: 1.5rem; line-height: 1.2; }
+}
+
+/* On 4K, allow content containers to scale up gracefully. */
+@media (min-width: 2560px) {
+  html { font-size: 18px; }
+}
