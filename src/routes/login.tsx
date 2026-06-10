@@ -18,8 +18,24 @@ async function navigateAfterLogin(navigate: ReturnType<typeof useNavigate>, fall
     window.location.href = redirectTo;
     return;
   }
-  const { supabase } = await import("@/integrations/supabase/client");
   const { consumeBookingIntent } = await import("@/lib/booking");
+
+  if (useNewApi()) {
+    const s = await authApi.getSession();
+    if (s?.user.username) {
+      const intent = consumeBookingIntent();
+      if (intent) {
+        navigate({ to: "/$username/book", params: { username: s.user.username }, search: intent });
+        return;
+      }
+      navigate({ to: userDashboardPath(s.user.username) });
+      return;
+    }
+    navigate({ to: dashboardPathFor(fallbackRole) });
+    return;
+  }
+
+  const { supabase } = await import("@/integrations/supabase/client");
   const { data: sess } = await supabase.auth.getSession();
   if (sess.session) {
     const { data: prof } = await supabase
