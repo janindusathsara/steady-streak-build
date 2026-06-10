@@ -37,7 +37,7 @@ export function NewsPage() {
       </section>
 
       {(featured || sidebar.length > 0) && (
-        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5">
+        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6">
           <div className="grid gap-5 lg:grid-cols-2">
             {featured && (
               <Link to="/news/$id" params={{ id: String(featured.id) }} className="group block overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-md">
