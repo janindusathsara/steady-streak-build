@@ -4,6 +4,9 @@ import { Home as HomeIcon, Wrench, Upload, User as UserIcon, Eye, EyeOff, AlertC
 import { Footer } from "@/components/common/Footer";
 import { toast } from "sonner";
 import { setRole, dashboardPathFor } from "@/lib/role";
+import { useNewApi } from "@/lib/api-client";
+import { authApi } from "@/lib/auth-api";
+
 
 const DISTRICTS = ["Colombo", "Gampaha", "Kalutara", "Kandy", "Galle", "Matara", "Negombo", "Jaffna", "Kurunegala", "Anuradhapura"];
 const CATEGORIES = [
