@@ -38,7 +38,7 @@ export function AboutPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 pt-16 pb-20 text-center">
+      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 sm:px-6 pt-10 pb-12 md:pt-16 md:pb-20 text-center">
         <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
           About FixItNow
         </span>
