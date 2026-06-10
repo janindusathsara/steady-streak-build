@@ -100,8 +100,8 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-secondary/40 py-20">
-        <div className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5">
+      <section className="bg-secondary/40 py-12 md:py-20">
+        <div className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6">
           <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Core Values</h2>
             <p className="mt-3 text-muted-foreground">Every decision we make comes back to these principles.</p>
