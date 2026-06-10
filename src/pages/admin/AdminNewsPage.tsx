@@ -1,9 +1,10 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { supabase } from "@/integrations/supabase/client";
+import { listNews, deleteNews, publishNews } from "@/lib/news-admin-data";
 import { toast } from "sonner";
 import { Pencil, Trash2, Loader2, Plus } from "lucide-react";
+
 
 type Status = "live" | "draft" | "scheduled";
 interface Article {
