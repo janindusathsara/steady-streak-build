@@ -9,6 +9,8 @@ import { Footer } from "@/components/common/Footer";
 import { SERVICES } from "@/lib/services-data";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
+import { useNewApi } from "@/lib/api-client";
+import { authApi } from "@/lib/auth-api";
 import { toast } from "sonner";
 
 type Tab = "dashboard" | "security" | "system" | "wallet" | "bookings" | "active" | "preferences" | "support";
@@ -23,7 +25,7 @@ export function HomeownerDashboard({ initialTab = "dashboard" }: { initialTab?: 
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    if (useNewApi()) { await authApi.signOut(); } else { await supabase.auth.signOut(); }
     toast.success("Signed out");
     navigate({ to: "/" });
   };
