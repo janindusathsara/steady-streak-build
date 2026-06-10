@@ -120,7 +120,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 py-20 text-center">
+      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 sm:px-6 py-12 md:py-20 text-center">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Built by Group C</h2>
         <p className="mt-3 text-muted-foreground">A dedicated team committed to making home repair hassle-free.</p>
         <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">
