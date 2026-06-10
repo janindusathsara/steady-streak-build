@@ -315,3 +315,25 @@
 @media (min-width: 2560px) {
   html { font-size: 18px; }
 }
+
+/* Eye-comfort tweaks for tablet (≤1024px) on content-heavy pages.
+   Loosens line-height and softens inner card padding so /news, /about and
+   /{username}/book don't feel cramped on iPad-class viewports. */
+@media (max-width: 1024px) {
+  article p,
+  article li {
+    line-height: 1.7;
+  }
+}
+
+/* Mobile (≤640px): reduce inner card padding so booking wizard, news article
+   and about hero breathe instead of butting against the viewport edge. */
+@media (max-width: 640px) {
+  .rounded-2xl.p-6,
+  .rounded-2xl.p-5 {
+    padding: 1rem;
+  }
+  .rounded-3xl.p-8 {
+    padding: 1.25rem;
+  }
+}

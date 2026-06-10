@@ -31,7 +31,7 @@ export function NewsArticlePage() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <article className="mx-auto max-w-3xl px-5 pt-10 pb-16">
+      <article className="mx-auto max-w-3xl px-5 sm:px-6 pt-8 pb-12 md:pt-10 md:pb-16">
         <Link to="/news" className="inline-flex items-center gap-1.5 text-sm text-muted-foreground hover:text-foreground transition-colors">
           <ChevronLeft className="h-4 w-4" /> All News
         </Link>
@@ -54,7 +54,7 @@ export function NewsArticlePage() {
       </article>
 
       {related.length > 0 && (
-        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 pb-16">
+        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6 pb-12 md:pb-16">
           <h2 className="mb-6 text-2xl font-bold tracking-tight">More in {article.category}</h2>
           <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
             {related.map((a) => (

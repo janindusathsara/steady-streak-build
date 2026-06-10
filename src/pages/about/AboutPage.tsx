@@ -38,7 +38,7 @@ export function AboutPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 pt-16 pb-20 text-center">
+      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 sm:px-6 pt-10 pb-12 md:pt-16 md:pb-20 text-center">
         <span className="inline-block rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wider text-primary">
           About FixItNow
         </span>
@@ -61,7 +61,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 py-12">
+      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6 py-10 md:py-12">
         <div className="grid gap-10 md:grid-cols-2">
           <div>
             <h2 className="text-3xl font-bold tracking-tight">Our Mission</h2>
@@ -100,8 +100,8 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="bg-secondary/40 py-20">
-        <div className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5">
+      <section className="bg-secondary/40 py-12 md:py-20">
+        <div className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6">
           <div className="text-center">
             <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Our Core Values</h2>
             <p className="mt-3 text-muted-foreground">Every decision we make comes back to these principles.</p>
@@ -120,7 +120,7 @@ export function AboutPage() {
         </div>
       </section>
 
-      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 py-20 text-center">
+      <section className="mx-auto max-w-5xl 4xl:max-w-[1800px] px-5 sm:px-6 py-12 md:py-20 text-center">
         <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">Built by Group C</h2>
         <p className="mt-3 text-muted-foreground">A dedicated team committed to making home repair hassle-free.</p>
         <div className="mt-10 grid grid-cols-2 gap-6 sm:grid-cols-4">

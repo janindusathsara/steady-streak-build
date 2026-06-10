@@ -15,7 +15,7 @@ export function NewsPage() {
     <div className="min-h-screen bg-background text-foreground">
       <Navbar />
 
-      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 pt-12 pb-8">
+      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6 pt-8 pb-6 md:pt-12 md:pb-8">
         <h1 className="text-4xl font-bold tracking-tight sm:text-5xl">FixItNow News &amp; Insights</h1>
         <p className="mt-3 text-muted-foreground">Home maintenance tips, platform updates, and industry guides — all in one place.</p>
 
@@ -37,7 +37,7 @@ export function NewsPage() {
       </section>
 
       {(featured || sidebar.length > 0) && (
-        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5">
+        <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6">
           <div className="grid gap-5 lg:grid-cols-2">
             {featured && (
               <Link to="/news/$id" params={{ id: String(featured.id) }} className="group block overflow-hidden rounded-2xl border border-border bg-card transition-shadow hover:shadow-md">
@@ -65,7 +65,7 @@ export function NewsPage() {
         </section>
       )}
 
-      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 py-16">
+      <section className="mx-auto max-w-6xl 4xl:max-w-[1800px] px-5 sm:px-6 py-10 md:py-16">
         <h2 className="mb-8 text-2xl font-bold tracking-tight">All Articles</h2>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {rest.map((a) => (
