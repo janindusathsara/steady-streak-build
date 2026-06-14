@@ -182,38 +182,24 @@ function SideItem({ icon: Icon, label, active, onClick }: { icon: any; label: st
 
 /* ---------------- Active Bookings ---------------- */
 function ActiveBookingsView() {
+  const [data, setData] = useState<Awaited<ReturnType<typeof bookingsService.active>> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    (async () => {
+      try { setData(await bookingsService.active()); }
+      catch (err: any) { toast.error(err?.message ?? "Failed to load bookings"); }
+      finally { setLoading(false); }
+    })();
+  }, []);
+
   const stats = [
-    { icon: "⚙️", v: "3", l: "Active Now" },
-    { icon: "🚗", v: "1", l: "En Route" },
-    { icon: "🛠️", v: "2", l: "In Progress" },
-    { icon: "💰", v: "Rs. 18,500", l: "In Escrow" },
+    { icon: "⚙️", v: data?.stats.active_now?.toString() ?? "—", l: "Active Now" },
+    { icon: "🚗", v: data?.stats.en_route?.toString() ?? "—", l: "En Route" },
+    { icon: "🛠️", v: data?.stats.in_progress?.toString() ?? "—", l: "In Progress" },
+    { icon: "💰", v: data?.stats.in_escrow ?? "—", l: "In Escrow" },
   ];
-  const bookings = [
-    {
-      icon: "❄️", iconBg: "bg-blue-100",
-      title: "AC Service & Gas Refill", status: "In Progress", tone: "warn", ref: "#FIN-2026-08195",
-      cat: "❄️ HVAC", date: "Today", time: "09:00 AM", addr: "42 Palm Grove, Colombo 3",
-      provider: "James Wilson", pInit: "JW", phase: "Technician on-site · Refilling gas",
-      eta: "Est. completion: 11:30 AM", price: "Rs. 7,500", pay: "Held in escrow",
-      actions: ["Track Live", "Message"],
-    },
-    {
-      icon: "🔧", iconBg: "bg-amber-100",
-      title: "Kitchen Sink Leak Fix", status: "En Route", tone: "ok", ref: "#FIN-2026-08214",
-      cat: "🔧 Plumbing", date: "Today", time: "01:30 PM", addr: "42 Palm Grove, Colombo 3",
-      provider: "Marcus Sterling", pInit: "MS", phase: "Provider en route · ETA 18 mins",
-      eta: "Arriving by 01:48 PM", price: "Rs. 4,800", pay: "Held in escrow",
-      actions: ["Track Live", "Message"],
-    },
-    {
-      icon: "⚡", iconBg: "bg-yellow-100",
-      title: "Outdoor Light Installation", status: "Scheduled", tone: "info", ref: "#FIN-2026-08230",
-      cat: "⚡ Electrical", date: "Tomorrow", time: "10:00 AM", addr: "42 Palm Grove, Colombo 3",
-      provider: "Elena Rodriguez", pInit: "ER", phase: "Confirmed · Awaiting service date",
-      eta: "Starts in 19 hours", price: "Rs. 6,200", pay: "Held in escrow",
-      actions: ["Reschedule", "Cancel"],
-    },
-  ];
+  const bookings = data?.items ?? [];
   const toneCls = (t: string) =>
     t === "ok" ? "bg-emerald-50 text-emerald-700" :
     t === "warn" ? "bg-amber-50 text-amber-700" :
@@ -236,6 +222,13 @@ function ActiveBookingsView() {
         ))}
       </div>
 
+      {loading ? (
+        <p className="py-8 text-center text-sm text-muted-foreground">Loading bookings…</p>
+      ) : bookings.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
+          No active bookings right now.
+        </div>
+      ) : (
       <div className="space-y-3">
         {bookings.map((b) => (
           <div key={b.ref} className="flex flex-col gap-3 rounded-2xl border border-border bg-card p-4 sm:flex-row sm:items-center">
@@ -271,6 +264,7 @@ function ActiveBookingsView() {
           </div>
         ))}
       </div>
+      )}
     </div>
   );
 }
