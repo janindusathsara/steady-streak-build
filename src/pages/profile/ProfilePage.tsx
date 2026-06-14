@@ -1,12 +1,64 @@
+import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { HomeownerLayout } from "@/components/homeowner/HomeownerLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { profileService, type HomeownerProfileStats } from "@/services/profile";
+import { toast } from "sonner";
 
 export function ProfilePage() {
   const { profile, email } = useCurrentUser();
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
+
+  const [stats, setStats] = useState<HomeownerProfileStats | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    displayName,
+    username,
+    email: email ?? "",
+    phone: "",
+    address: "",
+    district: "",
+    bio: "",
+  });
+
+  useEffect(() => {
+    profileService.homeownerStats().then(setStats).catch(() => setStats(null));
+    profileService.me().then((m) => {
+      setForm((f) => ({
+        ...f,
+        displayName: m.displayName ?? f.displayName,
+        username: m.username ?? f.username,
+        email: m.email ?? f.email,
+        phone: m.phone ?? f.phone,
+        address: m.address ?? f.address,
+        district: m.district ?? f.district,
+        bio: m.bio ?? f.bio,
+      }));
+    }).catch(() => {});
+  }, []);
+
+  const update = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await profileService.update({
+        displayName: form.displayName,
+        username: form.username,
+        phone: form.phone,
+        address: form.address,
+        district: form.district,
+        bio: form.bio,
+      });
+      toast.success("Profile updated");
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <HomeownerLayout active="preferences">
@@ -22,12 +74,12 @@ export function ProfilePage() {
 
           <dl className="mt-6 space-y-2.5 text-left text-sm">
             {[
-              ["Total Bookings", "24"],
-              ["Active Projects", "3"],
-              ["Total Spent", "$4,280"],
-              ["Wallet Balance", "$1,240.50"],
-              ["Reviews Given", "18"],
-              ["Member Since", "Sep 2024"],
+              ["Total Bookings", String(stats?.totalBookings ?? "—")],
+              ["Active Projects", String(stats?.activeProjects ?? "—")],
+              ["Total Spent", stats?.totalSpent ?? "—"],
+              ["Wallet Balance", stats?.walletBalance ?? "—"],
+              ["Reviews Given", String(stats?.reviewsGiven ?? "—")],
+              ["Member Since", stats?.memberSince ?? "—"],
             ].map(([k, v]) => (
               <div key={k} className="flex items-center justify-between border-b border-border pb-2 last:border-0">
                 <dt className="text-muted-foreground">{k}</dt>
@@ -43,14 +95,19 @@ export function ProfilePage() {
           <section className="rounded-2xl border border-border bg-card p-6">
             <h2 className="font-bold">Personal Information</h2>
             <div className="mt-4 grid gap-4 sm:grid-cols-2">
-              <Field label="Display Name" defaultValue={displayName} />
-              <Field label="Username" defaultValue={username} />
-              <Field label="Email Address" defaultValue={email ?? ""} type="email" />
-              <Field label="Phone Number" defaultValue="+94 77 123 4567" />
-              <Field label="Home Address" defaultValue="42 Palm Grove, Colombo 3" />
+              <Field label="Display Name" value={form.displayName} onChange={(v) => update("displayName", v)} />
+              <Field label="Username" value={form.username} onChange={(v) => update("username", v)} />
+              <Field label="Email Address" value={form.email} onChange={(v) => update("email", v)} type="email" />
+              <Field label="Phone Number" value={form.phone} onChange={(v) => update("phone", v)} />
+              <Field label="Home Address" value={form.address} onChange={(v) => update("address", v)} />
               <div>
                 <label className="text-xs font-semibold">District</label>
-                <select className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm">
+                <select
+                  value={form.district}
+                  onChange={(e) => update("district", e.target.value)}
+                  className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm"
+                >
+                  <option value="">Select district</option>
                   <option>Western Province</option>
                   <option>Central</option>
                   <option>Southern</option>
@@ -61,12 +118,17 @@ export function ProfilePage() {
               <label className="text-xs font-semibold">About Your Property</label>
               <textarea
                 rows={3}
-                defaultValue="3-bedroom villa with garden. Main concerns: plumbing and HVAC maintenance. Prefer morning bookings."
+                value={form.bio}
+                onChange={(e) => update("bio", e.target.value)}
                 className="mt-1.5 w-full resize-none rounded-lg border border-border bg-background px-3 py-2 text-sm"
               />
             </div>
-            <button className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity">
-              Save Changes
+            <button
+              onClick={handleSave}
+              disabled={saving}
+              className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90 transition-opacity disabled:opacity-60"
+            >
+              {saving ? "Saving…" : "Save Changes"}
             </button>
           </section>
 
@@ -96,14 +158,14 @@ export function ProfilePage() {
   );
 }
 
-function Field({ label, defaultValue, type = "text" }: { label: string; defaultValue: string; type?: string }) {
+function Field({ label, value, onChange, type = "text" }: { label: string; value: string; onChange: (v: string) => void; type?: string }) {
   return (
     <div>
       <label className="text-xs font-semibold">{label}</label>
       <input
-        key={defaultValue}
         type={type}
-        defaultValue={defaultValue}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
         className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
       />
     </div>

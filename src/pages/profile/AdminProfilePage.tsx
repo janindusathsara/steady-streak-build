@@ -1,12 +1,33 @@
+import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { profileService, type AdminProfileStats } from "@/services/profile";
+import { toast } from "sonner";
 
 export function AdminProfilePage() {
   const { profile, email } = useCurrentUser();
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "Admin";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "A";
+  const [stats, setStats] = useState<AdminProfileStats | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    profileService.adminStats().then(setStats).catch(() => setStats(null));
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await profileService.update({ displayName });
+      toast.success("Profile updated");
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <AdminLayout active="dashboard">
@@ -22,12 +43,12 @@ export function AdminProfilePage() {
 
           <dl className="mt-6 space-y-2.5 text-left text-sm">
             {[
-              ["Active Users", "1,284"],
-              ["Live Providers", "342"],
-              ["Open Tickets", "7"],
-              ["Cluster Load", "32%"],
-              ["Last Audit", "2h ago"],
-              ["Member Since", "Jan 2024"],
+              ["Active Users", stats?.activeUsers ?? "—"],
+              ["Live Providers", stats?.liveProviders ?? "—"],
+              ["Open Tickets", stats?.openTickets ?? "—"],
+              ["Cluster Load", stats?.clusterLoad ?? "—"],
+              ["Last Audit", stats?.lastAudit ?? "—"],
+              ["Member Since", stats?.memberSince ?? "—"],
             ].map(([k, v]) => (
               <div key={k} className="flex items-center justify-between border-b border-background/10 pb-2 last:border-0">
                 <dt className="text-background/60">{k}</dt>
@@ -64,7 +85,7 @@ export function AdminProfilePage() {
                 className="mt-1.5 w-full resize-none rounded-lg border border-background/10 bg-background/[0.04] px-3 py-2 text-sm"
               />
             </div>
-            <button className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90">Save Changes</button>
+            <button onClick={handleSave} disabled={saving} className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90 disabled:opacity-60">{saving ? "Saving…" : "Save Changes"}</button>
           </section>
 
           <section className="rounded-2xl border border-background/10 bg-background/[0.03] p-6">
