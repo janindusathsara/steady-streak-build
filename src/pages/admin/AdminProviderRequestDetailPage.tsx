@@ -1,13 +1,51 @@
+import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
-import { ArrowLeft, Check, X, Star } from "lucide-react";
+import { ArrowLeft, Check, Star } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { findProviderRequest } from "@/lib/provider-requests-data";
+import type { ProviderRequest } from "@/lib/provider-requests-data";
+import { providerRequestsService } from "@/services/provider-requests";
 import { toast } from "sonner";
 
 export function AdminProviderRequestDetailPage({ id }: { id: string }) {
   const { username } = useParams({ from: "/_authenticated/$username/provider-request/$id" });
   const navigate = useNavigate();
-  const req = findProviderRequest(id);
+  const [req, setReq] = useState<ProviderRequest | null>(() => findProviderRequest(id) ?? null);
+  const [busy, setBusy] = useState<"approve" | "reject" | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    providerRequestsService.get(id)
+      .then((r) => { if (!cancelled && r) setReq(r); })
+      .catch(() => { /* keep static fallback */ });
+    return () => { cancelled = true; };
+  }, [id]);
+
+  const handleApprove = async () => {
+    setBusy("approve");
+    try {
+      await providerRequestsService.approve(id);
+      toast.success("Provider approved");
+      navigate({ to: "/$username/provider-request", params: { username } });
+    } catch {
+      toast.error("Approve failed");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleReject = async () => {
+    setBusy("reject");
+    try {
+      await providerRequestsService.reject(id);
+      toast("Application rejected");
+      navigate({ to: "/$username/provider-request", params: { username } });
+    } catch {
+      toast.error("Reject failed");
+    } finally {
+      setBusy(null);
+    }
+  };
 
   if (!req) {
     return (
@@ -76,10 +114,14 @@ export function AdminProviderRequestDetailPage({ id }: { id: string }) {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <button onClick={() => { toast.success("Provider approved"); navigate({ to: "/$username/provider-request", params: { username } }); }}
-              className="rounded-lg bg-emerald-500/90 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-500">✓ Approve Provider</button>
-            <button onClick={() => { toast.error("Application rejected"); navigate({ to: "/$username/provider-request", params: { username } }); }}
-              className="rounded-lg border border-destructive/50 px-5 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/10">✗ Reject Application</button>
+            <button onClick={handleApprove} disabled={busy !== null}
+              className="rounded-lg bg-emerald-500/90 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-500 disabled:opacity-60">
+              {busy === "approve" ? "Approving…" : "✓ Approve Provider"}
+            </button>
+            <button onClick={handleReject} disabled={busy !== null}
+              className="rounded-lg border border-destructive/50 px-5 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60">
+              {busy === "reject" ? "Rejecting…" : "✗ Reject Application"}
+            </button>
             <button onClick={() => navigate({ to: "/$username/provider-request", params: { username } })}
               className="rounded-lg border border-background/15 px-5 py-2.5 text-sm font-semibold text-background/80 hover:bg-background/10">Cancel</button>
           </div>
