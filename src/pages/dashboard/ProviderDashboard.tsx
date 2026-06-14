@@ -153,24 +153,33 @@ export function ProviderDashboard() {
         </div>
       </div>
 
-      {/* Monthly earnings chart placeholder */}
+      {/* Monthly earnings chart */}
       <div className="mt-6 rounded-2xl border border-border bg-card p-5">
         <h3 className="font-bold">Monthly Earnings Overview</h3>
-        <div className="mt-6 grid grid-cols-12 items-end gap-2">
-          {MONTHS.map((m, i) => (
-            <div key={m} className="flex flex-col items-center gap-2">
-              <div
-                className={`w-full rounded-t ${i === 11 ? "bg-foreground" : "bg-primary/40"}`}
-                style={{ height: `${20 + Math.sin(i) * 20 + i * 4}px` }}
-              />
-              <p className={`text-[10px] ${i === 11 ? "font-bold text-foreground" : "text-muted-foreground"}`}>{m}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Peak: Rs. 124,000 · Dec</span>
-          <span className="font-bold text-emerald-600">YTD: Rs. 842,000</span>
-        </div>
+        {(() => {
+          const monthly = providerStats?.monthly?.length ? providerStats.monthly : MONTHS.map((m) => ({ month: m, amount: 0 }));
+          const maxAmount = Math.max(1, ...monthly.map((x) => x.amount));
+          const lastIdx = monthly.length - 1;
+          return (
+            <>
+              <div className="mt-6 grid items-end gap-2" style={{ gridTemplateColumns: `repeat(${monthly.length}, minmax(0, 1fr))` }}>
+                {monthly.map((m, i) => (
+                  <div key={m.month} className="flex flex-col items-center gap-2">
+                    <div
+                      className={`w-full rounded-t ${i === lastIdx ? "bg-foreground" : "bg-primary/40"}`}
+                      style={{ height: `${providerStats ? Math.max(4, (m.amount / maxAmount) * 120) : 20 + Math.sin(i) * 20 + i * 4}px` }}
+                    />
+                    <p className={`text-[10px] ${i === lastIdx ? "font-bold text-foreground" : "text-muted-foreground"}`}>{m.month}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">{providerStats?.monthly_peak ?? "—"}</span>
+                <span className="font-bold text-emerald-600">{providerStats?.monthly_ytd ?? "—"}</span>
+              </div>
+            </>
+          );
+        })()}
       </div>
     </ProviderLayout>
   );
