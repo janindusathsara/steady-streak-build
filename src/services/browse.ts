@@ -161,4 +161,14 @@ export const browseService = {
     if (!sub) return getStaticSubService(serviceSlug, subSlug);
     return { service, sub };
   },
+
+  async topProviders(limit = 4): Promise<Provider[]> {
+    try {
+      const list = await loadAllProviders();
+      const sorted = [...list].sort((a, b) => Number(b.rating ?? 0) - Number(a.rating ?? 0));
+      return sorted.slice(0, limit).map((p, i) => mapProvider(p, i, "Specialist"));
+    } catch {
+      return [];
+    }
+  },
 };
