@@ -24,13 +24,29 @@ export function ServicesPage() {
     : { to: "/login" as const, onClick: () => setBookingIntent({}) };
 
   const [services, setServices] = useState<ServiceCategory[]>(SERVICES);
+  const [topProviders, setTopProviders] = useState<Provider[]>([]);
   useEffect(() => {
     let alive = true;
     browseService.listCategories().then((list) => {
       if (alive && list.length) setServices(list);
     }).catch(() => {});
+    browseService.topProviders(4).then((list) => {
+      if (alive) setTopProviders(list);
+    }).catch(() => {});
     return () => { alive = false; };
   }, []);
+
+  const topRated = topProviders.length
+    ? topProviders.map((p) => ({
+        id: p.id,
+        name: p.name,
+        title: p.title,
+        area: p.area,
+        avail: p.availability,
+        price: p.hourly,
+        rating: p.rating,
+      }))
+    : FALLBACK_TOP;
 
 
 
