@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Search, MapPin, Star, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { SERVICES, type ServiceCategory } from "@/lib/services-data";
+import { SERVICES, type ServiceCategory, type Provider } from "@/lib/services-data";
 import { browseService } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
