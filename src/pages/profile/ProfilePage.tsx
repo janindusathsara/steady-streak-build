@@ -1,12 +1,64 @@
+import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { HomeownerLayout } from "@/components/homeowner/HomeownerLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { profileService, type HomeownerProfileStats } from "@/services/profile";
+import { toast } from "sonner";
 
 export function ProfilePage() {
   const { profile, email } = useCurrentUser();
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "User";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "U";
+
+  const [stats, setStats] = useState<HomeownerProfileStats | null>(null);
+  const [saving, setSaving] = useState(false);
+  const [form, setForm] = useState({
+    displayName,
+    username,
+    email: email ?? "",
+    phone: "",
+    address: "",
+    district: "",
+    bio: "",
+  });
+
+  useEffect(() => {
+    profileService.homeownerStats().then(setStats).catch(() => setStats(null));
+    profileService.me().then((m) => {
+      setForm((f) => ({
+        ...f,
+        displayName: m.displayName ?? f.displayName,
+        username: m.username ?? f.username,
+        email: m.email ?? f.email,
+        phone: m.phone ?? f.phone,
+        address: m.address ?? f.address,
+        district: m.district ?? f.district,
+        bio: m.bio ?? f.bio,
+      }));
+    }).catch(() => {});
+  }, []);
+
+  const update = (k: keyof typeof form, v: string) => setForm((f) => ({ ...f, [k]: v }));
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await profileService.update({
+        displayName: form.displayName,
+        username: form.username,
+        phone: form.phone,
+        address: form.address,
+        district: form.district,
+        bio: form.bio,
+      });
+      toast.success("Profile updated");
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <HomeownerLayout active="preferences">
@@ -22,12 +74,12 @@ export function ProfilePage() {
 
           <dl className="mt-6 space-y-2.5 text-left text-sm">
             {[
-              ["Total Bookings", "24"],
-              ["Active Projects", "3"],
-              ["Total Spent", "$4,280"],
-              ["Wallet Balance", "$1,240.50"],
-              ["Reviews Given", "18"],
-              ["Member Since", "Sep 2024"],
+              ["Total Bookings", String(stats?.totalBookings ?? "—")],
+              ["Active Projects", String(stats?.activeProjects ?? "—")],
+              ["Total Spent", stats?.totalSpent ?? "—"],
+              ["Wallet Balance", stats?.walletBalance ?? "—"],
+              ["Reviews Given", String(stats?.reviewsGiven ?? "—")],
+              ["Member Since", stats?.memberSince ?? "—"],
             ].map(([k, v]) => (
               <div key={k} className="flex items-center justify-between border-b border-border pb-2 last:border-0">
                 <dt className="text-muted-foreground">{k}</dt>
