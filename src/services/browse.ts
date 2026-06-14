@@ -2,6 +2,7 @@ import {
   loadCategories,
   loadSubServices,
   loadProvidersForCategory,
+  loadAllProviders,
   type Category as ApiCategory,
   type SubService as ApiSubService,
   type Provider as ApiProvider,
@@ -14,6 +15,21 @@ import {
   type SubService,
   type Provider,
 } from "@/lib/services-data";
+
+// Backend slugs (e.g. "plumbing") → static fallback ids (e.g. "plumber") for img/tagline.
+const SLUG_ALIASES: Record<string, string> = {
+  plumbing: "plumber",
+  electrical: "electrician",
+  painting: "painter",
+  carpentry: "carpenter",
+  cleaning: "cleaner",
+  masonry: "mason",
+  welding: "welder",
+};
+
+function staticBySlug(slug: string): ServiceCategory | undefined {
+  return getStaticService(slug) ?? getStaticService(SLUG_ALIASES[slug] ?? "");
+}
 
 const PROVIDER_COLORS = [
   "oklch(0.42 0.04 55)",
