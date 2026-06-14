@@ -114,10 +114,14 @@ export function AdminProviderRequestDetailPage({ id }: { id: string }) {
           </div>
 
           <div className="mt-6 flex flex-wrap gap-3">
-            <button onClick={() => { toast.success("Provider approved"); navigate({ to: "/$username/provider-request", params: { username } }); }}
-              className="rounded-lg bg-emerald-500/90 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-500">✓ Approve Provider</button>
-            <button onClick={() => { toast.error("Application rejected"); navigate({ to: "/$username/provider-request", params: { username } }); }}
-              className="rounded-lg border border-destructive/50 px-5 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/10">✗ Reject Application</button>
+            <button onClick={handleApprove} disabled={busy !== null}
+              className="rounded-lg bg-emerald-500/90 px-5 py-2.5 text-sm font-bold text-white hover:bg-emerald-500 disabled:opacity-60">
+              {busy === "approve" ? "Approving…" : "✓ Approve Provider"}
+            </button>
+            <button onClick={handleReject} disabled={busy !== null}
+              className="rounded-lg border border-destructive/50 px-5 py-2.5 text-sm font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60">
+              {busy === "reject" ? "Rejecting…" : "✗ Reject Application"}
+            </button>
             <button onClick={() => navigate({ to: "/$username/provider-request", params: { username } })}
               className="rounded-lg border border-background/15 px-5 py-2.5 text-sm font-semibold text-background/80 hover:bg-background/10">Cancel</button>
           </div>
