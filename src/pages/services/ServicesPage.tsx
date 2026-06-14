@@ -130,7 +130,7 @@ export function ServicesPage() {
           <a href="#" className="text-sm font-medium text-primary hover:underline">View More →</a>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {TOP_RATED.map((p) => (
+          {topRated.map((p) => (
             <div key={p.name} className="overflow-hidden rounded-2xl border border-border bg-card">
               <div className="relative h-36" style={{ background: `linear-gradient(135deg, var(--primary) 0%, oklch(0.55 0.10 60) 100%)` }}>
                 <span className="absolute left-3 top-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">Top Rated</span>
