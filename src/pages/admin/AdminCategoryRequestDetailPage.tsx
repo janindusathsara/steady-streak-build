@@ -110,10 +110,14 @@ export function AdminCategoryRequestDetailPage({ id }: { id: string }) {
           </div>
 
           <div className="mt-5 flex flex-wrap gap-2">
-            <button onClick={() => { toast.success("Category approved"); navigate({ to: "/$username/category-request", params: { username } }); }}
-              className="rounded-xl bg-emerald-500/20 px-5 py-2.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/30">✓ Approve &amp; Go Live</button>
-            <button onClick={() => { toast("Category rejected"); navigate({ to: "/$username/category-request", params: { username } }); }}
-              className="rounded-xl bg-red-500/20 px-5 py-2.5 text-xs font-bold text-red-300 hover:bg-red-500/30">✗ Reject Category</button>
+            <button onClick={handleApprove} disabled={busy !== null}
+              className="rounded-xl bg-emerald-500/20 px-5 py-2.5 text-xs font-bold text-emerald-300 hover:bg-emerald-500/30 disabled:opacity-60">
+              {busy === "approve" ? "Approving…" : "✓ Approve & Go Live"}
+            </button>
+            <button onClick={handleReject} disabled={busy !== null}
+              className="rounded-xl bg-red-500/20 px-5 py-2.5 text-xs font-bold text-red-300 hover:bg-red-500/30 disabled:opacity-60">
+              {busy === "reject" ? "Rejecting…" : "✗ Reject Category"}
+            </button>
             <Link to="/$username/category-request" params={{ username }}
               className="rounded-xl border border-background/15 px-5 py-2.5 text-xs font-bold text-background/80 hover:bg-background/10">Cancel</Link>
           </div>
