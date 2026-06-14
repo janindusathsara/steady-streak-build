@@ -10,7 +10,7 @@ import { setBookingIntent } from "@/lib/booking";
 
 const POPULAR = ["Faucet Repair", "AC Maintenance", "Roof Inspection", "Garden Design"];
 
-const TOP_RATED = [
+const FALLBACK_TOP: Array<{ id: string; name: string; title: string; area: string; avail: string; price: number; rating: number }> = [
   { id: "plumber", name: "Marcus Sterling", title: "Master Plumber", area: "Downtown Colombo", avail: "Available within 2 hours", price: 85, rating: 4.9 },
   { id: "electrician", name: "Elena Rodriguez", title: "Electrical Specialist", area: "Negombo", avail: "Available today", price: 95, rating: 4.8 },
   { id: "hvac", name: "James Wilson", title: "HVAC & Cooling", area: "Gampaha", avail: "Scheduled slots open", price: 120, rating: 5.0 },
