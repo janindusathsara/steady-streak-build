@@ -686,58 +686,39 @@ function WalletView() {
 
 /* ---------------- Past Bookings ---------------- */
 function PastBookingsView() {
-  const stats = [
-    { icon: "📋", v: "24", l: "Total Bookings" },
-    { icon: "✅", v: "20", l: "Completed" },
-    { icon: "❌", v: "3", l: "Cancelled" },
-    { icon: "💰", v: "Rs. 428K", l: "Total Spent" },
-  ];
-  const filters = ["All (24)", "Completed (20)", "Cancelled (3)", "In Dispute (1)"];
-  const bookings = [
-    {
-      icon: "🔧", iconBg: "bg-amber-100",
-      title: "Faucet & Tap Repair", status: "Completed", statusTone: "ok", ref: "#FIN-2026-08471",
-      cat: "🔧 Plumbing", date: "23 May 2026", time: "10:00 AM", addr: "42 Palm Grove, Colombo 3", svcType: "⚡ On-the-Spot",
-      provider: "Marcus Sterling", pInit: "MS", rating: "★★★★★ 4.9", review: "✓ Review Submitted",
-      price: "Rs. 4,200", pay: "Paid via Visa ···· 4242", actions: ["Book Again", "Invoice"],
-    },
-    {
-      icon: "⚡", iconBg: "bg-yellow-100",
-      title: "Switch & Socket Installation", status: "Completed", statusTone: "ok", ref: "#FIN-2026-08310",
-      cat: "⚡ Electrical", date: "20 May 2026", time: "02:00 PM", addr: "42 Palm Grove, Colombo 3", svcType: "📅 Scheduled",
-      provider: "Elena Rodriguez", pInit: "ER", rating: "★★★★★ 4.8", review: "✓ Review Submitted",
-      price: "Rs. 3,800", pay: "Paid via Wallet", actions: ["Book Again", "Invoice"],
-    },
-    {
-      icon: "❄️", iconBg: "bg-blue-100",
-      title: "AC Service & Gas Refill", status: "In Progress", statusTone: "warn", ref: "#FIN-2026-08195",
-      cat: "❄️ HVAC", date: "18 May 2026", time: "09:00 AM", addr: "42 Palm Grove, Colombo 3", svcType: "⚡ On-the-Spot",
-      provider: "James Wilson", pInit: "JW", rating: "★★★★☆ 4.6", review: "💰 Rs. 7,500 in Escrow",
-      price: "Rs. 7,500", pay: "Escrow held", actions: ["Confirm Done", "Track"], highlight: true,
-    },
-    {
-      icon: "🎨", iconBg: "bg-pink-100",
-      title: "Interior Wall Painting", status: "Completed", statusTone: "ok", ref: "#FIN-2026-07882",
-      cat: "🎨 Painting", date: "10 May 2026", time: "08:00 AM", addr: "42 Palm Grove, Colombo 3", svcType: "📅 Scheduled",
-      provider: "Rajan Perera", pInit: "RP", rating: "★★★★★ 4.9", review: "⭐ Leave a Review",
-      price: "Rs. 18,000", pay: "Paid via Visa ···· 4242", actions: ["Book Again", "Invoice"],
-    },
-    {
-      icon: "🪚", iconBg: "bg-orange-100",
-      title: "Cabinet Door Repair", status: "Cancelled", statusTone: "bad", ref: "#FIN-2026-07741",
-      cat: "🪚 Carpentry", date: "3 May 2026", time: "11:00 AM", addr: "42 Palm Grove, Colombo 3",
-      note: "Cancelled by homeowner · 2 hrs before job · Full refund issued",
-      price: "Rs. 2,800", pay: "↩ Refunded", actions: ["Rebook"], strike: true,
-    },
-    {
-      icon: "🚽", iconBg: "bg-cyan-100",
-      title: "Toilet Flush & Cistern Fix", status: "Completed", statusTone: "ok", ref: "#FIN-2026-07530",
-      cat: "🔧 Plumbing", date: "28 Apr 2026", time: "10:30 AM", addr: "42 Palm Grove, Colombo 3", svcType: "⚡ On-the-Spot",
-      provider: "Marcus Sterling", pInit: "MS", rating: "★★★★★ 4.9", review: "✓ Review Submitted",
-      price: "Rs. 2,200", pay: "Paid via Wallet", actions: ["Book Again", "Invoice"],
-    },
-  ];
+  const [data, setData] = useState<Awaited<ReturnType<typeof bookingsService.past>> | null>(null);
+  const [loading, setLoading] = useState(true);
   const [active, setActive] = useState(0);
+  const [q, setQ] = useState("");
+
+  useEffect(() => {
+    (async () => {
+      try { setData(await bookingsService.past()); }
+      catch (err: any) { toast.error(err?.message ?? "Failed to load bookings"); }
+      finally { setLoading(false); }
+    })();
+  }, []);
+
+  const stats = [
+    { icon: "📋", v: data?.stats.total?.toString() ?? "—", l: "Total Bookings" },
+    { icon: "✅", v: data?.stats.completed?.toString() ?? "—", l: "Completed" },
+    { icon: "❌", v: data?.stats.cancelled?.toString() ?? "—", l: "Cancelled" },
+    { icon: "💰", v: data?.stats.total_spent ?? "—", l: "Total Spent" },
+  ];
+  const allItems = data?.items ?? [];
+  const filters = [
+    `All (${data?.stats.total ?? 0})`,
+    `Completed (${data?.stats.completed ?? 0})`,
+    `Cancelled (${data?.stats.cancelled ?? 0})`,
+    `In Dispute (0)`,
+  ];
+  const filtered = allItems.filter((b) => {
+    if (active === 1 && b.statusTone !== "ok") return false;
+    if (active === 2 && b.statusTone !== "bad") return false;
+    if (active === 3) return false;
+    if (q && !`${b.title} ${b.provider ?? ""} ${b.ref}`.toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  });
   const toneCls = (t?: string) =>
     t === "ok" ? "bg-emerald-50 text-emerald-700" : t === "warn" ? "bg-amber-50 text-amber-700" : t === "bad" ? "bg-red-50 text-red-700" : "bg-muted text-foreground";
 
@@ -772,12 +753,19 @@ function PastBookingsView() {
         ))}
         <div className="ml-auto flex min-w-[260px] flex-1 items-center gap-2 rounded-full border border-border bg-card px-4 py-2">
           <Search className="h-3.5 w-3.5 text-muted-foreground" />
-          <input placeholder="Search by service, provider or booking ref…" className="flex-1 bg-transparent text-xs outline-none" />
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by service, provider or booking ref…" className="flex-1 bg-transparent text-xs outline-none" />
         </div>
       </div>
 
+      {loading ? (
+        <p className="py-8 text-center text-sm text-muted-foreground">Loading bookings…</p>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">
+          No bookings to show.
+        </div>
+      ) : (
       <div className="space-y-3">
-        {bookings.map((b) => (
+        {filtered.map((b) => (
           <div key={b.ref} className={`flex flex-col gap-3 rounded-2xl border p-4 sm:flex-row sm:items-center ${b.highlight ? "border-amber-300 bg-amber-50/50" : "border-border bg-card"}`}>
             <div className={`flex h-14 w-14 flex-shrink-0 items-center justify-center rounded-xl text-2xl ${b.iconBg}`}>{b.icon}</div>
             <div className="min-w-0 flex-1">
@@ -815,10 +803,7 @@ function PastBookingsView() {
           </div>
         ))}
       </div>
-
-      <div className="flex justify-center">
-        <button className="rounded-full border border-border bg-card px-6 py-2.5 text-sm font-semibold hover:bg-muted">Load More Bookings (18 remaining)</button>
-      </div>
+      )}
     </div>
   );
 }
