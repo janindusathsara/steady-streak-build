@@ -88,7 +88,7 @@ export function ServicesPage() {
           <a href="#" className="text-sm font-medium text-primary hover:underline">View All 30+ Categories →</a>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {SERVICES.map((s) => (
+          {services.map((s) => (
             <Link
               key={s.id}
               to="/services/$serviceId"
