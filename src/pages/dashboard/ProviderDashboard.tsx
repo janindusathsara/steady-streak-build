@@ -4,6 +4,7 @@ import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell, Droplets } from "
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { loadProviderBookings, loadUnreadNotifications, type Booking } from "@/lib/booking";
+import { providerStatsService, type ProviderStats } from "@/services/provider-stats";
 
 export function ProviderDashboard() {
   const { profile } = useCurrentUser();
@@ -13,16 +14,19 @@ export function ProviderDashboard() {
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [unread, setUnread] = useState(0);
+  const [providerStats, setProviderStats] = useState<ProviderStats | null>(null);
 
   useEffect(() => {
     if (!profile?.id) return;
     void (async () => {
-      const [bs, ns] = await Promise.all([
+      const [bs, ns, ps] = await Promise.all([
         loadProviderBookings(profile.id),
         loadUnreadNotifications(profile.id),
+        providerStatsService.me().catch(() => null),
       ]);
       setBookings(bs);
       setUnread(ns.length);
+      setProviderStats(ps);
     })();
   }, [profile?.id]);
 
@@ -31,11 +35,12 @@ export function ProviderDashboard() {
     .filter((b) => b.status === "accepted" || b.status === "in_progress" || b.status === "pending")
     .slice(0, 4);
 
+  const activeJobsValue = providerStats?.active_jobs.value ?? bookings.filter((b) => b.status === "in_progress" || b.status === "accepted").length;
   const stats = [
-    { label: "Active Jobs", value: bookings.filter((b) => b.status === "in_progress" || b.status === "accepted").length || 3, icon: Wrench, hint: "+1 since yesterday" },
-    { label: "This Week", value: "Rs. 18,400", icon: DollarSign, hint: "+18% vs last week" },
-    { label: "Avg Rating", value: "4.9 ★", icon: Star, hint: "From 128 reviews" },
-    { label: "Completion Rate", value: "98%", icon: TrendingUp, hint: "Top 5% of pros" },
+    { label: "Active Jobs", value: activeJobsValue, icon: Wrench, hint: providerStats?.active_jobs.hint ?? "+1 since yesterday" },
+    { label: "This Week", value: providerStats?.weekly_earnings.value ?? "Rs. —", icon: DollarSign, hint: providerStats?.weekly_earnings.hint ?? "" },
+    { label: "Avg Rating", value: providerStats?.avg_rating.value ?? "—", icon: Star, hint: providerStats?.avg_rating.hint ?? "" },
+    { label: "Completion Rate", value: providerStats?.completion_rate.value ?? "—", icon: TrendingUp, hint: providerStats?.completion_rate.hint ?? "" },
   ];
 
   return (
@@ -148,24 +153,33 @@ export function ProviderDashboard() {
         </div>
       </div>
 
-      {/* Monthly earnings chart placeholder */}
+      {/* Monthly earnings chart */}
       <div className="mt-6 rounded-2xl border border-border bg-card p-5">
         <h3 className="font-bold">Monthly Earnings Overview</h3>
-        <div className="mt-6 grid grid-cols-12 items-end gap-2">
-          {MONTHS.map((m, i) => (
-            <div key={m} className="flex flex-col items-center gap-2">
-              <div
-                className={`w-full rounded-t ${i === 11 ? "bg-foreground" : "bg-primary/40"}`}
-                style={{ height: `${20 + Math.sin(i) * 20 + i * 4}px` }}
-              />
-              <p className={`text-[10px] ${i === 11 ? "font-bold text-foreground" : "text-muted-foreground"}`}>{m}</p>
-            </div>
-          ))}
-        </div>
-        <div className="mt-4 flex items-center justify-between text-xs">
-          <span className="text-muted-foreground">Peak: Rs. 124,000 · Dec</span>
-          <span className="font-bold text-emerald-600">YTD: Rs. 842,000</span>
-        </div>
+        {(() => {
+          const monthly = providerStats?.monthly?.length ? providerStats.monthly : MONTHS.map((m) => ({ month: m, amount: 0 }));
+          const maxAmount = Math.max(1, ...monthly.map((x) => x.amount));
+          const lastIdx = monthly.length - 1;
+          return (
+            <>
+              <div className="mt-6 grid items-end gap-2" style={{ gridTemplateColumns: `repeat(${monthly.length}, minmax(0, 1fr))` }}>
+                {monthly.map((m, i) => (
+                  <div key={m.month} className="flex flex-col items-center gap-2">
+                    <div
+                      className={`w-full rounded-t ${i === lastIdx ? "bg-foreground" : "bg-primary/40"}`}
+                      style={{ height: `${providerStats ? Math.max(4, (m.amount / maxAmount) * 120) : 20 + Math.sin(i) * 20 + i * 4}px` }}
+                    />
+                    <p className={`text-[10px] ${i === lastIdx ? "font-bold text-foreground" : "text-muted-foreground"}`}>{m.month}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-4 flex items-center justify-between text-xs">
+                <span className="text-muted-foreground">{providerStats?.monthly_peak ?? "—"}</span>
+                <span className="font-bold text-emerald-600">{providerStats?.monthly_ytd ?? "—"}</span>
+              </div>
+            </>
+          );
+        })()}
       </div>
     </ProviderLayout>
   );
