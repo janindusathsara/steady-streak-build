@@ -3,14 +3,14 @@ import { useEffect, useState } from "react";
 import { Search, MapPin, Star, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { SERVICES, type ServiceCategory } from "@/lib/services-data";
+import { SERVICES, type ServiceCategory, type Provider } from "@/lib/services-data";
 import { browseService } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
 
 const POPULAR = ["Faucet Repair", "AC Maintenance", "Roof Inspection", "Garden Design"];
 
-const TOP_RATED = [
+const FALLBACK_TOP: Array<{ id: string; name: string; title: string; area: string; avail: string; price: number; rating: number }> = [
   { id: "plumber", name: "Marcus Sterling", title: "Master Plumber", area: "Downtown Colombo", avail: "Available within 2 hours", price: 85, rating: 4.9 },
   { id: "electrician", name: "Elena Rodriguez", title: "Electrical Specialist", area: "Negombo", avail: "Available today", price: 95, rating: 4.8 },
   { id: "hvac", name: "James Wilson", title: "HVAC & Cooling", area: "Gampaha", avail: "Scheduled slots open", price: 120, rating: 5.0 },
@@ -24,13 +24,29 @@ export function ServicesPage() {
     : { to: "/login" as const, onClick: () => setBookingIntent({}) };
 
   const [services, setServices] = useState<ServiceCategory[]>(SERVICES);
+  const [topProviders, setTopProviders] = useState<Provider[]>([]);
   useEffect(() => {
     let alive = true;
     browseService.listCategories().then((list) => {
       if (alive && list.length) setServices(list);
     }).catch(() => {});
+    browseService.topProviders(4).then((list) => {
+      if (alive) setTopProviders(list);
+    }).catch(() => {});
     return () => { alive = false; };
   }, []);
+
+  const topRated = topProviders.length
+    ? topProviders.map((p) => ({
+        id: p.id,
+        name: p.name,
+        title: p.title,
+        area: p.area,
+        avail: p.availability,
+        price: p.hourly,
+        rating: p.rating,
+      }))
+    : FALLBACK_TOP;
 
 
 
@@ -114,7 +130,7 @@ export function ServicesPage() {
           <a href="#" className="text-sm font-medium text-primary hover:underline">View More →</a>
         </div>
         <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
-          {TOP_RATED.map((p) => (
+          {topRated.map((p) => (
             <div key={p.name} className="overflow-hidden rounded-2xl border border-border bg-card">
               <div className="relative h-36" style={{ background: `linear-gradient(135deg, var(--primary) 0%, oklch(0.55 0.10 60) 100%)` }}>
                 <span className="absolute left-3 top-3 rounded-full bg-primary px-2.5 py-1 text-[10px] font-bold uppercase tracking-wider text-primary-foreground">Top Rated</span>

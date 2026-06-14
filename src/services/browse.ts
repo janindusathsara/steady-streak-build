@@ -2,6 +2,7 @@ import {
   loadCategories,
   loadSubServices,
   loadProvidersForCategory,
+  loadAllProviders,
   type Category as ApiCategory,
   type SubService as ApiSubService,
   type Provider as ApiProvider,
@@ -14,6 +15,21 @@ import {
   type SubService,
   type Provider,
 } from "@/lib/services-data";
+
+// Backend slugs (e.g. "plumbing") → static fallback ids (e.g. "plumber") for img/tagline.
+const SLUG_ALIASES: Record<string, string> = {
+  plumbing: "plumber",
+  electrical: "electrician",
+  painting: "painter",
+  carpentry: "carpenter",
+  cleaning: "cleaner",
+  masonry: "mason",
+  welding: "welder",
+};
+
+function staticBySlug(slug: string): ServiceCategory | undefined {
+  return getStaticService(slug) ?? getStaticService(SLUG_ALIASES[slug] ?? "");
+}
 
 const PROVIDER_COLORS = [
   "oklch(0.42 0.04 55)",
@@ -63,9 +79,6 @@ function mapProvider(p: ApiProvider, i: number, categoryName: string): Provider 
   };
 }
 
-function staticBySlug(slug: string): ServiceCategory | undefined {
-  return getStaticService(slug);
-}
 
 function mergeCategory(api: ApiCategory, subs: ApiSubService[], providers: ApiProvider[]): ServiceCategory {
   const fallback = staticBySlug(api.slug);
@@ -147,5 +160,15 @@ export const browseService = {
     const sub = service.subServices.find((s) => s.id === subSlug);
     if (!sub) return getStaticSubService(serviceSlug, subSlug);
     return { service, sub };
+  },
+
+  async topProviders(limit = 4): Promise<Provider[]> {
+    try {
+      const list = await loadAllProviders();
+      const sorted = [...list].sort((a, b) => Number(b.rating ?? 0) - Number(a.rating ?? 0));
+      return sorted.slice(0, limit).map((p, i) => mapProvider(p, i, "Specialist"));
+    } catch {
+      return [];
+    }
   },
 };
