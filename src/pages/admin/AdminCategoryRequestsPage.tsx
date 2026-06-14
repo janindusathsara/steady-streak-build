@@ -1,21 +1,84 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "@tanstack/react-router";
+import { Loader2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { CATEGORY_REQUESTS } from "@/lib/category-requests-data";
+import { CATEGORY_REQUESTS, type CategoryRequest } from "@/lib/category-requests-data";
+import { categoryRequestsService, type CategoryRequestStats } from "@/services/category-requests";
+import { toast } from "sonner";
 
-const TABS = [
-  { k: "all", label: "All (31)" },
-  { k: "Pending", label: "Pending (3)" },
-  { k: "Active", label: "Active (24)" },
-  { k: "Rejected", label: "Rejected (4)" },
-] as const;
+type TabKey = "all" | "Pending" | "Active" | "Rejected";
 
 export function AdminCategoryRequestsPage() {
-  const [tab, setTab] = useState<(typeof TABS)[number]["k"]>("all");
+  const [tab, setTab] = useState<TabKey>("all");
   const { profile } = useCurrentUser();
   const username = profile?.username ?? "";
-  const rows = CATEGORY_REQUESTS.filter((r) => tab === "all" || r.status === tab);
+
+  const [loading, setLoading] = useState(true);
+  const [items, setItems] = useState<CategoryRequest[]>([]);
+  const [stats, setStats] = useState<CategoryRequestStats | null>(null);
+  const [busyId, setBusyId] = useState<string | null>(null);
+
+  const load = async () => {
+    const [list, s] = await Promise.all([
+      categoryRequestsService.list().catch(() => CATEGORY_REQUESTS),
+      categoryRequestsService.stats().catch(() => null),
+    ]);
+    setItems(list.length ? list : CATEGORY_REQUESTS);
+    setStats(s);
+  };
+
+  useEffect(() => {
+    (async () => {
+      try {
+        await load();
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const counts = {
+    all: stats?.total ?? items.length,
+    Pending: stats?.pending ?? items.filter((r) => r.status === "Pending").length,
+    Active: stats?.active ?? items.filter((r) => r.status === "Active").length,
+    Rejected: stats?.rejected ?? items.filter((r) => r.status === "Rejected").length,
+  };
+
+  const TABS: { k: TabKey; label: string }[] = [
+    { k: "all", label: `All (${counts.all})` },
+    { k: "Pending", label: `Pending (${counts.Pending})` },
+    { k: "Active", label: `Active (${counts.Active})` },
+    { k: "Rejected", label: `Rejected (${counts.Rejected})` },
+  ];
+
+  const rows = items.filter((r) => tab === "all" || r.status === tab);
+
+  const handleApprove = async (id: string) => {
+    setBusyId(id);
+    try {
+      await categoryRequestsService.approve(id);
+      toast.success("Category approved");
+      await load();
+    } catch {
+      toast.error("Approve failed");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    setBusyId(id);
+    try {
+      await categoryRequestsService.reject(id);
+      toast("Category rejected");
+      await load();
+    } catch {
+      toast.error("Reject failed");
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   return (
     <AdminLayout active="category-requests">
@@ -25,9 +88,9 @@ export function AdminCategoryRequestsPage() {
       </div>
 
       <section className="mt-6 grid gap-4 sm:grid-cols-3">
-        <Stat value="3" label="Pending Review" tone="text-amber-400" />
-        <Stat value="24" label="Active Categories" tone="text-emerald-400" />
-        <Stat value="4" label="Rejected" tone="text-red-400" />
+        <Stat value={String(counts.Pending)} label="Pending Review" tone="text-amber-400" />
+        <Stat value={String(counts.Active)} label="Active Categories" tone="text-emerald-400" />
+        <Stat value={String(counts.Rejected)} label="Rejected" tone="text-red-400" />
       </section>
 
       <section className="mt-5 flex flex-wrap items-center gap-2">
@@ -47,7 +110,11 @@ export function AdminCategoryRequestsPage() {
         <div className="grid grid-cols-[1.6fr_1.2fr_1fr_0.7fr_0.8fr_1.2fr] gap-2 border-b border-background/10 px-5 py-3 text-[10px] font-bold uppercase tracking-wider text-background/50">
           <span>Category</span><span>Requested By</span><span>Providers Waiting</span><span>Applied</span><span>Status</span><span className="text-right">Actions</span>
         </div>
-        {rows.map((r) => (
+        {loading ? (
+          <div className="flex justify-center py-10"><Loader2 className="h-5 w-5 animate-spin text-background/50" /></div>
+        ) : rows.length === 0 ? (
+          <p className="py-10 text-center text-xs text-background/50">No category requests</p>
+        ) : rows.map((r) => (
           <div key={r.id} className="grid grid-cols-[1.6fr_1.2fr_1fr_0.7fr_0.8fr_1.2fr] items-center gap-2 border-b border-background/5 px-5 py-3 text-xs last:border-0">
             <div className="flex items-center gap-3">
               <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-background/10 text-lg">{r.icon}</div>
@@ -70,8 +137,16 @@ export function AdminCategoryRequestsPage() {
                 className="rounded-full border border-background/15 px-3 py-1 text-[10px] font-bold text-background/80 hover:bg-background/10">View</Link>
               {r.status === "Pending" && (
                 <>
-                  <button className="rounded-full bg-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-300 hover:bg-emerald-500/30">Approve</button>
-                  <button className="rounded-full bg-red-500/20 px-3 py-1 text-[10px] font-bold text-red-300 hover:bg-red-500/30">Reject</button>
+                  <button
+                    disabled={busyId === r.id}
+                    onClick={() => handleApprove(r.id)}
+                    className="rounded-full bg-emerald-500/20 px-3 py-1 text-[10px] font-bold text-emerald-300 hover:bg-emerald-500/30 disabled:opacity-60"
+                  >Approve</button>
+                  <button
+                    disabled={busyId === r.id}
+                    onClick={() => handleReject(r.id)}
+                    className="rounded-full bg-red-500/20 px-3 py-1 text-[10px] font-bold text-red-300 hover:bg-red-500/30 disabled:opacity-60"
+                  >Reject</button>
                 </>
               )}
             </div>
