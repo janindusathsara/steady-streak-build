@@ -1,5 +1,6 @@
 import { Link, useNavigate } from "@tanstack/react-router";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { bookingsService } from "@/services/bookings";
 import {
   Search, Filter, MapPin, Clock, Star, Bell, Wrench, PlusCircle,
   LayoutGrid, ShieldCheck, Activity, Wallet as WalletIcon,
