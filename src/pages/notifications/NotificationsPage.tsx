@@ -9,7 +9,7 @@ import {
   markNotificationRead,
   subscribeNotifications,
   type Notif,
-} from "@/lib/notifications";
+} from "@/lib/notifications-data";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { HomeownerLayout } from "@/components/homeowner/HomeownerLayout";
