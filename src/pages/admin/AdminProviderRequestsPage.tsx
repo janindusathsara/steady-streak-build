@@ -1,8 +1,10 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { Search } from "lucide-react";
+import { Loader2, Search } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { PROVIDER_REQUESTS } from "@/lib/provider-requests-data";
+import type { ProviderRequest } from "@/lib/provider-requests-data";
+import { providerRequestsService, type ProviderRequestStats } from "@/services/provider-requests";
 import { toast } from "sonner";
 
 type Tab = "all" | "pending" | "approved" | "rejected";
@@ -11,14 +13,66 @@ export function AdminProviderRequestsPage() {
   const { username } = useParams({ from: "/_authenticated/$username/provider-request/" });
   const [tab, setTab] = useState<Tab>("all");
   const [q, setQ] = useState("");
+  const [items, setItems] = useState<ProviderRequest[]>([]);
+  const [stats, setStats] = useState<ProviderRequestStats | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [busyId, setBusyId] = useState<string | null>(null);
 
-  const filtered = PROVIDER_REQUESTS.filter((r) => {
+  const load = async () => {
+    const [list, s] = await Promise.all([
+      providerRequestsService.list().catch(() => PROVIDER_REQUESTS),
+      providerRequestsService.stats().catch(() => null),
+    ]);
+    setItems(list.length ? list : PROVIDER_REQUESTS);
+    setStats(s);
+  };
+
+  useEffect(() => {
+    (async () => {
+      try { await load(); } finally { setLoading(false); }
+    })();
+  }, []);
+
+  const counts = {
+    all: stats?.total ?? items.length,
+    pending: stats?.pending ?? items.filter((r) => r.status === "Pending").length,
+    approved: stats?.approved ?? items.filter((r) => r.status === "Approved").length,
+    rejected: stats?.rejected ?? items.filter((r) => r.status === "Rejected").length,
+  };
+
+  const filtered = items.filter((r) => {
     if (tab === "pending" && r.status !== "Pending") return false;
     if (tab === "approved" && r.status !== "Approved") return false;
     if (tab === "rejected" && r.status !== "Rejected") return false;
     if (q && !`${r.name} ${r.category} ${r.district}`.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
   });
+
+  const handleApprove = async (id: string) => {
+    setBusyId(id);
+    try {
+      await providerRequestsService.approve(id);
+      toast.success("Provider approved");
+      await load();
+    } catch {
+      toast.error("Approve failed");
+    } finally {
+      setBusyId(null);
+    }
+  };
+
+  const handleReject = async (id: string) => {
+    setBusyId(id);
+    try {
+      await providerRequestsService.reject(id);
+      toast("Application rejected");
+      await load();
+    } catch {
+      toast.error("Reject failed");
+    } finally {
+      setBusyId(null);
+    }
+  };
 
   return (
     <AdminLayout active="provider-requests">
@@ -28,16 +82,16 @@ export function AdminProviderRequestsPage() {
       </div>
 
       <div className="mb-5 grid grid-cols-1 gap-4 md:grid-cols-3">
-        <Stat value="5" label="Pending Review" color="text-primary" />
-        <Stat value="142" label="Approved Total" color="text-emerald-400" />
-        <Stat value="18" label="Rejected Total" color="text-destructive" />
+        <Stat value={String(counts.pending)} label="Pending Review" color="text-primary" />
+        <Stat value={String(counts.approved)} label="Approved Total" color="text-emerald-400" />
+        <Stat value={String(counts.rejected)} label="Rejected Total" color="text-destructive" />
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <TabPill active={tab === "all"} primary onClick={() => setTab("all")}>All (165)</TabPill>
-        <TabPill active={tab === "pending"} onClick={() => setTab("pending")}>Pending (5)</TabPill>
-        <TabPill active={tab === "approved"} onClick={() => setTab("approved")}>Approved (142)</TabPill>
-        <TabPill active={tab === "rejected"} onClick={() => setTab("rejected")}>Rejected (18)</TabPill>
+        <TabPill active={tab === "all"} primary onClick={() => setTab("all")}>All ({counts.all})</TabPill>
+        <TabPill active={tab === "pending"} onClick={() => setTab("pending")}>Pending ({counts.pending})</TabPill>
+        <TabPill active={tab === "approved"} onClick={() => setTab("approved")}>Approved ({counts.approved})</TabPill>
+        <TabPill active={tab === "rejected"} onClick={() => setTab("rejected")}>Rejected ({counts.rejected})</TabPill>
         <div className="relative ml-auto min-w-[280px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-background/40" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search by name, service or district…"
@@ -58,7 +112,11 @@ export function AdminProviderRequestsPage() {
             </tr>
           </thead>
           <tbody className="divide-y divide-background/10">
-            {filtered.map((r) => (
+            {loading ? (
+              <tr><td colSpan={6} className="py-10 text-center"><Loader2 className="mx-auto h-5 w-5 animate-spin text-background/50" /></td></tr>
+            ) : filtered.length === 0 ? (
+              <tr><td colSpan={6} className="py-10 text-center text-xs text-background/50">No provider requests</td></tr>
+            ) : filtered.map((r) => (
               <tr key={r.id} className="hover:bg-background/5">
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
@@ -81,8 +139,8 @@ export function AdminProviderRequestsPage() {
                       className="rounded-md border border-background/15 px-3 py-1 text-xs font-semibold text-background/80 hover:bg-background/10">View</Link>
                     {r.status === "Pending" && (
                       <>
-                        <button onClick={() => toast.success("Approved")} className="rounded-md bg-emerald-500/90 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-500">Approve</button>
-                        <button onClick={() => toast.error("Rejected")} className="rounded-md border border-destructive/50 px-3 py-1 text-xs font-bold text-destructive hover:bg-destructive/10">Reject</button>
+                        <button disabled={busyId === r.id} onClick={() => handleApprove(r.id)} className="rounded-md bg-emerald-500/90 px-3 py-1 text-xs font-bold text-white hover:bg-emerald-500 disabled:opacity-60">Approve</button>
+                        <button disabled={busyId === r.id} onClick={() => handleReject(r.id)} className="rounded-md border border-destructive/50 px-3 py-1 text-xs font-bold text-destructive hover:bg-destructive/10 disabled:opacity-60">Reject</button>
                       </>
                     )}
                   </div>
