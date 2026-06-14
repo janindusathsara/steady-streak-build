@@ -1,39 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
-import { Search, Star } from "lucide-react";
+import { Search, Star, Loader2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { toast } from "sonner";
-
-interface Provider {
-  id: string; initials: string; name: string; email: string;
-  category: string; icon: string; district: string;
-  jobs: number; rating: number; status: "Active" | "Suspended" | "New" | "Top";
-}
-
-const PROVIDERS: Provider[] = [
-  { id: "marcus-sterling", initials: "MS", name: "Marcus Sterling", email: "marcus.s@gmail.com", category: "Plumbing", icon: "🔧", district: "Colombo", jobs: 342, rating: 4.9, status: "Top" },
-  { id: "elena-rodriguez", initials: "ER", name: "Elena Rodriguez", email: "elena.r@gmail.com", category: "Electrical", icon: "⚡", district: "Colombo", jobs: 218, rating: 4.8, status: "Top" },
-  { id: "james-wilson", initials: "JW", name: "James Wilson", email: "james.w@yahoo.com", category: "HVAC", icon: "❄️", district: "Gampaha", jobs: 156, rating: 4.6, status: "Active" },
-  { id: "rajan-perera", initials: "RP", name: "Rajan Perera", email: "rajan.p@gmail.com", category: "Painting", icon: "🎨", district: "Kandy", jobs: 94, rating: 4.9, status: "Top" },
-  { id: "thilanka-bandara", initials: "TB", name: "Thilanka Bandara", email: "thilanka.b@gmail.com", category: "Carpentry", icon: "🪚", district: "Matara", jobs: 12, rating: 3.8, status: "Suspended" },
-  { id: "ashan-kumara", initials: "AK", name: "Ashan Kumara", email: "ashan.k@gmail.com", category: "Plumbing", icon: "🔧", district: "Colombo", jobs: 67, rating: 4.7, status: "New" },
-];
+import { providersService, type Provider, type ProviderStats } from "@/services/providers";
 
 type Tab = "all" | "top" | "new" | "suspended";
 
 export function AdminProvidersPage() {
   const [tab, setTab] = useState<Tab>("all");
   const [q, setQ] = useState("");
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [stats, setStats] = useState<ProviderStats | null>(null);
+  const [loading, setLoading] = useState(true);
   const { username } = useParams({ from: "/_authenticated/$username/providers/" });
 
+  const load = async () => {
+    setLoading(true);
+    try {
+      const [list, s] = await Promise.all([
+        providersService.list().catch(() => []),
+        providersService.stats().catch(() => null),
+      ]);
+      setProviders(list ?? []);
+      setStats(s);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to load providers");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => { load(); }, []);
 
-  const filtered = PROVIDERS.filter((p) => {
+  const filtered = providers.filter((p) => {
     if (tab === "top" && p.status !== "Top") return false;
     if (tab === "new" && p.status !== "New") return false;
     if (tab === "suspended" && p.status !== "Suspended") return false;
     if (q && !`${p.name} ${p.category} ${p.district}`.toLowerCase().includes(q.toLowerCase())) return false;
     return true;
   });
+
+  const handleSuspend = async (id: string) => {
+    try {
+      await providersService.suspend(id);
+      toast.success("Provider suspended");
+      load();
+    } catch (e: any) { toast.error(e?.message ?? "Failed"); }
+  };
+  const handleReinstate = async (id: string) => {
+    try {
+      await providersService.reinstate(id);
+      toast.success("Provider reinstated");
+      load();
+    } catch (e: any) { toast.error(e?.message ?? "Failed"); }
+  };
 
   return (
     <AdminLayout active="providers">
@@ -43,17 +63,17 @@ export function AdminProvidersPage() {
       </div>
 
       <div className="mb-5 grid grid-cols-2 gap-4 md:grid-cols-4">
-        <Stat value="142" label="Active Providers" color="text-emerald-400" />
-        <Stat value="18" label="Categories" color="text-sky-400" />
-        <Stat value="4.8" label="Avg. Rating" color="text-background" />
-        <Stat value="6" label="Suspended" color="text-destructive" />
+        <Stat value={stats?.active?.toString() ?? "—"} label="Active Providers" color="text-emerald-400" />
+        <Stat value={stats?.categories?.toString() ?? "—"} label="Categories" color="text-sky-400" />
+        <Stat value={stats?.avg_rating?.toFixed(1) ?? "—"} label="Avg. Rating" color="text-background" />
+        <Stat value={stats?.suspended?.toString() ?? "—"} label="Suspended" color="text-destructive" />
       </div>
 
       <div className="mb-4 flex flex-wrap items-center gap-2">
-        <TabPill active={tab === "all"} onClick={() => setTab("all")} primary>All (142)</TabPill>
-        <TabPill active={tab === "top"} onClick={() => setTab("top")}>Top Rated (40)</TabPill>
-        <TabPill active={tab === "new"} onClick={() => setTab("new")}>New (12)</TabPill>
-        <TabPill active={tab === "suspended"} onClick={() => setTab("suspended")}>Suspended (6)</TabPill>
+        <TabPill active={tab === "all"} onClick={() => setTab("all")} primary>All ({stats?.active ?? providers.length})</TabPill>
+        <TabPill active={tab === "top"} onClick={() => setTab("top")}>Top Rated ({stats?.top_rated ?? 0})</TabPill>
+        <TabPill active={tab === "new"} onClick={() => setTab("new")}>New ({stats?.new_count ?? 0})</TabPill>
+        <TabPill active={tab === "suspended"} onClick={() => setTab("suspended")}>Suspended ({stats?.suspended ?? 0})</TabPill>
         <div className="relative ml-auto min-w-[280px] flex-1">
           <Search className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-background/40" />
           <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="Search provider, category or district…"
@@ -62,6 +82,11 @@ export function AdminProvidersPage() {
       </div>
 
       <div className="overflow-hidden rounded-2xl border border-background/10 bg-background/5">
+        {loading ? (
+          <div className="flex justify-center py-12 text-background/60"><Loader2 className="h-6 w-6 animate-spin" /></div>
+        ) : filtered.length === 0 ? (
+          <div className="py-12 text-center text-sm text-background/50">No providers found</div>
+        ) : (
         <table className="w-full text-sm">
           <thead className="bg-background/5">
             <tr className="text-left text-[10px] font-bold uppercase tracking-wider text-background/40">
@@ -76,7 +101,7 @@ export function AdminProvidersPage() {
           </thead>
           <tbody className="divide-y divide-background/10">
             {filtered.map((p) => (
-              <tr key={p.email} className="hover:bg-background/5">
+              <tr key={p.id} className="hover:bg-background/5">
                 <td className="px-5 py-3">
                   <div className="flex items-center gap-3">
                     <div className="flex h-9 w-9 items-center justify-center rounded-full bg-primary/30 text-xs font-bold text-primary">{p.initials}</div>
@@ -101,9 +126,9 @@ export function AdminProvidersPage() {
                   <div className="flex justify-end gap-2">
                     <Link to="/$username/providers/$id" params={{ username, id: p.id }} className="rounded-md border border-background/15 px-3 py-1 text-xs font-semibold text-background/80 hover:bg-background/10">View</Link>
                     {p.status === "Suspended" ? (
-                      <button onClick={() => toast.success("Reinstated")} className="rounded-md border border-emerald-400/40 px-3 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-400/10">Reinstate</button>
+                      <button onClick={() => handleReinstate(p.id)} className="rounded-md border border-emerald-400/40 px-3 py-1 text-xs font-semibold text-emerald-400 hover:bg-emerald-400/10">Reinstate</button>
                     ) : (
-                      <button onClick={() => toast.success("Suspended")} className="rounded-md border border-background/15 px-3 py-1 text-xs font-semibold text-background/80 hover:bg-background/10">Suspend</button>
+                      <button onClick={() => handleSuspend(p.id)} className="rounded-md border border-background/15 px-3 py-1 text-xs font-semibold text-background/80 hover:bg-background/10">Suspend</button>
                     )}
                   </div>
                 </td>
@@ -111,6 +136,7 @@ export function AdminProvidersPage() {
             ))}
           </tbody>
         </table>
+        )}
       </div>
     </AdminLayout>
   );

@@ -1,28 +1,59 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { AdminLayout } from "@/components/admin/AdminLayout";
+import { Loader2 } from "lucide-react";
+import { toast } from "sonner";
+import { homeownersService, type Homeowner, type HomeownerStats } from "@/services/homeowners";
 
 type Status = "Active" | "New" | "Flagged";
-const ROWS: Array<{ id: string; i: string; name: string; email: string; location: string; bookings: number; spent: string; since: string; status: Status }> = [
-  { id: "priya-mendis", i: "PM", name: "Priya Mendis", email: "priya.m@gmail.com", location: "Colombo 7", bookings: 14, spent: "Rs. 48,200", since: "Jan 2026", status: "Active" },
-  { id: "ranjith-wijesinghe", i: "RW", name: "Ranjith Wijesinghe", email: "ranjith.w@yahoo.com", location: "Kandy", bookings: 8, spent: "Rs. 22,500", since: "Mar 2026", status: "Active" },
-  { id: "sunitha-de-silva", i: "SD", name: "Sunitha De Silva", email: "sunitha.d@gmail.com", location: "Gampaha", bookings: 21, spent: "Rs. 78,000", since: "Oct 2025", status: "Active" },
-  { id: "nuwan-kumara", i: "NK", name: "Nuwan Kumara", email: "nuwan.k@hotmail.com", location: "Matara", bookings: 3, spent: "Rs. 7,800", since: "May 2026", status: "New" },
-  { id: "layla-fernando", i: "LF", name: "Layla Fernando", email: "layla.f@gmail.com", location: "Colombo 3", bookings: 6, spent: "Rs. 18,400", since: "Feb 2026", status: "Flagged" },
-  { id: "anoma-jayawardena", i: "AJ", name: "Anoma Jayawardena", email: "anoma.j@gmail.com", location: "Nugegoda", bookings: 11, spent: "Rs. 34,000", since: "Nov 2025", status: "Active" },
-];
-
 
 const TABS = [
-  { k: "all", label: "All (1,284)" },
-  { k: "active", label: "Active (1,190)" },
-  { k: "new", label: "New (24)" },
-  { k: "flag", label: "Flagged (14)" },
+  { k: "all", label: "All" },
+  { k: "active", label: "Active" },
+  { k: "new", label: "New" },
+  { k: "flag", label: "Flagged" },
 ] as const;
 
 export function AdminHomeownersPage() {
   const [tab, setTab] = useState<(typeof TABS)[number]["k"]>("all");
+  const [q, setQ] = useState("");
+  const [rows, setRows] = useState<Homeowner[]>([]);
+  const [stats, setStats] = useState<HomeownerStats | null>(null);
+  const [loading, setLoading] = useState(true);
   const { username } = useParams({ from: "/_authenticated/$username/homeowners/" });
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const [list, s] = await Promise.all([
+        homeownersService.list().catch(() => []),
+        homeownersService.stats().catch(() => null),
+      ]);
+      setRows(list ?? []);
+      setStats(s);
+    } catch (err: any) {
+      toast.error(err?.message ?? "Failed to load homeowners");
+    } finally {
+      setLoading(false);
+    }
+  };
+  useEffect(() => { load(); }, []);
+
+  const handleSuspend = async (id: string) => {
+    try {
+      await homeownersService.suspend(id);
+      toast.success("Homeowner suspended");
+      load();
+    } catch (e: any) { toast.error(e?.message ?? "Failed"); }
+  };
+
+  const filtered = rows.filter((r) => {
+    if (tab === "active" && r.status !== "Active") return false;
+    if (tab === "new" && r.status !== "New") return false;
+    if (tab === "flag" && r.status !== "Flagged") return false;
+    if (q && !`${r.name} ${r.email} ${r.location}`.toLowerCase().includes(q.toLowerCase())) return false;
+    return true;
+  });
 
   return (
     <AdminLayout active="homeowners">
@@ -32,10 +63,10 @@ export function AdminHomeownersPage() {
       </div>
 
       <section className="mt-6 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-        <Stat value="1,284" label="Total Homeowners" tone="text-sky-400" />
-        <Stat value="1,190" label="Active (last 30 days)" tone="text-emerald-400" />
-        <Stat value="24" label="Joined This Week" tone="text-amber-400" />
-        <Stat value="14" label="Flagged / Disputed" tone="text-red-400" />
+        <Stat value={stats?.total?.toLocaleString() ?? "—"} label="Total Homeowners" tone="text-sky-400" />
+        <Stat value={stats?.active?.toLocaleString() ?? "—"} label="Active (last 30 days)" tone="text-emerald-400" />
+        <Stat value={stats?.joined_this_week?.toString() ?? "—"} label="Joined This Week" tone="text-amber-400" />
+        <Stat value={stats?.flagged?.toString() ?? "—"} label="Flagged / Disputed" tone="text-red-400" />
       </section>
 
       <section className="mt-5 flex flex-wrap items-center gap-2">
@@ -46,7 +77,7 @@ export function AdminHomeownersPage() {
           </button>
         ))}
         <div className="ml-auto min-w-[280px] flex-1 max-w-md">
-          <input placeholder="🔍  Search by name, email or location…"
+          <input value={q} onChange={(e) => setQ(e.target.value)} placeholder="🔍  Search by name, email or location…"
             className="w-full rounded-full border border-background/10 bg-background/5 px-4 py-2 text-xs text-background placeholder:text-background/40 focus:outline-none" />
         </div>
       </section>
@@ -55,10 +86,14 @@ export function AdminHomeownersPage() {
         <div className="grid grid-cols-[1.5fr_1fr_0.8fr_0.9fr_0.9fr_0.7fr_0.9fr] gap-2 border-b border-background/10 px-5 py-3 text-[10px] font-bold uppercase tracking-wider text-background/50">
           <span>Homeowner</span><span>Location</span><span>Total Bookings</span><span>Spent</span><span>Member Since</span><span>Status</span><span className="text-right">Actions</span>
         </div>
-        {ROWS.map((r) => (
-          <div key={r.email} className="grid grid-cols-[1.5fr_1fr_0.8fr_0.9fr_0.9fr_0.7fr_0.9fr] items-center gap-2 border-b border-background/5 px-5 py-3 text-xs last:border-0">
+        {loading ? (
+          <div className="flex justify-center py-12 text-background/60"><Loader2 className="h-6 w-6 animate-spin" /></div>
+        ) : filtered.length === 0 ? (
+          <div className="py-12 text-center text-sm text-background/50">No homeowners found</div>
+        ) : filtered.map((r) => (
+          <div key={r.id} className="grid grid-cols-[1.5fr_1fr_0.8fr_0.9fr_0.9fr_0.7fr_0.9fr] items-center gap-2 border-b border-background/5 px-5 py-3 text-xs last:border-0">
             <div className="flex items-center gap-3">
-              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background/10 text-[11px] font-bold">{r.i}</div>
+              <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background/10 text-[11px] font-bold">{r.initials}</div>
               <div>
                 <p className="text-sm font-bold">{r.name}</p>
                 <p className="text-[11px] text-background/50">{r.email}</p>
@@ -67,15 +102,12 @@ export function AdminHomeownersPage() {
             <span className="text-background/80">{r.location}</span>
             <span className="font-semibold">{r.bookings}</span>
             <span className="text-background/80">{r.spent}</span>
-            <span className="text-background/60">{r.since}</span>
-            <span>
-              <StatusPill s={r.status} />
-            </span>
+            <span className="text-background/60">{r.member_since}</span>
+            <span><StatusPill s={r.status} /></span>
             <div className="flex justify-end gap-1.5">
               <Link to="/$username/homeowners/$id" params={{ username, id: r.id }} className="rounded-full border border-background/15 px-3 py-1 text-[10px] font-bold text-background/80 hover:bg-background/10">View</Link>
-              <button className={`rounded-full px-3 py-1 text-[10px] font-bold ${r.status === "Flagged" ? "bg-red-500/20 text-red-300 hover:bg-red-500/30" : "border border-background/15 text-background/80 hover:bg-background/10"}`}>Suspend</button>
+              <button onClick={() => handleSuspend(r.id)} className={`rounded-full px-3 py-1 text-[10px] font-bold ${r.status === "Flagged" ? "bg-red-500/20 text-red-300 hover:bg-red-500/30" : "border border-background/15 text-background/80 hover:bg-background/10"}`}>Suspend</button>
             </div>
-
           </div>
         ))}
       </section>
