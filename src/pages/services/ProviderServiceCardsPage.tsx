@@ -75,7 +75,14 @@ export default function ProviderServiceCardsPage() {
         </Button>
       </div>
 
+      {loading && (
+        <div className="mt-6 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+      )}
+
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {!loading && cards.length === 0 && (
+          <p className="col-span-full py-10 text-center text-sm text-muted-foreground">No service cards yet. Create one to get started.</p>
+        )}
         {cards.map((card) => (
           <article
             key={card.id}
