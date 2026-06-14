@@ -1,8 +1,10 @@
+import { useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { findCategoryRequest } from "@/lib/category-requests-data";
+import { categoryRequestsService } from "@/services/category-requests";
 import { toast } from "sonner";
 
 export function AdminCategoryRequestDetailPage({ id }: { id: string }) {
@@ -10,6 +12,33 @@ export function AdminCategoryRequestDetailPage({ id }: { id: string }) {
   const username = profile?.username ?? "";
   const navigate = useNavigate();
   const c = findCategoryRequest(id);
+  const [busy, setBusy] = useState<"approve" | "reject" | null>(null);
+
+  const handleApprove = async () => {
+    setBusy("approve");
+    try {
+      await categoryRequestsService.approve(id);
+      toast.success("Category approved");
+      navigate({ to: "/$username/category-request", params: { username } });
+    } catch {
+      toast.error("Approve failed");
+    } finally {
+      setBusy(null);
+    }
+  };
+
+  const handleReject = async () => {
+    setBusy("reject");
+    try {
+      await categoryRequestsService.reject(id);
+      toast("Category rejected");
+      navigate({ to: "/$username/category-request", params: { username } });
+    } catch {
+      toast.error("Reject failed");
+    } finally {
+      setBusy(null);
+    }
+  };
 
   if (!c) {
     return (
