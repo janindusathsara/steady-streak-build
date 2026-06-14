@@ -4,6 +4,7 @@ import { Wrench, Calendar, DollarSign, Star, TrendingUp, Bell, Droplets } from "
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { loadProviderBookings, loadUnreadNotifications, type Booking } from "@/lib/booking";
+import { providerStatsService, type ProviderStats } from "@/services/provider-stats";
 
 export function ProviderDashboard() {
   const { profile } = useCurrentUser();
@@ -13,16 +14,19 @@ export function ProviderDashboard() {
 
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [unread, setUnread] = useState(0);
+  const [providerStats, setProviderStats] = useState<ProviderStats | null>(null);
 
   useEffect(() => {
     if (!profile?.id) return;
     void (async () => {
-      const [bs, ns] = await Promise.all([
+      const [bs, ns, ps] = await Promise.all([
         loadProviderBookings(profile.id),
         loadUnreadNotifications(profile.id),
+        providerStatsService.me().catch(() => null),
       ]);
       setBookings(bs);
       setUnread(ns.length);
+      setProviderStats(ps);
     })();
   }, [profile?.id]);
 
@@ -31,11 +35,12 @@ export function ProviderDashboard() {
     .filter((b) => b.status === "accepted" || b.status === "in_progress" || b.status === "pending")
     .slice(0, 4);
 
+  const activeJobsValue = providerStats?.active_jobs.value ?? bookings.filter((b) => b.status === "in_progress" || b.status === "accepted").length;
   const stats = [
-    { label: "Active Jobs", value: bookings.filter((b) => b.status === "in_progress" || b.status === "accepted").length || 3, icon: Wrench, hint: "+1 since yesterday" },
-    { label: "This Week", value: "Rs. 18,400", icon: DollarSign, hint: "+18% vs last week" },
-    { label: "Avg Rating", value: "4.9 ★", icon: Star, hint: "From 128 reviews" },
-    { label: "Completion Rate", value: "98%", icon: TrendingUp, hint: "Top 5% of pros" },
+    { label: "Active Jobs", value: activeJobsValue, icon: Wrench, hint: providerStats?.active_jobs.hint ?? "+1 since yesterday" },
+    { label: "This Week", value: providerStats?.weekly_earnings.value ?? "Rs. —", icon: DollarSign, hint: providerStats?.weekly_earnings.hint ?? "" },
+    { label: "Avg Rating", value: providerStats?.avg_rating.value ?? "—", icon: Star, hint: providerStats?.avg_rating.hint ?? "" },
+    { label: "Completion Rate", value: providerStats?.completion_rate.value ?? "—", icon: TrendingUp, hint: providerStats?.completion_rate.hint ?? "" },
   ];
 
   return (
