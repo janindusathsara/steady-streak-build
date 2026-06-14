@@ -43,12 +43,12 @@ export function AdminProfilePage() {
 
           <dl className="mt-6 space-y-2.5 text-left text-sm">
             {[
-              ["Active Users", "1,284"],
-              ["Live Providers", "342"],
-              ["Open Tickets", "7"],
-              ["Cluster Load", "32%"],
-              ["Last Audit", "2h ago"],
-              ["Member Since", "Jan 2024"],
+              ["Active Users", stats?.activeUsers ?? "—"],
+              ["Live Providers", stats?.liveProviders ?? "—"],
+              ["Open Tickets", stats?.openTickets ?? "—"],
+              ["Cluster Load", stats?.clusterLoad ?? "—"],
+              ["Last Audit", stats?.lastAudit ?? "—"],
+              ["Member Since", stats?.memberSince ?? "—"],
             ].map(([k, v]) => (
               <div key={k} className="flex items-center justify-between border-b border-background/10 pb-2 last:border-0">
                 <dt className="text-background/60">{k}</dt>
