@@ -79,9 +79,6 @@ function mapProvider(p: ApiProvider, i: number, categoryName: string): Provider 
   };
 }
 
-function staticBySlug(slug: string): ServiceCategory | undefined {
-  return getStaticService(slug);
-}
 
 function mergeCategory(api: ApiCategory, subs: ApiSubService[], providers: ApiProvider[]): ServiceCategory {
   const fallback = staticBySlug(api.slug);
