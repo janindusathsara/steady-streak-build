@@ -1,8 +1,9 @@
+import { useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
 import { Camera } from "lucide-react";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { supabase } from "@/integrations/supabase/client";
+import { profileService } from "@/services/profile";
 import { toast } from "sonner";
 
 const SKILLS = [
@@ -22,11 +23,22 @@ export function ProviderProfilePage() {
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "Provider";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "P";
+  const [saving, setSaving] = useState(false);
 
   const handleCancel = () => {
     if (username) navigate({ to: "/$username/dashboard", params: { username } });
   };
-  const handleSave = () => toast.success("Profile updated");
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await profileService.update({ displayName });
+      toast.success("Profile updated");
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <ProviderLayout active="update-profile" newRequestsCount={2} reviewsCount={128}>
