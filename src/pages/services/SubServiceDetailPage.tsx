@@ -1,9 +1,10 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Search, MapPin, Star, Shield, CheckCircle2, Clock, ChevronDown } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { getSubService } from "@/lib/services-data";
+import { getSubService, type ServiceCategory, type SubService } from "@/lib/services-data";
+import { browseService } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
 
@@ -12,7 +13,14 @@ const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evenin
 
 export function SubServiceDetailPage() {
   const { serviceId, subServiceId } = useParams({ from: "/services/$serviceId/$subServiceId" });
-  const data = getSubService(serviceId, subServiceId);
+  const [data, setData] = useState<{ service: ServiceCategory; sub: SubService } | undefined>(() => getSubService(serviceId, subServiceId));
+  useEffect(() => {
+    let alive = true;
+    browseService.getSubService(serviceId, subServiceId).then((d) => {
+      if (alive && d) setData(d);
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [serviceId, subServiceId]);
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const

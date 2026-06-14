@@ -1,9 +1,10 @@
 import { Link, useParams } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Search, MapPin, Star, Shield, CheckCircle2, Zap, Clock, ChevronDown } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { getService } from "@/lib/services-data";
+import { getService, type ServiceCategory } from "@/lib/services-data";
+import { browseService } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
 
@@ -12,7 +13,14 @@ const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evenin
 
 export function ServiceDetailPage() {
   const { serviceId } = useParams({ from: "/services/$serviceId/" });
-  const service = getService(serviceId);
+  const [service, setService] = useState<ServiceCategory | undefined>(() => getService(serviceId));
+  useEffect(() => {
+    let alive = true;
+    browseService.getServiceBySlug(serviceId).then((s) => {
+      if (alive && s) setService(s);
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, [serviceId]);
   const { profile } = useCurrentUser();
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const

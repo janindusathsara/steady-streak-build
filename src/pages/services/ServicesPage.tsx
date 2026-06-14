@@ -1,8 +1,10 @@
 import { Link } from "@tanstack/react-router";
+import { useEffect, useState } from "react";
 import { Search, MapPin, Star, ArrowRight } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { SERVICES } from "@/lib/services-data";
+import { SERVICES, type ServiceCategory } from "@/lib/services-data";
+import { browseService } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
 
@@ -20,6 +22,15 @@ export function ServicesPage() {
   const bookLink = profile?.username
     ? { to: "/$username/book", params: { username: profile.username } } as const
     : { to: "/login" as const, onClick: () => setBookingIntent({}) };
+
+  const [services, setServices] = useState<ServiceCategory[]>(SERVICES);
+  useEffect(() => {
+    let alive = true;
+    browseService.listCategories().then((list) => {
+      if (alive && list.length) setServices(list);
+    }).catch(() => {});
+    return () => { alive = false; };
+  }, []);
 
 
 
@@ -77,7 +88,7 @@ export function ServicesPage() {
           <a href="#" className="text-sm font-medium text-primary hover:underline">View All 30+ Categories →</a>
         </div>
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-6">
-          {SERVICES.map((s) => (
+          {services.map((s) => (
             <Link
               key={s.id}
               to="/services/$serviceId"
