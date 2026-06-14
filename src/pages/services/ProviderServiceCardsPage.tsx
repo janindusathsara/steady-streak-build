@@ -112,7 +112,7 @@ export default function ProviderServiceCardsPage() {
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={card.published}
-                    onCheckedChange={() => cardsStore.togglePublish(card.id)}
+                    onCheckedChange={() => handleTogglePublish(card)}
                   />
                   <span className="text-xs font-medium text-muted-foreground">
                     {card.published ? "Published" : "Hidden"}
