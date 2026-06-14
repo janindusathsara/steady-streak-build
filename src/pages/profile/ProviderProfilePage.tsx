@@ -53,8 +53,8 @@ export function ProviderProfilePage() {
           <button onClick={handleCancel} className="rounded-xl border border-border bg-card px-5 py-2.5 text-sm font-semibold hover:bg-muted">
             Cancel
           </button>
-          <button onClick={handleSave} className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-5 py-2.5 text-sm font-bold text-background hover:opacity-90">
-            ✓ Save Changes
+          <button onClick={handleSave} disabled={saving} className="inline-flex items-center gap-1.5 rounded-xl bg-foreground px-5 py-2.5 text-sm font-bold text-background hover:opacity-90 disabled:opacity-60">
+            {saving ? "Saving…" : "✓ Save Changes"}
           </button>
         </div>
       </div>
