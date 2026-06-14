@@ -1,12 +1,13 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "@tanstack/react-router";
-import { Plus, AlertTriangle } from "lucide-react";
+import { Plus, AlertTriangle, Loader2 } from "lucide-react";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
 import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { cardsStore, useCards, type ServiceCard } from "@/lib/service-cards-store";
+import { servicesService } from "@/services/services";
 
 export default function ProviderServiceCardsPage() {
   const navigate = useNavigate();
@@ -14,12 +15,47 @@ export default function ProviderServiceCardsPage() {
   const username = profile?.username ?? "";
   const cards = useCards();
   const [confirmDelete, setConfirmDelete] = useState<ServiceCard | null>(null);
+  const [loading, setLoading] = useState(true);
 
-  const handleDelete = () => {
+  useEffect(() => {
+    let alive = true;
+    (async () => {
+      try {
+        const list = await servicesService.list();
+        if (!alive) return;
+        if (list.length) list.forEach((c) => cardsStore.upsert(c));
+      } catch {
+        // keep local store fallback
+      } finally {
+        if (alive) setLoading(false);
+      }
+    })();
+    return () => {
+      alive = false;
+    };
+  }, []);
+
+  const handleDelete = async () => {
     if (!confirmDelete) return;
+    try {
+      await servicesService.remove(confirmDelete.id);
+    } catch {
+      // proceed locally even if API fails
+    }
     cardsStore.remove(confirmDelete.id);
     toast.success(`Deleted "${confirmDelete.title}"`);
     setConfirmDelete(null);
+  };
+
+  const handleTogglePublish = async (card: ServiceCard) => {
+    const next = !card.published;
+    cardsStore.togglePublish(card.id);
+    try {
+      await servicesService.togglePublish(card.id, next);
+    } catch {
+      cardsStore.togglePublish(card.id); // revert
+      toast.error("Failed to update visibility");
+    }
   };
 
   return (
@@ -39,7 +75,14 @@ export default function ProviderServiceCardsPage() {
         </Button>
       </div>
 
+      {loading && (
+        <div className="mt-6 flex justify-center"><Loader2 className="h-6 w-6 animate-spin text-muted-foreground" /></div>
+      )}
+
       <div className="mt-6 grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
+        {!loading && cards.length === 0 && (
+          <p className="col-span-full py-10 text-center text-sm text-muted-foreground">No service cards yet. Create one to get started.</p>
+        )}
         {cards.map((card) => (
           <article
             key={card.id}
@@ -69,7 +112,7 @@ export default function ProviderServiceCardsPage() {
                 <div className="flex items-center gap-2">
                   <Switch
                     checked={card.published}
-                    onCheckedChange={() => cardsStore.togglePublish(card.id)}
+                    onCheckedChange={() => handleTogglePublish(card)}
                   />
                   <span className="text-xs font-medium text-muted-foreground">
                     {card.published ? "Published" : "Hidden"}
