@@ -1,12 +1,33 @@
+import { useEffect, useState } from "react";
 import { Trash2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
+import { profileService, type AdminProfileStats } from "@/services/profile";
+import { toast } from "sonner";
 
 export function AdminProfilePage() {
   const { profile, email } = useCurrentUser();
   const username = profile?.username ?? "";
   const displayName = profile?.display_name ?? username ?? "Admin";
   const initials = displayName.split(" ").map((n) => n[0]).join("").slice(0, 2).toUpperCase() || "A";
+  const [stats, setStats] = useState<AdminProfileStats | null>(null);
+  const [saving, setSaving] = useState(false);
+
+  useEffect(() => {
+    profileService.adminStats().then(setStats).catch(() => setStats(null));
+  }, []);
+
+  const handleSave = async () => {
+    setSaving(true);
+    try {
+      await profileService.update({ displayName });
+      toast.success("Profile updated");
+    } catch {
+      toast.error("Failed to update profile");
+    } finally {
+      setSaving(false);
+    }
+  };
 
   return (
     <AdminLayout active="dashboard">
