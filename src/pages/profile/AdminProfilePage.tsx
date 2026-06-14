@@ -85,7 +85,7 @@ export function AdminProfilePage() {
                 className="mt-1.5 w-full resize-none rounded-lg border border-background/10 bg-background/[0.04] px-3 py-2 text-sm"
               />
             </div>
-            <button className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90">Save Changes</button>
+            <button onClick={handleSave} disabled={saving} className="mt-5 rounded-xl bg-primary px-5 py-2.5 text-sm font-bold text-primary-foreground hover:opacity-90 disabled:opacity-60">{saving ? "Saving…" : "Save Changes"}</button>
           </section>
 
           <section className="rounded-2xl border border-background/10 bg-background/[0.03] p-6">
