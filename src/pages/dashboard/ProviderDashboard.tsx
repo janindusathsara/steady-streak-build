@@ -68,18 +68,16 @@ export function ProviderDashboard() {
       </div>
 
       {/* New requests banner */}
-      {(pending.length > 0 || true) && (
+      {pending.length > 0 && (
         <div className="mt-6 flex flex-wrap items-center justify-between gap-4 rounded-2xl border border-amber-200 bg-amber-50 p-5">
           <div className="flex items-start gap-3">
             <Bell className="h-5 w-5 text-amber-500" />
             <div>
               <p className="text-sm font-bold text-amber-900">
-                {pending.length || 2} New Job Request{pending.length === 1 ? "" : "s"} Waiting!
+                {pending.length} New Job Request{pending.length === 1 ? "" : "s"} Waiting!
               </p>
               <p className="text-xs text-amber-800/80">
-                {pending.length > 0
-                  ? `${pending[0].service_name} request${pending.length > 1 ? "s are" : " is"} pending your response.`
-                  : "Faucet Repair from Maria Santos and Water Heater Service from Priya Mendis are pending your response."}
+                {pending[0].service_name} request{pending.length > 1 ? "s are" : " is"} pending your response.
               </p>
             </div>
           </div>
@@ -102,27 +100,31 @@ export function ProviderDashboard() {
               View all →
             </Link>
           </div>
+          {upcoming.length === 0 ? (
+            <p className="px-5 py-10 text-center text-sm text-muted-foreground">No upcoming jobs yet.</p>
+          ) : (
           <div className="divide-y divide-border">
-            {(upcoming.length > 0 ? upcoming : SAMPLE_JOBS).map((j: any) => (
+            {upcoming.map((j) => (
               <div key={j.id} className="flex items-center justify-between gap-4 p-5">
                 <div className="flex items-center gap-3">
                   <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-muted">
                     <Droplets className="h-5 w-5 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="font-semibold">{j.service_name ?? j.service}</p>
+                    <p className="font-semibold">{j.service_name}</p>
                     <p className="text-xs text-muted-foreground">
-                      {j.customer ?? "Customer"} · {j.scheduled_date ?? j.time} · {j.district ?? j.location}
+                      {j.scheduled_date ?? "Scheduled"} · {j.district ?? "—"}
                     </p>
                   </div>
                 </div>
                 <div className="text-right">
-                  <p className="font-bold">Rs. {(j.total_amount ?? j.price).toLocaleString()}</p>
-                  <span className="text-[10px] font-bold uppercase text-emerald-600">{j.status ?? "Confirmed"}</span>
+                  <p className="font-bold">Rs. {j.total_amount.toLocaleString()}</p>
+                  <span className="text-[10px] font-bold uppercase text-emerald-600">{j.status}</span>
                 </div>
               </div>
             ))}
           </div>
+          )}
         </div>
 
         {/* Right column */}
@@ -186,9 +188,3 @@ export function ProviderDashboard() {
 }
 
 const MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
-const SAMPLE_JOBS = [
-  { id: "s1", service: "Emergency Plumbing", customer: "Alex Johnson", time: "Today · 2:30 PM", location: "Colombo 7", price: 4200, status: "Confirmed" },
-  { id: "s2", service: "Pipe Replacement", customer: "T. Kumar", time: "Oct 26 · 4:00 PM", location: "Kandy", price: 8500, status: "Confirmed" },
-  { id: "s3", service: "Faucet Repair", customer: "Maria Santos", time: "Tomorrow · 10:00 AM", location: "Gampaha", price: 2800, status: "Pending" },
-  { id: "s4", service: "Water Heater Service", customer: "Priya Mendis", time: "Oct 27 · 9:00 AM", location: "Nugegoda", price: 3500, status: "Pending" },
-];
