@@ -2,22 +2,24 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate, useParams } from "@tanstack/react-router";
 import { ArrowLeft, Check, Star } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { findProviderRequest } from "@/lib/provider-requests-data";
-import type { ProviderRequest } from "@/lib/provider-requests-data";
-import { providerRequestsService } from "@/services/provider-requests";
+import {
+  providerRequestsService,
+  type ProviderRequest,
+} from "@/services/provider-requests";
 import { toast } from "sonner";
 
 export function AdminProviderRequestDetailPage({ id }: { id: string }) {
   const { username } = useParams({ from: "/_authenticated/$username/provider-request/$id" });
   const navigate = useNavigate();
-  const [req, setReq] = useState<ProviderRequest | null>(() => findProviderRequest(id) ?? null);
+  const [req, setReq] = useState<ProviderRequest | null>(null);
+  const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<"approve" | "reject" | null>(null);
 
   useEffect(() => {
     let cancelled = false;
     providerRequestsService.get(id)
-      .then((r) => { if (!cancelled && r) setReq(r); })
-      .catch(() => { /* keep static fallback */ });
+      .then((r) => { if (!cancelled) setReq(r); })
+      .finally(() => { if (!cancelled) setLoading(false); });
     return () => { cancelled = true; };
   }, [id]);
 
@@ -46,6 +48,14 @@ export function AdminProviderRequestDetailPage({ id }: { id: string }) {
       setBusy(null);
     }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout active="provider-requests">
+        <div className="rounded-2xl border border-background/10 bg-background/5 p-10 text-center text-background/70">Loading…</div>
+      </AdminLayout>
+    );
+  }
 
   if (!req) {
     return (

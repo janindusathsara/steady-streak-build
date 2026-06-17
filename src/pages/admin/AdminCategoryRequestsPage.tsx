@@ -3,8 +3,11 @@ import { Link } from "@tanstack/react-router";
 import { Loader2 } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { CATEGORY_REQUESTS, type CategoryRequest } from "@/lib/category-requests-data";
-import { categoryRequestsService, type CategoryRequestStats } from "@/services/category-requests";
+import {
+  categoryRequestsService,
+  type CategoryRequest,
+  type CategoryRequestStats,
+} from "@/services/category-requests";
 import { toast } from "sonner";
 
 type TabKey = "all" | "Pending" | "Active" | "Rejected";
@@ -21,10 +24,10 @@ export function AdminCategoryRequestsPage() {
 
   const load = async () => {
     const [list, s] = await Promise.all([
-      categoryRequestsService.list().catch(() => CATEGORY_REQUESTS),
+      categoryRequestsService.list().catch(() => [] as CategoryRequest[]),
       categoryRequestsService.stats().catch(() => null),
     ]);
-    setItems(list.length ? list : CATEGORY_REQUESTS);
+    setItems(list);
     setStats(s);
   };
 
