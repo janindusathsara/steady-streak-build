@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Droplets, Clock, MapPin, Timer, Check, X, AlarmClock, Star } from "lucide-react";
+import { Droplets, Clock, MapPin, Timer, Check, X, AlarmClock } from "lucide-react";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
