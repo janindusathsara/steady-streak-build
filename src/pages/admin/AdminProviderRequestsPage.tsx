@@ -2,9 +2,11 @@ import { useEffect, useState } from "react";
 import { Link, useParams } from "@tanstack/react-router";
 import { Loader2, Search } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
-import { PROVIDER_REQUESTS } from "@/lib/provider-requests-data";
-import type { ProviderRequest } from "@/lib/provider-requests-data";
-import { providerRequestsService, type ProviderRequestStats } from "@/services/provider-requests";
+import {
+  providerRequestsService,
+  type ProviderRequest,
+  type ProviderRequestStats,
+} from "@/services/provider-requests";
 import { toast } from "sonner";
 
 type Tab = "all" | "pending" | "approved" | "rejected";
@@ -20,10 +22,10 @@ export function AdminProviderRequestsPage() {
 
   const load = async () => {
     const [list, s] = await Promise.all([
-      providerRequestsService.list().catch(() => PROVIDER_REQUESTS),
+      providerRequestsService.list().catch(() => [] as ProviderRequest[]),
       providerRequestsService.stats().catch(() => null),
     ]);
-    setItems(list.length ? list : PROVIDER_REQUESTS);
+    setItems(list);
     setStats(s);
   };
 

@@ -27,9 +27,9 @@ export function ProviderJobsBookingsPage() {
     cancelled: bookings.filter((b) => b.status === "cancelled"),
   };
   const counts = {
-    confirmed: lists.confirmed.length || 3,
-    completed: lists.completed.length || 28,
-    cancelled: lists.cancelled.length || 1,
+    confirmed: lists.confirmed.length,
+    completed: lists.completed.length,
+    cancelled: lists.cancelled.length,
   };
 
   const handleComplete = async (b: Booking) => {
@@ -37,11 +37,11 @@ export function ProviderJobsBookingsPage() {
     catch (e: any) { toast.error(e.message || "Failed"); }
   };
 
-  const displayed: any[] = lists[tab].length > 0 ? lists[tab] : SAMPLE[tab];
+  const displayed = lists[tab];
   const pending = bookings.filter((b) => b.status === "pending").length;
 
   return (
-    <ProviderLayout active="jobs-bookings" newRequestsCount={pending || 2} reviewsCount={128}>
+    <ProviderLayout active="jobs-bookings" newRequestsCount={pending} reviewsCount={0}>
       <div>
         <h1 className="text-3xl font-bold">Jobs & Bookings</h1>
         <p className="mt-1 text-sm text-muted-foreground">View and manage all your confirmed, pending and completed jobs</p>
@@ -61,11 +61,11 @@ export function ProviderJobsBookingsPage() {
             No {tab} jobs yet.
           </div>
         ) : (
-          displayed.map((b: any) => (
+          displayed.map((b) => (
             <BookingCard
               key={b.id}
               booking={b}
-              onComplete={b.id && b.status ? () => handleComplete(b) : undefined}
+              onComplete={() => handleComplete(b)}
               tone={tab}
             />
           ))
@@ -88,11 +88,11 @@ function TabBtn({ active, onClick, children }: { active: boolean; onClick: () =>
   );
 }
 
-function BookingCard({ booking, onComplete, tone }: { booking: any; onComplete?: () => void; tone: Tab }) {
-  const date = booking.scheduled_date ?? booking.date ?? "Today";
-  const time = booking.scheduled_time ?? booking.time ?? "—";
-  const loc = booking.district ?? booking.location ?? "—";
-  const isUpcoming = tone === "confirmed" && (booking.status === "accepted" || booking.upcoming);
+function BookingCard({ booking, onComplete, tone }: { booking: Booking; onComplete?: () => void; tone: Tab }) {
+  const date = booking.scheduled_date ?? "—";
+  const time = booking.scheduled_time ?? "—";
+  const loc = booking.district ?? "—";
+  const isUpcoming = tone === "confirmed" && booking.status === "accepted";
   const badge = isUpcoming
     ? { label: "⌛ Upcoming", cls: "bg-blue-50 text-blue-700 border-blue-200" }
     : tone === "completed"
@@ -112,15 +112,15 @@ function BookingCard({ booking, onComplete, tone }: { booking: any; onComplete?:
                 <Droplets className="h-5 w-5 text-muted-foreground" />
               </div>
               <div>
-                <p className="text-base font-bold">{booking.service_name ?? booking.service}</p>
+                <p className="text-base font-bold">{booking.service_name}</p>
                 <p className="text-xs text-muted-foreground">
-                  {booking.customer ?? "Customer"} · {date} · {time} · {loc}
+                  Ref · #{booking.ref_code} · {date} · {time} · {loc}
                 </p>
               </div>
             </div>
             <div className="flex items-center gap-3">
               <span className={`rounded-full border px-2.5 py-1 text-[11px] font-semibold ${badge.cls}`}>{badge.label}</span>
-              <p className="text-base font-bold">Rs. {(booking.total_amount ?? booking.price).toLocaleString()}</p>
+              <p className="text-base font-bold">Rs. {booking.total_amount.toLocaleString()}</p>
             </div>
           </div>
 
@@ -165,17 +165,3 @@ function Field({ icon: Icon, label, value }: { icon: typeof Wrench; label: strin
     </div>
   );
 }
-
-const SAMPLE = {
-  confirmed: [
-    { id: "c1", service: "Emergency Plumbing", customer: "Alex Johnson", date: "Today", time: "2:30 PM", location: "Colombo 7", price: 4200, upcoming: false },
-    { id: "c2", service: "Pipe Replacement", customer: "T. Kumar", date: "Oct 26", time: "4:00 PM", location: "Kandy", price: 8500, upcoming: false },
-    { id: "c3", service: "Water Heater Service", customer: "Priya Mendis", date: "Oct 27", time: "9:00 AM", location: "Nugegoda", price: 3500, upcoming: true },
-  ],
-  completed: [
-    { id: "d1", service: "Faucet Repair", customer: "Nimal Perera", date: "Oct 20", time: "11:00 AM", location: "Dehiwala", price: 2400 },
-  ],
-  cancelled: [
-    { id: "x1", service: "AC Service", customer: "S. Fernando", date: "Oct 18", time: "3:00 PM", location: "Mt Lavinia", price: 5800 },
-  ],
-};

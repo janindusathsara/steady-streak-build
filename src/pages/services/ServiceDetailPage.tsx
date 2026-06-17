@@ -3,8 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Search, MapPin, Star, Shield, CheckCircle2, Zap, Clock, ChevronDown } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { getService, type ServiceCategory } from "@/lib/services-data";
-import { browseService } from "@/services/browse";
+import { browseService, type ServiceCategory } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
 
@@ -13,12 +12,13 @@ const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evenin
 
 export function ServiceDetailPage() {
   const { serviceId } = useParams({ from: "/services/$serviceId/" });
-  const [service, setService] = useState<ServiceCategory | undefined>(() => getService(serviceId));
+  const [service, setService] = useState<ServiceCategory | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     let alive = true;
-    browseService.getServiceBySlug(serviceId).then((s) => {
-      if (alive && s) setService(s);
-    }).catch(() => {});
+    browseService.getServiceBySlug(serviceId)
+      .then((s) => { if (alive) setService(s); })
+      .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
   }, [serviceId]);
   const { profile } = useCurrentUser();
@@ -44,6 +44,16 @@ export function ServiceDetailPage() {
       return true;
     });
   }, [service, filter, query]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <div className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 py-24 text-center text-sm text-muted-foreground">Loading service…</div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!service) {
     return (

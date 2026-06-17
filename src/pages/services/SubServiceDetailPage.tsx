@@ -3,8 +3,7 @@ import { useEffect, useMemo, useState } from "react";
 import { ChevronRight, Search, MapPin, Star, Shield, CheckCircle2, Clock, ChevronDown } from "lucide-react";
 import { Navbar } from "@/components/common/Navbar";
 import { Footer } from "@/components/common/Footer";
-import { getSubService, type ServiceCategory, type SubService } from "@/lib/services-data";
-import { browseService } from "@/services/browse";
+import { browseService, type ServiceCategory, type SubService } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { setBookingIntent } from "@/lib/booking";
 
@@ -13,12 +12,13 @@ const TIMES = ["Morning (8 AM – 12 PM)", "Afternoon (12 PM – 4 PM)", "Evenin
 
 export function SubServiceDetailPage() {
   const { serviceId, subServiceId } = useParams({ from: "/services/$serviceId/$subServiceId" });
-  const [data, setData] = useState<{ service: ServiceCategory; sub: SubService } | undefined>(() => getSubService(serviceId, subServiceId));
+  const [data, setData] = useState<{ service: ServiceCategory; sub: SubService } | undefined>(undefined);
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     let alive = true;
-    browseService.getSubService(serviceId, subServiceId).then((d) => {
-      if (alive && d) setData(d);
-    }).catch(() => {});
+    browseService.getSubService(serviceId, subServiceId)
+      .then((d) => { if (alive) setData(d); })
+      .finally(() => { if (alive) setLoading(false); });
     return () => { alive = false; };
   }, [serviceId, subServiceId]);
   const { profile } = useCurrentUser();
@@ -44,6 +44,16 @@ export function SubServiceDetailPage() {
       return true;
     });
   }, [data, filter, query]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen bg-background text-foreground">
+        <Navbar />
+        <div className="mx-auto w-full max-w-6xl 4xl:max-w-[1800px] px-4 sm:px-5 py-24 text-center text-sm text-muted-foreground">Loading…</div>
+        <Footer />
+      </div>
+    );
+  }
 
   if (!data) {
     return (

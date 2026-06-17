@@ -7,29 +7,63 @@ import {
   type SubService as ApiSubService,
   type Provider as ApiProvider,
 } from "@/lib/booking";
-import {
-  SERVICES,
-  getService as getStaticService,
-  getSubService as getStaticSubService,
-  type ServiceCategory,
-  type SubService,
-  type Provider,
-} from "@/lib/services-data";
 
-// Backend slugs (e.g. "plumbing") → static fallback ids (e.g. "plumber") for img/tagline.
-const SLUG_ALIASES: Record<string, string> = {
-  plumbing: "plumber",
-  electrical: "electrician",
-  painting: "painter",
-  carpentry: "carpenter",
-  cleaning: "cleaner",
-  masonry: "mason",
-  welding: "welder",
+export type SubService = {
+  id: string;
+  name: string;
+  description: string;
+  priceFrom: number;
+  emoji: string;
 };
 
-function staticBySlug(slug: string): ServiceCategory | undefined {
-  return getStaticService(slug) ?? getStaticService(SLUG_ALIASES[slug] ?? "");
-}
+export type Provider = {
+  id: string;
+  name: string;
+  initials: string;
+  title: string;
+  rating: number;
+  jobsDone: number;
+  experience: string;
+  area: string;
+  distance: string;
+  availability: string;
+  hourly: number;
+  topRated: boolean;
+  verified: boolean;
+  color: string;
+  reviews: number;
+};
+
+export type Review = {
+  initials: string;
+  name: string;
+  date: string;
+  rating: number;
+  text: string;
+  color: string;
+};
+export type Faq = { q: string; a: string };
+
+export type ServiceCategory = {
+  id: string;
+  name: string;
+  emoji: string;
+  specialists: string;
+  img: string;
+  tagline: string;
+  description: string;
+  priceRange: string;
+  startingPrice: number;
+  avgRating: number;
+  avgResponse: string;
+  totalSpecialists: number;
+  jobsDone: number;
+  included: string[];
+  subServices: SubService[];
+  providers: Provider[];
+  reviews: Review[];
+  faqs: Faq[];
+};
 
 const PROVIDER_COLORS = [
   "oklch(0.42 0.04 55)",
@@ -40,21 +74,23 @@ const PROVIDER_COLORS = [
 ];
 
 function initialsFrom(name: string): string {
-  return name
-    .split(/\s+/)
-    .filter(Boolean)
-    .slice(0, 2)
-    .map((s) => s[0]?.toUpperCase() ?? "")
-    .join("") || "P";
+  return (
+    name
+      .split(/\s+/)
+      .filter(Boolean)
+      .slice(0, 2)
+      .map((s) => s[0]?.toUpperCase() ?? "")
+      .join("") || "P"
+  );
 }
 
-function mapSub(s: ApiSubService, fallbackEmoji = "🛠️"): SubService {
+function mapSub(s: ApiSubService): SubService {
   return {
     id: s.slug || s.id,
     name: s.name,
     description: s.description ?? "",
     priceFrom: Number(s.base_price ?? 0),
-    emoji: s.icon ?? fallbackEmoji,
+    emoji: s.icon ?? "🛠️",
   };
 }
 
@@ -79,30 +115,32 @@ function mapProvider(p: ApiProvider, i: number, categoryName: string): Provider 
   };
 }
 
-
-function mergeCategory(api: ApiCategory, subs: ApiSubService[], providers: ApiProvider[]): ServiceCategory {
-  const fallback = staticBySlug(api.slug);
-  const mappedSubs = subs.map((s) => mapSub(s, fallback?.emoji));
+function fromApi(
+  api: ApiCategory,
+  subs: ApiSubService[] = [],
+  providers: ApiProvider[] = [],
+): ServiceCategory {
+  const mappedSubs = subs.map(mapSub);
   const mappedProviders = providers.map((p, i) => mapProvider(p, i, api.name));
   return {
     id: api.slug,
     name: api.name,
-    emoji: api.icon ?? fallback?.emoji ?? "🛠️",
+    emoji: api.icon ?? "🛠️",
     specialists: `${api.pros_count ?? mappedProviders.length}+ Specialists`,
-    img: fallback?.img ?? "",
-    tagline: fallback?.tagline ?? "",
-    description: fallback?.description ?? "",
-    priceRange: fallback?.priceRange ?? "",
-    startingPrice: mappedSubs.length ? Math.min(...mappedSubs.map((s) => s.priceFrom)) : fallback?.startingPrice ?? 0,
-    avgRating: fallback?.avgRating ?? 4.8,
-    avgResponse: fallback?.avgResponse ?? "< 30 min",
-    totalSpecialists: api.pros_count ?? fallback?.totalSpecialists ?? 0,
-    jobsDone: fallback?.jobsDone ?? 0,
-    included: fallback?.included ?? [],
-    subServices: mappedSubs.length ? mappedSubs : fallback?.subServices ?? [],
-    providers: mappedProviders.length ? mappedProviders : fallback?.providers ?? [],
-    reviews: fallback?.reviews ?? [],
-    faqs: fallback?.faqs ?? [],
+    img: "",
+    tagline: "",
+    description: "",
+    priceRange: "",
+    startingPrice: mappedSubs.length ? Math.min(...mappedSubs.map((s) => s.priceFrom)) : 0,
+    avgRating: 0,
+    avgResponse: "",
+    totalSpecialists: api.pros_count ?? 0,
+    jobsDone: 0,
+    included: [],
+    subServices: mappedSubs,
+    providers: mappedProviders,
+    reviews: [],
+    faqs: [],
   };
 }
 
@@ -110,32 +148,9 @@ export const browseService = {
   async listCategories(): Promise<ServiceCategory[]> {
     try {
       const cats = await loadCategories();
-      if (!cats.length) return SERVICES;
-      return cats.map((c) => {
-        const fb = staticBySlug(c.slug);
-        return {
-          id: c.slug,
-          name: c.name,
-          emoji: c.icon ?? fb?.emoji ?? "🛠️",
-          specialists: `${c.pros_count ?? 0}+ Specialists`,
-          img: fb?.img ?? "",
-          tagline: fb?.tagline ?? "",
-          description: fb?.description ?? "",
-          priceRange: fb?.priceRange ?? "",
-          startingPrice: fb?.startingPrice ?? 0,
-          avgRating: fb?.avgRating ?? 4.8,
-          avgResponse: fb?.avgResponse ?? "< 30 min",
-          totalSpecialists: c.pros_count ?? 0,
-          jobsDone: fb?.jobsDone ?? 0,
-          included: fb?.included ?? [],
-          subServices: fb?.subServices ?? [],
-          providers: fb?.providers ?? [],
-          reviews: fb?.reviews ?? [],
-          faqs: fb?.faqs ?? [],
-        } as ServiceCategory;
-      });
+      return cats.map((c) => fromApi(c));
     } catch {
-      return SERVICES;
+      return [];
     }
   },
 
@@ -143,22 +158,22 @@ export const browseService = {
     try {
       const cats = await loadCategories();
       const match = cats.find((c) => c.slug === slug);
-      if (!match) return staticBySlug(slug);
+      if (!match) return undefined;
       const [subs, providers] = await Promise.all([
         loadSubServices(match.id).catch(() => [] as ApiSubService[]),
         loadProvidersForCategory(match.id).catch(() => [] as ApiProvider[]),
       ]);
-      return mergeCategory(match, subs, providers);
+      return fromApi(match, subs, providers);
     } catch {
-      return staticBySlug(slug);
+      return undefined;
     }
   },
 
   async getSubService(serviceSlug: string, subSlug: string) {
     const service = await this.getServiceBySlug(serviceSlug);
-    if (!service) return getStaticSubService(serviceSlug, subSlug);
+    if (!service) return undefined;
     const sub = service.subServices.find((s) => s.id === subSlug);
-    if (!sub) return getStaticSubService(serviceSlug, subSlug);
+    if (!sub) return undefined;
     return { service, sub };
   },
 

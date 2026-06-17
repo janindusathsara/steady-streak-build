@@ -6,60 +6,69 @@ import { Button } from "@/components/ui/button";
 import { Switch } from "@/components/ui/switch";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { cardsStore, useCards, type ServiceCard } from "@/lib/service-cards-store";
-import { servicesService } from "@/services/services";
+import { servicesService, type ServiceCard } from "@/services/services";
 
 export default function ProviderServiceCardsPage() {
   const navigate = useNavigate();
   const { profile } = useCurrentUser();
   const username = profile?.username ?? "";
-  const cards = useCards();
+  const [cards, setCards] = useState<ServiceCard[]>([]);
   const [confirmDelete, setConfirmDelete] = useState<ServiceCard | null>(null);
   const [loading, setLoading] = useState(true);
 
+  const refresh = async () => {
+    try {
+      const list = await servicesService.list();
+      setCards(list);
+    } catch {
+      setCards([]);
+    } finally {
+      setLoading(false);
+    }
+  };
+
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const list = await servicesService.list();
-        if (!alive) return;
-        if (list.length) list.forEach((c) => cardsStore.upsert(c));
-      } catch {
-        // keep local store fallback
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
+    void refresh();
   }, []);
 
   const handleDelete = async () => {
     if (!confirmDelete) return;
     try {
       await servicesService.remove(confirmDelete.id);
+      setCards((s) => s.filter((c) => c.id !== confirmDelete.id));
+      toast.success(`Deleted "${confirmDelete.title}"`);
     } catch {
-      // proceed locally even if API fails
+      toast.error("Failed to delete");
+    } finally {
+      setConfirmDelete(null);
     }
-    cardsStore.remove(confirmDelete.id);
-    toast.success(`Deleted "${confirmDelete.title}"`);
-    setConfirmDelete(null);
   };
 
   const handleTogglePublish = async (card: ServiceCard) => {
     const next = !card.published;
-    cardsStore.togglePublish(card.id);
+    setCards((s) =>
+      s.map((c) =>
+        c.id === card.id
+          ? { ...c, published: next, status: next ? "live" : "hidden" }
+          : c,
+      ),
+    );
     try {
       await servicesService.togglePublish(card.id, next);
     } catch {
-      cardsStore.togglePublish(card.id); // revert
+      setCards((s) =>
+        s.map((c) =>
+          c.id === card.id
+            ? { ...c, published: !next, status: !next ? "live" : "hidden" }
+            : c,
+        ),
+      );
       toast.error("Failed to update visibility");
     }
   };
 
   return (
-    <ProviderLayout active="service-cards" newRequestsCount={2} reviewsCount={128}>
+    <ProviderLayout active="service-cards" newRequestsCount={0} reviewsCount={0}>
       <div className="flex items-start justify-between gap-4">
         <div>
           <h1 className="text-3xl font-bold tracking-tight">Service Cards</h1>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Droplets, Clock, MapPin, Timer, Check, X, AlarmClock, Star } from "lucide-react";
+import { Droplets, Clock, MapPin, Timer, Check, X, AlarmClock } from "lucide-react";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { ProviderLayout } from "@/components/provider/ProviderLayout";
@@ -19,7 +19,7 @@ export function ProviderNewJobsPage() {
   useEffect(() => { void refresh(); }, [profile?.id]);
 
   const pending = bookings.filter((b) => b.status === "pending");
-  const displayed: any[] = pending.length > 0 ? pending : SAMPLE;
+  const displayed = pending;
 
   const act = async (b: Booking, status: Booking["status"]) => {
     try { await updateBookingStatus(b.id, status); toast.success(status === "accepted" ? "Job accepted" : "Job declined"); void refresh(); }
@@ -27,7 +27,7 @@ export function ProviderNewJobsPage() {
   };
 
   return (
-    <ProviderLayout active="new-jobs" newRequestsCount={displayed.length} reviewsCount={128}>
+    <ProviderLayout active="new-jobs" newRequestsCount={displayed.length} reviewsCount={0}>
       <div>
         <h1 className="text-3xl font-bold">New Job Requests</h1>
         <p className="mt-1 text-sm text-muted-foreground">Incoming homeowner requests awaiting your Accept or Decline decision</p>
@@ -48,12 +48,12 @@ export function ProviderNewJobsPage() {
             No new requests right now.
           </div>
         ) : (
-          displayed.map((b: any) => (
+          displayed.map((b) => (
             <RequestCard
               key={b.id}
               booking={b}
-              onAccept={b.status ? () => act(b, "accepted") : undefined}
-              onDecline={b.status ? () => act(b, "cancelled") : undefined}
+              onAccept={() => act(b, "accepted")}
+              onDecline={() => act(b, "cancelled")}
             />
           ))
         )}
@@ -62,11 +62,11 @@ export function ProviderNewJobsPage() {
   );
 }
 
-function RequestCard({ booking, onAccept, onDecline }: { booking: any; onAccept?: () => void; onDecline?: () => void }) {
-  const date = booking.scheduled_date ?? booking.date ?? "Tomorrow";
-  const time = booking.scheduled_time ?? booking.time ?? "10:00 AM";
-  const loc = booking.district ?? booking.location ?? "—";
-  const note = booking.problem_desc ?? booking.note ?? "";
+function RequestCard({ booking, onAccept, onDecline }: { booking: Booking; onAccept?: () => void; onDecline?: () => void }) {
+  const date = booking.scheduled_date ?? "ASAP";
+  const time = booking.scheduled_time ?? "—";
+  const loc = booking.district ?? "—";
+  const note = booking.problem_desc ?? "";
 
   return (
     <div className="overflow-hidden rounded-2xl border border-amber-200 bg-amber-50/40">
@@ -77,16 +77,15 @@ function RequestCard({ booking, onAccept, onDecline }: { booking: any; onAccept?
               <Droplets className="h-5 w-5 text-muted-foreground" />
             </div>
             <div>
-              <p className="text-base font-bold">{booking.service_name ?? booking.service}</p>
+              <p className="text-base font-bold">{booking.service_name}</p>
               <p className="text-xs text-muted-foreground">
-                Requested by <span className="font-semibold text-foreground">{booking.customer ?? "Customer"}</span> · {booking.requested ?? "3 hours ago"} ·
-                <Star className="ml-1 inline h-3 w-3 fill-amber-400 text-amber-400" /> {booking.rating ?? "4.7"} homeowner rating
+                Ref · #{booking.ref_code} · {new Date(booking.created_at).toLocaleString()}
               </p>
             </div>
           </div>
           <div className="flex items-center gap-3">
             <span className="rounded-full border border-amber-200 bg-amber-100 px-2.5 py-1 text-[11px] font-semibold text-amber-800">⌛ Pending</span>
-            <p className="text-base font-bold">Rs. {(booking.total_amount ?? booking.price).toLocaleString()}</p>
+            <p className="text-base font-bold">Rs. {booking.total_amount.toLocaleString()}</p>
           </div>
         </div>
 
@@ -94,7 +93,7 @@ function RequestCard({ booking, onAccept, onDecline }: { booking: any; onAccept?
           <Field icon={Clock} label="Date" value={date} />
           <Field icon={Clock} label="Time" value={time} />
           <Field icon={MapPin} label="Location" value={loc} />
-          <Field icon={Timer} label="Est. Duration" value={booking.duration ?? "2 hours"} />
+          <Field icon={Timer} label="Est. Duration" value={`${booking.est_hours ?? 0}h`} />
         </div>
 
         {note && (
@@ -118,7 +117,7 @@ function RequestCard({ booking, onAccept, onDecline }: { booking: any; onAccept?
               <X className="h-3.5 w-3.5" /> Decline
             </button>
           </div>
-          <p className="text-[11px] text-muted-foreground">⏰ Respond within {booking.respond ?? "2 hours"}</p>
+          <p className="text-[11px] text-muted-foreground">⏰ Respond ASAP</p>
         </div>
       </div>
     </div>
@@ -135,8 +134,3 @@ function Field({ icon: Icon, label, value }: { icon: typeof Clock; label: string
     </div>
   );
 }
-
-const SAMPLE = [
-  { id: "n1", service: "Faucet & Tap Repair", customer: "Maria Santos", requested: "3 hours ago", rating: "4.7", date: "Tomorrow", time: "10:00 AM", location: "Gampaha", duration: "2 hours", price: 2800, note: "Kitchen faucet dripping constantly and bathroom tap handle is broken. I already have the replacement parts for the bathroom tap.", respond: "2 hours" },
-  { id: "n2", service: "Water Heater Service", customer: "Priya Mendis", requested: "6 hours ago", rating: "4.9", date: "Oct 27", time: "09:00 AM", location: "Nugegoda", duration: "3 hours", price: 3500, note: "Solar water heater not heating properly. Please bring common replacement parts — thermostat and heating element.", respond: "6 hours" },
-];

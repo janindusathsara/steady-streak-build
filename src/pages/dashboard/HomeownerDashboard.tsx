@@ -7,7 +7,7 @@ import {
   Settings, LifeBuoy, LogOut, CalendarDays, MessageCircle, Phone, Mail, Home,
 } from "lucide-react";
 import { Footer } from "@/components/common/Footer";
-import { SERVICES } from "@/lib/services-data";
+import { browseService, type ServiceCategory, type Provider } from "@/services/browse";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import { supabase } from "@/integrations/supabase/client";
 import { useNewApi } from "@/lib/api-client";
@@ -274,13 +274,21 @@ function ActiveBookingsView() {
 function DashboardView() {
   const { profile } = useCurrentUser();
   const username = profile?.username ?? "";
-  const services = SERVICES.slice(0, 6);
-  const providers = [
-    { name: "Marcus Sterling", title: "Master Plumber", area: "Downtown Brooklyn", avail: "Within 2 hours", price: 85, rating: 4.9, color: "oklch(0.42 0.04 55)" },
-    { name: "Elena Rodriguez", title: "Electrical Specialist", area: "Queens Village", avail: "Today", price: 95, rating: 4.8, color: "oklch(0.55 0.10 60)" },
-    { name: "James Wilson", title: "HVAC & Cooling", area: "Manhattan Heights", avail: "Scheduled", price: 120, rating: 5.0, color: "oklch(0.78 0.14 75)" },
-    { name: "Sarah Chen", title: "Professional Painter", area: "Jersey City", avail: "Within 24 hours", price: 65, rating: 4.7, color: "oklch(0.88 0.06 70)" },
-  ];
+  const [services, setServices] = useState<ServiceCategory[]>([]);
+  const [providers, setProviders] = useState<Provider[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    let alive = true;
+    Promise.all([browseService.listCategories(), browseService.topProviders(4)])
+      .then(([cats, top]) => {
+        if (!alive) return;
+        setServices(cats.slice(0, 6));
+        setProviders(top);
+      })
+      .finally(() => { if (alive) setLoading(false); });
+    return () => { alive = false; };
+  }, []);
 
   return (
     <div className="space-y-10">
@@ -309,14 +317,20 @@ function DashboardView() {
           </div>
           <Link to="/services" className="text-sm font-medium text-primary hover:underline">View All →</Link>
         </div>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
-          {services.map((s) => (
-            <Link key={s.id} to="/services/$serviceId" params={{ serviceId: s.id }} className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-3 text-center hover:bg-muted/40 transition-all">
-              <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl">{s.emoji}</div>
-              <p className="text-xs font-medium">{s.name}</p>
-            </Link>
-          ))}
-        </div>
+        {loading ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">Loading services…</p>
+        ) : services.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">No service categories yet.</p>
+        ) : (
+          <div className="grid grid-cols-3 gap-3 sm:grid-cols-6">
+            {services.map((s) => (
+              <Link key={s.id} to="/services/$serviceId" params={{ serviceId: s.id }} className="flex flex-col items-center gap-2 rounded-xl border border-border bg-card p-3 text-center hover:bg-muted/40 transition-all">
+                <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-2xl">{s.emoji}</div>
+                <p className="text-xs font-medium">{s.name}</p>
+              </Link>
+            ))}
+          </div>
+        )}
       </section>
 
       <section>
@@ -329,9 +343,14 @@ function DashboardView() {
             <Filter className="h-3.5 w-3.5" /> Filter
           </button>
         </div>
+        {loading ? (
+          <p className="py-8 text-center text-sm text-muted-foreground">Loading providers…</p>
+        ) : providers.length === 0 ? (
+          <p className="rounded-2xl border border-dashed border-border bg-card p-10 text-center text-sm text-muted-foreground">No top-rated providers yet.</p>
+        ) : (
         <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
           {providers.map((p) => (
-            <div key={p.name} className="overflow-hidden rounded-2xl border border-border bg-card">
+            <div key={p.id} className="overflow-hidden rounded-2xl border border-border bg-card">
               <div className="relative h-32" style={{ backgroundColor: p.color }}>
                 <span className="absolute right-2 top-2 flex items-center gap-1 rounded-full bg-background/90 px-2 py-1 text-[10px] font-bold">
                   <Star className="h-2.5 w-2.5 fill-primary text-primary" /> {p.rating}
@@ -341,15 +360,16 @@ function DashboardView() {
                 <p className="font-semibold">{p.name}</p>
                 <p className="text-xs font-bold text-primary">{p.title}</p>
                 <p className="flex items-center gap-1 text-[11px] text-muted-foreground"><MapPin className="h-3 w-3" /> {p.area}</p>
-                <p className="flex items-center gap-1 text-[11px] text-muted-foreground"><Clock className="h-3 w-3" /> {p.avail}</p>
+                <p className="flex items-center gap-1 text-[11px] text-muted-foreground"><Clock className="h-3 w-3" /> {p.availability}</p>
                 <div className="flex items-center justify-between border-t border-border pt-2.5">
-                  <p className="text-xs"><span className="text-base font-bold">${p.price}</span><span className="text-muted-foreground">/hr</span></p>
+                  <p className="text-xs"><span className="text-base font-bold">${p.hourly}</span><span className="text-muted-foreground">/hr</span></p>
                   <Link to="/$username/book" params={{ username: username }} className="rounded-lg bg-primary px-3 py-1.5 text-[11px] font-bold text-primary-foreground hover:opacity-90 transition-opacity">Book Now</Link>
                 </div>
               </div>
             </div>
           ))}
         </div>
+        )}
       </section>
     </div>
   );

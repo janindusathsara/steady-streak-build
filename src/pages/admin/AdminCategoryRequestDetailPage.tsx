@@ -1,18 +1,29 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link, useNavigate } from "@tanstack/react-router";
 import { ArrowLeft } from "lucide-react";
 import { AdminLayout } from "@/components/admin/AdminLayout";
 import { useCurrentUser } from "@/hooks/use-current-user";
-import { findCategoryRequest } from "@/lib/category-requests-data";
-import { categoryRequestsService } from "@/services/category-requests";
+import {
+  categoryRequestsService,
+  type CategoryRequest,
+} from "@/services/category-requests";
 import { toast } from "sonner";
 
 export function AdminCategoryRequestDetailPage({ id }: { id: string }) {
   const { profile } = useCurrentUser();
   const username = profile?.username ?? "";
   const navigate = useNavigate();
-  const c = findCategoryRequest(id);
+  const [c, setC] = useState<CategoryRequest | null>(null);
+  const [loading, setLoading] = useState(true);
   const [busy, setBusy] = useState<"approve" | "reject" | null>(null);
+
+  useEffect(() => {
+    let cancelled = false;
+    categoryRequestsService.get(id)
+      .then((r) => { if (!cancelled) setC(r); })
+      .finally(() => { if (!cancelled) setLoading(false); });
+    return () => { cancelled = true; };
+  }, [id]);
 
   const handleApprove = async () => {
     setBusy("approve");
@@ -39,6 +50,14 @@ export function AdminCategoryRequestDetailPage({ id }: { id: string }) {
       setBusy(null);
     }
   };
+
+  if (loading) {
+    return (
+      <AdminLayout active="category-requests">
+        <div className="rounded-2xl border border-background/10 bg-background/5 p-8 text-center text-sm text-background/60">Loading…</div>
+      </AdminLayout>
+    );
+  }
 
   if (!c) {
     return (

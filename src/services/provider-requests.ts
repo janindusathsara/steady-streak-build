@@ -1,5 +1,32 @@
 import { http } from "./http";
-import type { ProviderRequest, ProviderRequestStatus } from "@/lib/provider-requests-data";
+
+export type ProviderRequestStatus = "Pending" | "Approved" | "Rejected";
+
+export interface ProviderRequest {
+  id: string;
+  initials: string;
+  name: string;
+  fullName: string;
+  email: string;
+  phone: string;
+  nic: string;
+  category: string;
+  categoryIcon: string;
+  subSpeciality: string;
+  district: string;
+  experience: string;
+  hourlyRate: string;
+  availability: string;
+  applied: string;
+  appliedAt: string;
+  status: ProviderRequestStatus;
+  score: number;
+  scoreLabel: string;
+  documents: Array<{ icon: string; name: string }>;
+  adminNotes: string;
+  checks: Array<{ label: string; value: string; ok: boolean }>;
+  similar: Array<{ i: string; name: string; meta: string; rating: string }>;
+}
 
 export interface ProviderRequestStats {
   pending: number;
@@ -23,12 +50,19 @@ export const providerRequestsService = {
       total: Number(data?.total ?? 0),
     };
   },
-  async get(id: string): Promise<ProviderRequest> {
-    const { data } = await http.get(`/provider-requests/${id}`);
-    return data as ProviderRequest;
+  async get(id: string): Promise<ProviderRequest | null> {
+    try {
+      const { data } = await http.get(`/provider-requests/${id}`);
+      return (data as ProviderRequest) ?? null;
+    } catch {
+      return null;
+    }
   },
   async updateStatus(id: string, status: ProviderRequestStatus, notes?: string) {
-    const { data } = await http.patch(`/provider-requests/${id}`, { status, admin_notes: notes });
+    const { data } = await http.patch(`/provider-requests/${id}`, {
+      status,
+      admin_notes: notes,
+    });
     return data;
   },
   approve(id: string, notes?: string) {
