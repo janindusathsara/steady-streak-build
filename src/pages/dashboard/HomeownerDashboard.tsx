@@ -369,6 +369,7 @@ function DashboardView() {
             </div>
           ))}
         </div>
+        )}
       </section>
     </div>
   );
