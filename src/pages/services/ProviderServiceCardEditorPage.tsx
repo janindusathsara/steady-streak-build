@@ -9,11 +9,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { toast } from "sonner";
 import { useCurrentUser } from "@/hooks/use-current-user";
 import {
-  cardsStore,
+  servicesService,
   emptyCard,
   syncDerived,
   type ServiceCard,
-} from "@/lib/service-cards-store";
+} from "@/services/services";
 
 interface Props {
   initial?: ServiceCard;
@@ -24,6 +24,7 @@ export default function ProviderServiceCardEditorPage({ initial }: Props) {
   const { profile } = useCurrentUser();
   const username = profile?.username ?? "";
   const [card, setCard] = useState<ServiceCard>(initial ?? emptyCard());
+  const [saving, setSaving] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const set = <K extends keyof ServiceCard>(k: K, v: ServiceCard[K]) =>
@@ -38,11 +39,24 @@ export default function ProviderServiceCardEditorPage({ initial }: Props) {
     reader.readAsDataURL(file);
   };
 
-  const handlePublish = () => {
+  const handlePublish = async () => {
     if (!card.title.trim()) return toast.error("Service title is required");
-    cardsStore.upsert(syncDerived(card));
-    toast.success(initial ? "Card updated" : "Card published");
-    navigate({ to: "/$username/myservices", params: { username } });
+    setSaving(true);
+    const synced = syncDerived(card);
+    try {
+      if (initial) {
+        await servicesService.update(card.id, synced);
+        toast.success("Card updated");
+      } else {
+        await servicesService.create(synced);
+        toast.success("Card published");
+      }
+      navigate({ to: "/$username/myservices", params: { username } });
+    } catch {
+      toast.error("Failed to save card");
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
@@ -77,10 +91,11 @@ export default function ProviderServiceCardEditorPage({ initial }: Props) {
           </Button>
           <Button
             onClick={handlePublish}
-            className="rounded-xl bg-amber-900 px-4 font-semibold text-white hover:bg-amber-900/90"
+            disabled={saving}
+            className="rounded-xl bg-amber-900 px-4 font-semibold text-white hover:bg-amber-900/90 disabled:opacity-60"
           >
             <Sparkles className="mr-1 h-4 w-4" />
-            {initial ? "Save Changes" : "Publish Card"}
+            {saving ? "Saving…" : initial ? "Save Changes" : "Publish Card"}
           </Button>
         </div>
       </div>
